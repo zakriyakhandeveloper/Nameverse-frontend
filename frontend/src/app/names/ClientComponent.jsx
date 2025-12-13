@@ -388,7 +388,7 @@ export default function BabyNamesClient({ initialData, initialReligion = 'islami
                 </div>
               </div>
               
-              {pagination && (
+              {pagination?.totalResults && (
                 <div className="flex items-center gap-1.5 px-2.5 py-1 bg-indigo-50 rounded-full">
                   <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
                   <span className="text-xs font-bold text-indigo-700">{pagination.totalResults.toLocaleString()}</span>
@@ -549,7 +549,7 @@ export default function BabyNamesClient({ initialData, initialReligion = 'islami
                 <h2 className="text-xs font-bold text-gray-900 uppercase mb-1">
                   {religion.charAt(0).toUpperCase() + religion.slice(1)} Names
                 </h2>
-                {pagination && (
+                {pagination?.totalResults && (
                   <p className="text-xs text-gray-600">
                     Showing <strong>{names.length}</strong> of <strong>{pagination.totalResults.toLocaleString()}</strong> names
                   </p>
@@ -624,7 +624,7 @@ export default function BabyNamesClient({ initialData, initialReligion = 'islami
                   </div>
 
                   {/* Optimized Pagination */}
-                  {pagination && pagination.totalPages > 1 && (
+                  {pagination?.totalPages > 1 && (
                     <div className="flex items-center justify-center gap-2 mt-4 flex-wrap">
                       <button
                         onClick={() => setCurrentPage(1)}
