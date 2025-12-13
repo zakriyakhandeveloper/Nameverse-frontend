@@ -1,0 +1,384 @@
+===============================================
+NAMEVERSE API - COMPLETE ROUTES DOCUMENTATION
+===============================================
+
+Base URL: https://namverse-api.vercel.app
+Version: 1.0.0
+Rate Limit: 50 requests/day per IP (unlimited for nameverse.vercel.app)
+
+===============================================
+ROOT & HEALTH ENDPOINTS
+===============================================
+
+GET /
+  Description: API welcome message with documentation
+  Response: API info, version, available endpoints
+  Cache: No cache
+
+GET /health
+  Description: Health check endpoint
+  Response: Server and database status
+  Cache: No cache
+
+GET /warmup
+  Description: Warm up serverless function and database
+  Response: Warmup status and timing
+  Cache: No cache
+
+===============================================
+NAMES API - V1 ENDPOINTS (RECOMMENDED)
+===============================================
+
+GET /api/v1/names
+  Description: Fetch names with pagination and filtering
+  Query Parameters:
+    - religion (required): islamic, christian, hindu
+    - page (optional, default: 1): Page number
+    - limit (optional, default: 50, max: 100): Items per page
+    - gender (optional): male, female
+    - origin (optional): Filter by origin (e.g., Arabic, Hebrew)
+    - startsWith (optional): Filter by starting letter (A-Z)
+    - search (optional): Search in name and meaning
+    - sort (optional, default: asc): asc, desc
+  Response: Array of names with pagination info
+  Cache: 5 minutes
+  Examples:
+    /api/v1/names?religion=islamic
+    /api/v1/names?religion=islamic&gender=male&limit=10
+    /api/v1/names?religion=islamic&search=ali
+    /api/v1/names?religion=islamic&startsWith=A&limit=20
+    /api/v1/names?religion=islamic&page=2&limit=50
+
+GET /api/v1/names/:religion/:slug
+  Description: Get single name details
+  Path Parameters:
+    - religion (required): islamic, christian, hindu
+    - slug (required): Name slug (lowercase, hyphenated)
+  Response: Detailed name information
+  Cache: 1 hour
+  Examples:
+    /api/v1/names/islamic/ahmad
+    /api/v1/names/christian/john
+    /api/v1/names/hindu/arjun
+
+GET /api/v1/filters/:religion
+  Description: Get available filters for a religion
+  Path Parameters:
+    - religion (required): islamic, christian, hindu
+  Response: Available genders, origins, and letters
+  Cache: 1 hour
+  Examples:
+    /api/v1/filters/islamic
+    /api/v1/filters/christian
+    /api/v1/filters/hindu
+
+GET /api/v1/search
+  Description: Search names across religions
+  Query Parameters:
+    - q (required, min 2 chars): Search query
+    - religion (optional): Filter by religion
+    - limit (optional, default: 20, max: 100): Results limit
+  Response: Matching names across religions
+  Cache: 1 minute
+  Examples:
+    /api/v1/search?q=ali
+    /api/v1/search?q=ali&religion=islamic
+    /api/v1/search?q=john&limit=5
+
+===============================================
+NAMES API - LEGACY ENDPOINTS (BACKWARD COMPATIBILITY)
+===============================================
+
+GET /api/religion/:religion
+  Description: Legacy endpoint for fetching names (use /api/v1/names instead)
+  Path Parameters:
+    - religion (required): islamic, christian, hindu
+  Query Parameters: Same as /api/v1/names
+  Response: Names with pagination
+  Cache: 5 minutes
+  Example:
+    /api/religion/islamic?page=1&limit=20
+
+GET /api/religion/:religion/filters
+  Description: Legacy endpoint for filters (use /api/v1/filters/:religion instead)
+  Path Parameters:
+    - religion (required): islamic, christian, hindu
+  Response: Filter options with counts
+  Cache: 1 hour
+  Example:
+    /api/religion/islamic/filters
+
+GET /api/names/:religion/:slug
+  Description: Legacy endpoint for single name (use /api/v1/names/:religion/:slug instead)
+  Path Parameters:
+    - religion (required): islamic, christian, hindu
+    - slug (required): Name slug
+  Response: Single name details
+  Cache: 1 hour
+  Example:
+    /api/names/islamic/ahmad
+
+===============================================
+ARTICLES API - V1 ENDPOINTS
+===============================================
+
+GET /api/v1/articles
+  Description: List articles with pagination and filtering
+  Query Parameters:
+    - page (optional, default: 1): Page number
+    - limit (optional, default: 10, max: 50): Items per page
+    - category (optional): Filter by category
+    - status (optional, default: published): published, draft
+    - sort (optional, default: recent): recent, views, likes, oldest
+  Response: Array of articles with pagination
+  Cache: 5 minutes
+  Examples:
+    /api/v1/articles
+    /api/v1/articles?page=1&limit=10
+    /api/v1/articles?category=islamic&sort=views
+    /api/v1/articles?status=published&limit=20
+
+GET /api/v1/articles/latest
+  Description: Get latest articles
+  Query Parameters:
+    - limit (optional, default: 10): Number of articles
+  Response: Latest published articles
+  Cache: 5 minutes
+  Example:
+    /api/v1/articles/latest?limit=5
+
+GET /api/v1/articles/categories
+  Description: Get all article categories
+  Response: List of available categories
+  Cache: 1 hour
+  Example:
+    /api/v1/articles/categories
+
+GET /api/v1/articles/search
+  Description: Search articles
+  Query Parameters:
+    - q (required, min 1 char, max 100): Search query
+    - page (optional, default: 1): Page number
+    - limit (optional, default: 10, max: 50): Results limit
+  Response: Matching articles
+  Cache: 5 minutes
+  Example:
+    /api/v1/articles/search?q=islamic&limit=10
+
+GET /api/v1/articles/:slug
+  Description: Get single article by slug
+  Path Parameters:
+    - slug (required): Article slug
+  Response: Detailed article information
+  Cache: 1 hour
+  Example:
+    /api/v1/articles/top-100-islamic-names
+
+===============================================
+STORIES API - V1 ENDPOINTS
+===============================================
+
+GET /api/v1/stories
+  Description: List stories with pagination and filtering
+  Query Parameters:
+    - page (optional, default: 1): Page number
+    - limit (optional, default: 10, max: 50): Items per page
+    - category (optional): Filter by category
+    - subCategory (optional): Filter by sub-category
+    - status (optional, default: published): published, draft
+    - lengthType (optional): short, medium, long
+    - mood (optional): Filter by mood
+    - sort (optional, default: recent): recent, views, likes, trending, oldest
+  Response: Array of stories with pagination
+  Cache: 5 minutes
+  Examples:
+    /api/v1/stories
+    /api/v1/stories?page=1&limit=10
+    /api/v1/stories?category=history&sort=trending
+    /api/v1/stories?lengthType=short&limit=20
+
+GET /api/v1/stories/trending
+  Description: Get trending stories
+  Query Parameters:
+    - limit (optional, default: 10): Number of stories
+  Response: Trending stories
+  Cache: 5 minutes
+  Example:
+    /api/v1/stories/trending?limit=5
+
+GET /api/v1/stories/new
+  Description: Get newest stories
+  Query Parameters:
+    - limit (optional, default: 10): Number of stories
+  Response: Recently published stories
+  Cache: 5 minutes
+  Example:
+    /api/v1/stories/new?limit=5
+
+GET /api/v1/stories/categories
+  Description: Get all story categories
+  Response: List of available categories
+  Cache: 1 hour
+  Example:
+    /api/v1/stories/categories
+
+GET /api/v1/stories/category/:category
+  Description: Get stories by category
+  Path Parameters:
+    - category (required): Category name
+  Query Parameters: Same as /api/v1/stories
+  Response: Stories in the specified category
+  Cache: 5 minutes
+  Example:
+    /api/v1/stories/category/history?limit=10
+
+GET /api/v1/stories/search
+  Description: Search stories
+  Query Parameters:
+    - q (required, min 1 char, max 100): Search query
+    - page (optional, default: 1): Page number
+    - limit (optional, default: 10, max: 50): Results limit
+  Response: Matching stories
+  Cache: 5 minutes
+  Example:
+    /api/v1/stories/search?q=ottoman&limit=10
+
+GET /api/v1/stories/:slug
+  Description: Get single story by slug
+  Path Parameters:
+    - slug (required): Story slug
+  Response: Detailed story information with chapters
+  Cache: 1 hour
+  Example:
+    /api/v1/stories/genghis-khan-great-conqueror-history
+
+===============================================
+LEGACY HEALTH ENDPOINTS (REDIRECTS)
+===============================================
+
+GET /api/health
+  Description: Redirects to /health (301)
+
+GET /api/v1/health
+  Description: Redirects to /health (301)
+
+===============================================
+ERROR RESPONSES
+===============================================
+
+400 Bad Request
+  {
+    "success": false,
+    "error": "Invalid parameter",
+    "details": "Error message"
+  }
+
+404 Not Found
+  {
+    "success": false,
+    "error": "Resource not found"
+  }
+
+429 Too Many Requests
+  {
+    "success": false,
+    "error": "Too many requests",
+    "message": "Rate limit: 50 requests per day per IP",
+    "retryAfter": "24 hours"
+  }
+
+500 Internal Server Error
+  {
+    "success": false,
+    "error": "Internal Server Error",
+    "timestamp": "2025-12-10T09:30:00.000Z"
+  }
+
+503 Service Unavailable
+  {
+    "status": "unhealthy",
+    "error": "Database connection failed"
+  }
+
+===============================================
+COMMON RESPONSE FIELDS
+===============================================
+
+Success Response:
+  {
+    "success": true,
+    "data": [...],
+    "source": "cache" | "database",
+    "pagination": {
+      "page": 1,
+      "limit": 10,
+      "total": 100,
+      "totalPages": 10
+    }
+  }
+
+===============================================
+CACHE DURATIONS
+===============================================
+
+Endpoint                           Cache Duration
+--------------------------------------------------
+/health                           No cache
+/warmup                           No cache
+/api/v1/names                     5 minutes
+/api/v1/names/:religion/:slug     1 hour
+/api/v1/filters/:religion         1 hour
+/api/v1/search                    1 minute
+/api/v1/articles                  5 minutes
+/api/v1/articles/latest           5 minutes
+/api/v1/articles/categories       1 hour
+/api/v1/articles/:slug            1 hour
+/api/v1/stories                   5 minutes
+/api/v1/stories/trending          5 minutes
+/api/v1/stories/new               5 minutes
+/api/v1/stories/categories        1 hour
+/api/v1/stories/:slug             1 hour
+
+===============================================
+NOTES & BEST PRACTICES
+===============================================
+
+1. Religion Values: islamic, christian, hindu (case-insensitive)
+2. Slug Format: Lowercase with hyphens (e.g., ahmad, john-the-baptist)
+3. Date Format: ISO 8601 (e.g., 2025-12-10T09:30:00.000Z)
+4. Pagination: Default page=1, default limit varies by endpoint
+5. Search: Minimum character requirements vary by endpoint
+6. CORS: Enabled for all origins
+7. Compression: Automatic gzip/deflate
+8. Rate Limiting: 50 requests per day per IP (unlimited for nameverse.vercel.app domain)
+
+===============================================
+QUICK TESTING EXAMPLES
+===============================================
+
+# Test health
+curl https://namverse-api.vercel.app/health
+
+# Test names
+curl "https://namverse-api.vercel.app/api/v1/names?religion=islamic&limit=5"
+
+# Test search
+curl "https://namverse-api.vercel.app/api/v1/search?q=ali"
+
+# Test single name
+curl "https://namverse-api.vercel.app/api/v1/names/islamic/ahmad"
+
+# Test articles
+curl "https://namverse-api.vercel.app/api/v1/articles?limit=5"
+
+# Test stories
+curl "https://namverse-api.vercel.app/api/v1/stories?limit=5"
+
+# Test trending stories
+curl "https://namverse-api.vercel.app/api/v1/stories/trending?limit=5"
+
+===============================================
+TOTAL ENDPOINT COUNT: 30+
+===============================================
+
+Last Updated: December 11, 2025

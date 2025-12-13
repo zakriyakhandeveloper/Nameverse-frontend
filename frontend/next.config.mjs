@@ -2,6 +2,15 @@
 const nextConfig = {
   reactStrictMode: true,
   
+  // Allow all hosts for Replit proxy
+  allowedDevOrigins: [
+    'https://faea070e-8320-40f1-92b2-b79c20b8d2f6-00-6rm0csoemn1l.kirk.replit.dev',
+    'http://faea070e-8320-40f1-92b2-b79c20b8d2f6-00-6rm0csoemn1l.kirk.replit.dev',
+    '*.replit.dev',
+    '*.repl.co',
+    '*.kirk.replit.dev',
+  ],
+  
   // Performance Optimizations
   compress: true,
   
