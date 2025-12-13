@@ -172,7 +172,7 @@ const Hero = () => {
             </a>
             <a href="/blog" className="flex-1">
               <button className="w-full px-6 sm:px-8 py-3.5 sm:py-4 border-2 border-gray-300 text-gray-900 font-bold rounded-xl hover:border-indigo-400 hover:bg-indigo-50 hover:shadow-lg transition-all text-sm sm:text-base">
-                Name Stories
+                Articles
               </button>
             </a>
           </div>

@@ -5,16 +5,15 @@ const DOMAIN = process.env.NEXT_PUBLIC_SITE_URL || "https://yourdomain.com";
 
 // 100/100 SEO SSR metadata
 export const metadata = {
-  title: "Baby Names, Meanings & Stories — Muslim, Hindu, Christian | NameVerse",
+  title: "Baby Names & Meanings — Muslim, Hindu, Christian | NameVerse",
   description:
-    "Explore 65,000+ baby names with meanings, origins, and numerology. Discover Islamic, Hindu, and Christian names in Urdu, Arabic, Hindi & English. Find Quranic, Biblical, and modern baby names A–Z with meanings and stories.",
+    "Explore 65,000+ baby names with meanings, origins, and numerology. Discover Islamic, Hindu, and Christian names in Urdu, Arabic, Hindi & English. Find Quranic, Biblical, and modern baby names A–Z.",
   keywords: [
     "Islamic names",
     "Muslim baby names",
     "Quranic names",
     "Urdu names",
     "Arabic names",
-    "Islamic stories",
     "Islamic origin names",
     "trending Islamic names",
     "boys names",
@@ -22,19 +21,19 @@ export const metadata = {
     "Muslim culture",
   ],
   openGraph: {
-    title: "Islamic Names & Stories – Discover Meaning, Origin & History",
+    title: "Islamic Names – Discover Meaning, Origin & History",
     description:
-      "Explore authentic Islamic names and stories with meanings, origins and virtues. Perfect for parents and learners.",
+      "Explore authentic Islamic names with meanings, origins and virtues. Perfect for parents and learners.",
     url: DOMAIN + "/",
     type: "website",
-    siteName: "Islamic Names & Stories",
+    siteName: "Islamic Names",
     images: [{ url: DOMAIN + "/og-image.jpg" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Islamic Names & Stories — Meaning, Origin, and Virtues",
+    title: "Islamic Names — Meaning, Origin, and Virtues",
     description:
-      "Discover meaningful Islamic names and fascinating stories behind them.",
+      "Discover meaningful Islamic names and their origins.",
     images: [DOMAIN + "/og-image.jpg"],
   },
   alternates: {

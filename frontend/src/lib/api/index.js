@@ -29,20 +29,7 @@ export {
   fetchNamesWithAdvancedFilters,
 } from './names';
 
-// Export Stories API
-export { default as storiesAPI } from './stories';
-export {
-  fetchStories,
-  fetchTrendingStories,
-  fetchNewStories,
-  fetchStoriesByCategory,
-  fetchStoriesByTags,
-  searchStories,
-  fetchStoryBySlug,
-  fetchStoryChapter,
-  incrementStoryView,
-  getStoryCategories,
-} from './stories';
+// Stories API removed
 
 // Export Articles API
 export { default as articlesAPI } from './articles';
@@ -69,7 +56,6 @@ export {
 // Convenience object with all APIs
 export const API = {
   names: namesAPI,
-  stories: storiesAPI,
   articles: articlesAPI,
   search: searchAPI,
 };

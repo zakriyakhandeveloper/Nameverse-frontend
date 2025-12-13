@@ -66,7 +66,7 @@ const getCategoryFilter = (category) => {
 // Create clickable link from name
 const createNameLink = (name, categoryFilter) => {
   const nameSlug = name.toLowerCase().replace(/\s+/g, '-');
-  return `names/${categoryFilter}/${nameSlug}`;
+  return `/names/${categoryFilter}/english/${nameSlug}`;
 };
 
 // Render text with clickable names from name_links array
@@ -101,7 +101,7 @@ const renderTextWithNameLinks = (text, nameLinks, categoryFilter) => {
     // Add the clickable name
     const name = match[0];
     const nameSlug = name.toLowerCase().replace(/\s+/g, '-');
-    const href = `/names/${categoryFilter}/${nameSlug}`;
+    const href = `/names/${categoryFilter}/english/${nameSlug}`;
     
     parts.push({
       type: 'link',
@@ -297,7 +297,7 @@ const ArticleStats = memo(({ wordCount, readTime, status }) => (
 
 const RelatedArticleCard = memo(({ article }) => (
   <Link
-    href={`/${article.slug}`}
+    href={`/blog/${article.slug}`}
     className="group block overflow-hidden bg-white rounded-xl border-2 border-gray-200 hover:border-blue-300 transition-all duration-300 hover:shadow-xl hover:-translate-y-2"
   >
     <div className="h-48 bg-gradient-to-br from-gray-200 to-gray-300 overflow-hidden relative">

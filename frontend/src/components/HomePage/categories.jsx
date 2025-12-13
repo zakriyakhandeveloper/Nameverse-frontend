@@ -79,15 +79,15 @@ const QuickCategories = () => {
       pattern: "🔥❤️💖🌹"
     },
     {
-      title: "Latest Stories",
-      href: "/stories",
+      title: "Blog Articles",
+      href: "/blog",
       icon: <BookOpen className="w-10 h-10 text-purple-600" />,
       lucideIcon: <Sparkles className="w-6 h-6" />,
       gradient: "from-purple-500 via-violet-500 to-indigo-500",
       bgGradient: "from-purple-50 to-violet-50",
       borderGradient: "from-purple-200 to-violet-200", 
       hoverShadow: "shadow-purple-200/50",
-      description: "Name origins & meanings",
+      description: "Insights and guides",
       pattern: "📚✨📖🌟"
     }
   ];

@@ -27,9 +27,9 @@ const geistMono = Geist_Mono({
 
 // ✅ Global SEO Metadata
 export const metadata = {
-  title: "Baby Names, Meanings & Stories — Muslim, Hindu, Christian | NameVerse",
+  title: "Baby Names & Meanings — Muslim, Hindu, Christian | NameVerse",
   description:
-    "Explore 65,000+ baby names with meanings, origins, and numerology. Discover Islamic, Hindu, and Christian names in Urdu, Arabic, Hindi & English. Find Quranic, Biblical, and modern baby names A–Z with meanings and stories.",
+    "Explore 65,000+ baby names with meanings, origins, and numerology. Discover Islamic, Hindu, and Christian names in Urdu, Arabic, Hindi & English. Find Quranic, Biblical, and modern baby names A–Z.",
   keywords:
     "baby names, baby names a to z, baby names muslim, baby names girl, baby names muslim boy, name meanings, name meanings in urdu, name meanings in islam, baby names with meanings, unique baby names, modern baby names, islamic boy names from quran, hindu girl names meaning love, christian baby names with meanings, nameverse meaning, nameverse website",
   robots: "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1",
@@ -54,7 +54,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Baby Names & Meanings — Islamic, Hindu, Christian | NameVerse",
     description:
-      "Explore thousands of baby names by religion and origin — Islamic, Hindu, and Christian — with detailed meanings, numerology, and stories.",
+      "Explore thousands of baby names by religion and origin — Islamic, Hindu, and Christian — with detailed meanings and numerology.",
     images: [`${siteUrl}/og-image.png`],
     creator: "@NameVerseOfficial",
     site: "@NameVerseOfficial",
@@ -68,9 +68,16 @@ export const metadata = {
     apple: `/apple-touch.png`,
   },
   manifest: `/manifest.json`, // Use relative path to avoid CORS issues
+  category: "Baby Names, Culture, Religion",
+};
+
+// Viewport configuration (Next.js App Router)
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
   themeColor: "#1E40AF",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover",
-  category: "Baby Names, Culture, Religion, Stories",
 };
 
 export default function RootLayout({ children }) {

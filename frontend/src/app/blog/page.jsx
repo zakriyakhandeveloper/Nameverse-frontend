@@ -1,6 +1,8 @@
 // ==================== ArticleExplorer.jsx (Full ISR + SEO) ====================
 import HeroSection from "./Herosection";
 import ArticleGrid from "./articlegrid";
+import StructuredData from "@/components/SEO/StructuredData";
+import PageLayout from "@/components/Layout/PageLayout";
 import {
   getLatestArticles,
   getAllCategories,
@@ -37,7 +39,7 @@ export async function generateMetadata({ searchParams }) {
     ? `Latest articles in ${category} category`
     : "Explore latest articles and insights from NameVerse Blog.";
 
-  const canonicalUrl = `${SITE_URL}/articles`;
+  const canonicalUrl = `${SITE_URL}/blog`;
 
   return {
     title,
@@ -100,7 +102,7 @@ function generateStructuredData(articles = []) {
     "@type": "ListItem",
     position: index + 1,
     name: article.title,
-    url: `${SITE_URL}/articles/${article.slug}`,
+    url: `${SITE_URL}/blog/${article.slug}`,
   }));
 
   return {
@@ -108,7 +110,7 @@ function generateStructuredData(articles = []) {
     "@type": "CollectionPage",
     name: "Articles — NameVerse Blog",
     description: "Browse the latest articles, insights, and tips from NameVerse Blog.",
-    url: `${SITE_URL}/articles`,
+    url: `${SITE_URL}/blog`,
     isPartOf: { "@type": "WebSite", name: "NameVerse", url: SITE_URL },
     mainEntity: { "@type": "ItemList", itemListElement: articleItems },
     potentialAction: {
@@ -122,6 +124,8 @@ function generateStructuredData(articles = []) {
 // ---------------- Main ISR Page ----------------
 export default async function ArticleExplorer({ searchParams }) {
   const { articles, categories } = await fetchArticles(searchParams);
+
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://nameverse.com";
 
   const categoryOptions = ["All Categories", ...categories];
   const selectedLabel = searchParams.query
@@ -155,7 +159,6 @@ export default async function ArticleExplorer({ searchParams }) {
           article={articles[0] || null}
           categories={categoryOptions}
           selected={selectedLabel}
-          query={searchParams.query}
         />
 
         {/* Article Grid */}

@@ -9,7 +9,7 @@ import {
 
 import ArticleGrid from "./articlegrid";
 
-export default function ArticleExplorer() {
+export default function ArticleExplorer({ embedded = false }) {
   const [articles, setArticles] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selected, setSelected] = useState("All Categories");
@@ -79,6 +79,16 @@ export default function ArticleExplorer() {
       setIsLoading(false);
     }
   };
+
+  if (embedded) {
+    return (
+      <section className="w-full bg-white text-gray-900 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ArticleGrid articles={articles} isLoading={isLoading} />
+        </div>
+      </section>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900">

@@ -229,9 +229,18 @@ function EmptyState({ searchTerm }) {
 }
 
 function NameCard({ name, viewMode, index, searchTerm, router }) {
-  const religion = name.religion || 'islam';
-  const url = `/names/${religion}/${name.name}`;
-  
+  // API returns "Islam" but we need "islamic" for the URL
+  const religionMap = {
+    'islam': 'islamic',
+    'islamic': 'islamic',
+    'hindu': 'hindu',
+    'hinduism': 'hindu',
+    'christian': 'christian',
+    'christianity': 'christian',
+  };
+  const religion = religionMap[name.religion?.toLowerCase()] || 'islamic';
+  const url = `/names/${religion}/english/${name.slug || name.name?.toLowerCase().replace(/\s+/g, '-')}`;
+
   return (
     <article
       onClick={() => router.push(url)}
@@ -246,8 +255,8 @@ function NameCard({ name, viewMode, index, searchTerm, router }) {
       >
         {name.name}
       </h3>
-      {name.short_meaning && (
-        <p className="text-gray-700 text-base mb-2">{name.short_meaning}</p>
+      {(name.short_meaning || name.long_meaning) && (
+        <p className="text-gray-700 text-base mb-2 line-clamp-2">{name.short_meaning || name.long_meaning}</p>
       )}
       {name.origin && (
         <span className="inline-block text-xs mt-2 px-2 py-0.5 bg-indigo-100 text-indigo-800 rounded font-bold uppercase tracking-wider" itemProp="description">

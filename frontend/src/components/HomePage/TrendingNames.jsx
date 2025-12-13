@@ -1,18 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { TrendingUp, Heart, ChevronRight, Globe, BookOpen, Award, Sparkles, Loader2 } from 'lucide-react';
+import { TrendingUp, Heart, ChevronRight, BookOpen, Award, Sparkles, Loader2 } from 'lucide-react';
 import { fetchTrendingNames } from '@/lib/api/names';
 import toast from 'react-hot-toast';
 
 const religionFilters = [
-  { 
-    value: "global", 
-    label: "All", 
-    icon: Globe,
-    gradient: "from-indigo-600 to-purple-600",
-    bg: "bg-indigo-50"
-  },
   { 
     value: "islamic", 
     label: "Islamic", 
@@ -37,7 +30,7 @@ const religionFilters = [
 ];
 
 export default function TrendingNames() {
-  const [selectedReligion, setSelectedReligion] = useState("global");
+  const [selectedReligion, setSelectedReligion] = useState("islamic");
   const [favorites, setFavorites] = useState([]);
   const [names, setNames] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -83,10 +76,20 @@ export default function TrendingNames() {
   };
 
   const handleViewDetails = (name) => {
-    window.location.href = `/names/${name.religion?.toLowerCase()}/${name.slug}`;
+    // API returns "Islam" but we need "islamic" for the URL
+    const religionMap = {
+      'islam': 'islamic',
+      'islamic': 'islamic',
+      'hindu': 'hindu',
+      'hinduism': 'hindu',
+      'christian': 'christian',
+      'christianity': 'christian',
+    };
+    const religion = religionMap[name.religion?.toLowerCase()] || selectedReligion || 'islamic';
+    window.location.href = `/names/${religion}/english/${name.slug}`;
   };
 
-  const selectedFilter = religionFilters.find(f => f.value === selectedReligion);
+  const selectedFilter = religionFilters.find(f => f.value === selectedReligion) || religionFilters[0];
 
   return (
     <section className="w-full bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 py-12 sm:py-16 md:py-20">
@@ -217,8 +220,8 @@ export default function TrendingNames() {
                   }`}>
                     <div className="flex items-start gap-2">
                       <Sparkles size={16} className="text-gray-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-gray-700 leading-relaxed font-medium">
-                        {name.short_meaning}
+                      <p className="text-sm text-gray-700 leading-relaxed font-medium line-clamp-2">
+                        {name.short_meaning || name.long_meaning || 'Beautiful meaning'}
                       </p>
                     </div>
                   </div>

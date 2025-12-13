@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { BookHeart, Globe2, PenTool, History } from 'lucide-react';
-import Head from 'next/head';
+ 
 
 const CulturalImportance = () => {
   const prefersReducedMotion = useReducedMotion();
@@ -121,28 +121,7 @@ const CulturalImportance = () => {
 
   return (
     <>
-      <Head>
-        <title>Baby Names Cultural Meaning | Islamic, Hindu, Christian | NameVerse</title>
-        <meta name="description" content="Discover verified baby names with cultural meaning across Islamic, Hindu, Christian, and global traditions. Learn how meaningful baby names connect heritage with identity." />
-        <meta name="keywords" content="baby names, verified baby name meanings, Islamic baby names, Hindu baby names, Christian baby names, baby boy names, baby girl names, baby names with meaning" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        
-        <meta property="og:title" content="Baby Names Cultural Meaning | Islamic, Hindu, Christian Traditions" />
-        <meta property="og:description" content="Explore verified baby names with cultural significance and spiritual meaning across diverse traditions." />
-        <meta property="og:image" content="https://nameverse.com/og-image-cultural-importance.jpg" />
-        <meta property="og:type" content="article" />
-        <meta property="og:site_name" content="NameVerse" />
-        
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Baby Names Cultural Meaning & Heritage" />
-        <meta name="twitter:description" content="Verified baby names connecting heritage, identity, and cultural significance." />
-        <meta name="twitter:image" content="https://nameverse.com/og-image-cultural-importance.jpg" />
-        
-        <link rel="canonical" href="https://nameverse.com/cultural-importance" />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
-      </Head>
-
+      
       <section 
         className="py-12 sm:py-16 lg:py-24 bg-gradient-to-b from-white via-indigo-50/30 to-white" 
         aria-labelledby="cultural-heading"

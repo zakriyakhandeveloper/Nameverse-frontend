@@ -36,7 +36,7 @@ export async function fetchFilters(religion) {
       };
     }
 
-    const { data } = await apiClient.get(`/filters/${religion}`);
+    const { data } = await apiClient.get(`/api/v1/filters/${religion}`);
 
     if (data.success && data.filters) {
       return {
@@ -103,7 +103,7 @@ export async function fetchNames(params = {}) {
       ...filters,
     };
 
-    const { data } = await apiClient.get('/names', { params: queryParams });
+    const { data } = await apiClient.get('/api/v1/names', { params: queryParams });
 
     return {
       data: data.data || [],
@@ -144,7 +144,7 @@ export async function fetchNameDetail(religion, slug) {
       return null;
     }
 
-    const { data } = await apiClient.get(`/names/${religion}/${slug}`);
+    const { data } = await apiClient.get(`/api/v1/names/${religion}/${slug}`);
 
     if (data.success && data.data) {
       return data.data;
@@ -183,7 +183,7 @@ export async function searchNames(query, options = {}) {
       ...(options.religion && { religion: options.religion }),
     };
 
-    const { data } = await apiClient.get('/search', { params });
+    const { data } = await apiClient.get('/api/v1/search', { params });
 
     return {
       data: data.data || [],
@@ -220,7 +220,7 @@ export async function fetchNamesLegacy(params = {}) {
       };
     }
 
-    const { data } = await apiClient.get(`/religion/${religion}`, { params: rest });
+    const { data } = await apiClient.get(`/api/religion/${religion}`, { params: rest });
 
     return {
       data: data.data || [],
@@ -248,7 +248,7 @@ export async function fetchFiltersLegacy(religion) {
       return { genders: [], origins: [], firstLetters: [], totalNames: 0 };
     }
 
-    const { data } = await apiClient.get(`/religion/${religion}/filters`);
+    const { data } = await apiClient.get(`/api/religion/${religion}/filters`);
 
     if (data.success && data.filters) {
       return {
@@ -277,7 +277,7 @@ export async function fetchNameDetailLegacy(religion, slug) {
       return null;
     }
 
-    const { data } = await apiClient.get(`/names/${religion}/${slug}`);
+    const { data } = await apiClient.get(`/api/names/${religion}/${slug}`);
 
     if (data.success && data.data) {
       return data.data;
@@ -310,8 +310,8 @@ export async function fetchNamesByLetter(letter, params = {}) {
 
     const { religion = 'islamic', page = 1, perPage = 150 } = params;
 
-    const { data } = await apiClient.get(`/name/letter/${letter}`, {
-      params: { religion, page, perPage }
+    const { data } = await apiClient.get('/api/v1/names', {
+      params: { religion, page, limit: perPage, startsWith: letter }
     });
 
     return {
@@ -356,8 +356,8 @@ export async function fetchNamesByCategory(religion, category, params = {}) {
 
     const { page = 1, perPage = 20 } = params;
 
-    const { data } = await apiClient.get(`/category/${religion}/${category}`, {
-      params: { page, perPage }
+    const { data } = await apiClient.get('/api/v1/names', {
+      params: { religion, page, limit: perPage, category }
     });
 
     return {
@@ -402,8 +402,8 @@ export async function fetchNamesByGender(gender, religion, params = {}) {
 
     const { page = 1, perPage = 50 } = params;
 
-    const { data } = await apiClient.get(`/gender/${gender}/${religion}`, {
-      params: { page, perPage }
+    const { data } = await apiClient.get('/api/v1/names', {
+      params: { religion, page, limit: perPage, gender }
     });
 
     return {
@@ -448,8 +448,8 @@ export async function fetchNamesByOrigin(religion, origin, params = {}) {
 
     const { page = 1, perPage = 50 } = params;
 
-    const { data } = await apiClient.get(`/origin/${religion}/${origin}`, {
-      params: { page, perPage }
+    const { data } = await apiClient.get('/api/v1/names', {
+      params: { religion, page, limit: perPage, origin }
     });
 
     return {
@@ -494,8 +494,8 @@ export async function fetchNamesByLanguage(religion, language, params = {}) {
 
     const { page = 1, perPage = 50 } = params;
 
-    const { data } = await apiClient.get(`/language/${religion}/${language}`, {
-      params: { page, perPage }
+    const { data } = await apiClient.get('/api/v1/names', {
+      params: { religion, page, limit: perPage, language }
     });
 
     return {
@@ -521,16 +521,21 @@ export async function fetchNamesByLanguage(religion, language, params = {}) {
 
 /**
  * Fetch trending names
- * Backend: GET /api/trending?religion=global&page=1&limit=20
+ * Backend: GET /api/v1/names?religion=X&limit=20
  * @param {Object} params - Query parameters
  * @returns {Promise<Object>} Trending names
  */
 export async function fetchTrendingNames(params = {}) {
   try {
-    const { religion = 'global', page = 1, limit = 20 } = params;
+    const { religion = 'islamic', page = 1, limit = 20 } = params;
 
-    const { data } = await apiClient.get('/trending', {
-      params: { religion, page, limit }
+    // Use valid religion value (islamic, christian, hindu)
+    const validReligion = ['islamic', 'christian', 'hindu'].includes(religion.toLowerCase())
+      ? religion.toLowerCase()
+      : 'islamic';
+
+    const { data } = await apiClient.get('/api/v1/names', {
+      params: { religion: validReligion, page, limit }
     });
 
     return {
@@ -541,7 +546,7 @@ export async function fetchTrendingNames(params = {}) {
         total: 0,
         totalPages: 0,
       },
-      religion,
+      religion: validReligion,
       success: data.success !== false,
     };
   } catch (error) {
@@ -561,7 +566,7 @@ export async function fetchTrendingNames(params = {}) {
  */
 export async function fetchAllFilters() {
   try {
-    const { data } = await apiClient.get('/filters');
+    const { data } = await apiClient.get('/api/v1/filters');
 
     return {
       filters: data.filters || data.data || {},
@@ -592,7 +597,7 @@ export async function fetchReligionFilters(religion) {
       };
     }
 
-    const { data } = await apiClient.get(`/religion/${religion}/filters`);
+    const { data } = await apiClient.get(`/api/v1/filters/${religion}`);
 
     return {
       filters: data.filters || data.data || {},
@@ -654,7 +659,7 @@ export async function fetchNamesWithAdvancedFilters(filters = {}) {
     if (luckyColor) params.luckyColor = luckyColor;
     if (luckyStone) params.luckyStone = luckyStone;
 
-    const { data } = await apiClient.get('/names', { params });
+    const { data } = await apiClient.get('/api/v1/names', { params });
 
     return {
       data: data.data || data.names || [],

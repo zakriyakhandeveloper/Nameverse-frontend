@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 // CONFIGURATION
 // ==========================================
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:5000/api/religion';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'https://namverse-api.vercel.app';
 
 const RELIGIONS = [
   { 
@@ -48,8 +48,11 @@ const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 async function fetchNames(religion, params) {
   try {
-    const queryParams = new URLSearchParams(params);
-    const response = await fetch(`${API_BASE}/religion/${religion}?${queryParams}`);
+    const queryParams = new URLSearchParams({
+      religion,
+      ...params
+    });
+    const response = await fetch(`${API_BASE}/api/v1/names?${queryParams}`);
     return await response.json();
   } catch (error) {
     console.error('Fetch error:', error);
@@ -134,9 +137,12 @@ function NameCard({ name, onFavorite, isFavorite, religion }) {
             </span>
           </div>
         </div>
-        <button className="px-3 py-1.5 bg-gray-900 text-white rounded-lg text-xs font-semibold hover:bg-gray-800 transition-colors">
+        <a
+          href={`/names/${religion}/english/${name.slug}`}
+          className="px-3 py-1.5 bg-gray-900 text-white rounded-lg text-xs font-semibold hover:bg-gray-800 transition-colors"
+        >
           View Details
-        </button>
+        </a>
       </div>
     </article>
   );

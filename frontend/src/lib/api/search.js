@@ -11,7 +11,6 @@
 
 import { apiClient } from './client';
 import { searchNames } from './names';
-import { searchStories } from './stories';
 import { searchArticles } from './articles';
 
 /**
@@ -28,7 +27,6 @@ export async function globalSearch(query, options = {}) {
     if (!query || query.trim().length < 2) {
       return {
         names: [],
-        stories: [],
         articles: [],
         total: 0,
         success: false,
@@ -39,19 +37,17 @@ export async function globalSearch(query, options = {}) {
     const { type = 'all', religion, limit = 20 } = options;
     const trimmedQuery = query.trim();
 
-    // If searching all types, fetch from all APIs in parallel
+    // If searching all types, fetch from supported APIs in parallel
     if (type === 'all') {
-      const [namesResult, storiesResult, articlesResult] = await Promise.all([
+      const [namesResult, articlesResult] = await Promise.all([
         searchNames(trimmedQuery, { religion, limit }),
-        searchStories(trimmedQuery, { limit }),
         searchArticles(trimmedQuery, { limit }),
       ]);
 
       return {
         names: namesResult.data || [],
-        stories: storiesResult.data || [],
-        articles: articlesResult.data || [],
-        total: (namesResult.count || 0) + (storiesResult.count || 0) + (articlesResult.data?.length || 0),
+        articles: Array.isArray(articlesResult) ? articlesResult : (articlesResult.data || []),
+        total: (namesResult.count || 0) + (Array.isArray(articlesResult) ? articlesResult.length : (articlesResult.data?.length || 0)),
         query: trimmedQuery,
         success: true,
       };
@@ -63,29 +59,16 @@ export async function globalSearch(query, options = {}) {
         const namesResult = await searchNames(trimmedQuery, { religion, limit });
         return {
           names: namesResult.data || [],
-          stories: [],
           articles: [],
           total: namesResult.count || 0,
           query: trimmedQuery,
           success: namesResult.success,
         };
 
-      case 'stories':
-        const storiesResult = await searchStories(trimmedQuery, { limit });
-        return {
-          names: [],
-          stories: storiesResult.data || [],
-          articles: [],
-          total: storiesResult.count || 0,
-          query: trimmedQuery,
-          success: storiesResult.success,
-        };
-
       case 'articles':
         const articlesResult = await searchArticles(trimmedQuery, { limit });
         return {
           names: [],
-          stories: [],
           articles: articlesResult || [],
           total: articlesResult?.length || 0,
           query: trimmedQuery,
@@ -95,7 +78,6 @@ export async function globalSearch(query, options = {}) {
       default:
         return {
           names: [],
-          stories: [],
           articles: [],
           total: 0,
           query: trimmedQuery,
@@ -107,7 +89,6 @@ export async function globalSearch(query, options = {}) {
     console.error('[Global Search API] Error:', error);
     return {
       names: [],
-      stories: [],
       articles: [],
       total: 0,
       success: false,
@@ -154,18 +135,7 @@ export async function quickSearch(query, options = {}) {
       );
     }
 
-    if (results.stories?.length > 0) {
-      suggestions.push(
-        ...results.stories.slice(0, limit).map(story => ({
-          type: 'story',
-          title: story.title,
-          subtitle: story.excerpt || story.summary,
-          locale: story.locale,
-          slug: story.slug,
-          url: `/stories/${story.locale}/${story.slug}`,
-        }))
-      );
-    }
+    // Stories are no longer supported
 
     if (results.articles?.length > 0) {
       suggestions.push(
@@ -228,7 +198,6 @@ export async function advancedSearch(query, filters = {}) {
 
     // Apply additional filters client-side if needed
     let filteredNames = results.names || [];
-    let filteredStories = results.stories || [];
     let filteredArticles = results.articles || [];
 
     // Filter names
@@ -244,17 +213,7 @@ export async function advancedSearch(query, filters = {}) {
       }
     }
 
-    // Filter stories
-    if (type === 'stories' || type === 'all') {
-      if (tags && tags.length > 0) {
-        filteredStories = filteredStories.filter(s =>
-          tags.some(tag => s.tags?.includes(tag))
-        );
-      }
-      if (category) {
-        filteredStories = filteredStories.filter(s => s.category?.toLowerCase() === category.toLowerCase());
-      }
-    }
+    // Stories filtering removed
 
     // Filter articles
     if (type === 'articles' || type === 'all') {
@@ -269,13 +228,12 @@ export async function advancedSearch(query, filters = {}) {
 
     return {
       names: filteredNames.slice(startIndex, endIndex),
-      stories: filteredStories.slice(startIndex, endIndex),
       articles: filteredArticles.slice(startIndex, endIndex),
-      total: filteredNames.length + filteredStories.length + filteredArticles.length,
+      total: filteredNames.length + filteredArticles.length,
       pagination: {
         page,
         limit,
-        totalPages: Math.ceil((filteredNames.length + filteredStories.length + filteredArticles.length) / limit),
+        totalPages: Math.ceil((filteredNames.length + filteredArticles.length) / limit),
       },
       query,
       filters,
@@ -285,7 +243,6 @@ export async function advancedSearch(query, filters = {}) {
     console.error('[Advanced Search API] Error:', error);
     return {
       names: [],
-      stories: [],
       articles: [],
       total: 0,
       success: false,

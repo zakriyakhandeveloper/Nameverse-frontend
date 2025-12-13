@@ -20,10 +20,9 @@ async function getNameData(religion, slug) {
 // Fetch popular names for ISR
 async function getPopularNames(religion, limit = 150) {
   try {
-    const { data } = await fetchNames({ 
-      religion, 
-      limit,
-      sort: 'popular'
+    const { data } = await fetchNames({
+      religion,
+      limit
     })
     return data || []
   } catch (error) {

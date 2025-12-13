@@ -1,23 +1,12 @@
 "use client";
 
-import dynamic from "next/dynamic";
-import { motion } from "framer-motion";
-import HeroSection from "./HeroSection"; // now SSR
-const TrendingNames = dynamic(() => import("./TrendingNames"), { ssr: false });
-const LatestStories = dynamic(() => import("./latestStories"), { ssr: false });
-const SEOContentBlock = dynamic(() => import("./SeoContentBlock"), { ssr: false });
+import HeroSection from "./HeroSection";
+import TrendingNames from "./TrendingNames";
+import SEOContentBlock from "./SeoContentBlock";
+import ArticleExplorer from "./latestStories";
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
-  visible: (i) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.15, duration: 0.7, ease: "easeOut" },
-  }),
-};
 
 export default function HomePageClient() {
   const currentYear = new Date().getFullYear();
@@ -49,7 +38,7 @@ export default function HomePageClient() {
 
         {/* Below-the-fold content loaded client-side */}
         <TrendingNames />
-        <LatestStories />
+        <ArticleExplorer embedded />
         <SEOContentBlock />
       </main>
       

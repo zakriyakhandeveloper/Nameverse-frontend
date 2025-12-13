@@ -7,10 +7,10 @@ const DOMAIN = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
 // Fetch search results from API
 const fetchSearchResults = async (term) => {
   try {
-    const result = await searchNames(term.trim());
+    const result = await searchNames(term.trim(), { limit: 50 });
     return {
-      names: result.results || [],
-      totalNames: result.total || 0,
+      names: result.data || [],
+      totalNames: result.count || result.data?.length || 0,
     };
   } catch (error) {
     console.error('Search fetch error:', error);

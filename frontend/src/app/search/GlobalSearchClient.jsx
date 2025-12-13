@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Search, Loader2, FileText, BookOpen, User, TrendingUp, X, Filter } from 'lucide-react';
+import { Search, Loader2, FileText, User, TrendingUp, X } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { globalSearch, getPopularSearches } from '@/lib/api/search';
@@ -16,7 +16,7 @@ export default function GlobalSearchClient() {
 
   const [query, setQuery] = useState(initialQuery);
   const [searchType, setSearchType] = useState(initialType);
-  const [results, setResults] = useState({ names: [], stories: [], articles: [], total: 0 });
+  const [results, setResults] = useState({ names: [], articles: [], total: 0 });
   const [loading, setLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
@@ -26,7 +26,7 @@ export default function GlobalSearchClient() {
   const debouncedSearch = useCallback(
     debounce(async (searchQuery, type) => {
       if (!searchQuery || searchQuery.length < 2) {
-        setResults({ names: [], stories: [], articles: [], total: 0 });
+        setResults({ names: [], articles: [], total: 0 });
         setHasSearched(false);
         return;
       }
@@ -44,12 +44,12 @@ export default function GlobalSearchClient() {
           setResults(result);
         } else {
           toast.error('Search failed. Please try again.');
-          setResults({ names: [], stories: [], articles: [], total: 0 });
+          setResults({ names: [], articles: [], total: 0 });
         }
       } catch (error) {
         console.error('Search error:', error);
         toast.error('Search failed. Please try again.');
-        setResults({ names: [], stories: [], articles: [], total: 0 });
+        setResults({ names: [], articles: [], total: 0 });
       } finally {
         setLoading(false);
       }
@@ -86,7 +86,7 @@ export default function GlobalSearchClient() {
 
   const clearSearch = () => {
     setQuery('');
-    setResults({ names: [], stories: [], articles: [], total: 0 });
+    setResults({ names: [], articles: [], total: 0 });
     setHasSearched(false);
     router.push('/search');
   };
@@ -94,7 +94,6 @@ export default function GlobalSearchClient() {
   const typeOptions = [
     { value: 'all', label: 'All', icon: Search },
     { value: 'names', label: 'Names', icon: User },
-    { value: 'stories', label: 'Stories', icon: BookOpen },
     { value: 'articles', label: 'Articles', icon: FileText },
   ];
 
@@ -113,7 +112,7 @@ export default function GlobalSearchClient() {
             </h1>
           </div>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Search across names, stories, and articles
+            Search across names and articles
           </p>
         </div>
 
@@ -125,7 +124,7 @@ export default function GlobalSearchClient() {
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search for names, stories, or articles..."
+                placeholder="Search for names or articles..."
                 className="w-full px-6 py-4 text-lg rounded-2xl border-2 border-gray-200 focus:border-purple-500 focus:outline-none shadow-md pr-24"
               />
               {query && (
@@ -220,55 +219,45 @@ export default function GlobalSearchClient() {
                     title="Names"
                     icon={User}
                     items={results.names}
-                    renderItem={(name) => (
-                      <Link
-                        key={name._id}
-                        href={`/names/${name.religion}/${name.slug}`}
-                        className="block p-4 bg-white rounded-lg border-2 border-gray-100 hover:border-purple-300 hover:shadow-md transition-all"
-                      >
-                        <h3 className="text-lg font-bold text-gray-900 mb-1">{name.name}</h3>
-                        <p className="text-sm text-gray-600 mb-2">{name.short_meaning || name.meaning}</p>
-                        <div className="flex items-center gap-2 text-xs text-gray-500">
-                          <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded">
-                            {name.religion}
-                          </span>
-                          <span className="px-2 py-1 bg-green-50 text-green-700 rounded">
-                            {name.gender}
-                          </span>
-                          <span className="px-2 py-1 bg-purple-50 text-purple-700 rounded">
-                            {name.origin}
-                          </span>
-                        </div>
-                      </Link>
-                    )}
+                    renderItem={(name) => {
+                      // API returns "Islam" but we need "islamic" for the URL
+                      const religionMap = {
+                        'islam': 'islamic',
+                        'islamic': 'islamic',
+                        'hindu': 'hindu',
+                        'hinduism': 'hindu',
+                        'christian': 'christian',
+                        'christianity': 'christian',
+                      };
+                      const religion = religionMap[name.religion?.toLowerCase()] || 'islamic';
+                      return (
+                        <Link
+                          key={name._id}
+                          href={`/names/${religion}/english/${name.slug}`}
+                          className="block p-4 bg-white rounded-lg border-2 border-gray-100 hover:border-purple-300 hover:shadow-md transition-all"
+                        >
+                          <h3 className="text-lg font-bold text-gray-900 mb-1">{name.name}</h3>
+                          <p className="text-sm text-gray-600 mb-2">{name.short_meaning || name.long_meaning || name.meaning}</p>
+                          <div className="flex items-center gap-2 text-xs text-gray-500">
+                            <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded capitalize">
+                              {religion}
+                            </span>
+                            <span className="px-2 py-1 bg-green-50 text-green-700 rounded">
+                              {name.gender}
+                            </span>
+                            {name.origin && (
+                              <span className="px-2 py-1 bg-purple-50 text-purple-700 rounded">
+                                {name.origin}
+                              </span>
+                            )}
+                          </div>
+                        </Link>
+                      );
+                    }}
                   />
                 )}
 
-                {/* Stories Results */}
-                {results.stories && results.stories.length > 0 && (searchType === 'all' || searchType === 'stories') && (
-                  <SearchSection
-                    title="Stories"
-                    icon={BookOpen}
-                    items={results.stories}
-                    renderItem={(story) => (
-                      <Link
-                        key={story._id}
-                        href={`/stories/${story.locale || 'en'}/${story.slug}`}
-                        className="block p-4 bg-white rounded-lg border-2 border-gray-100 hover:border-purple-300 hover:shadow-md transition-all"
-                      >
-                        <h3 className="text-lg font-bold text-gray-900 mb-1">{story.title}</h3>
-                        <p className="text-sm text-gray-600 mb-2 line-clamp-2">
-                          {story.excerpt || story.summary}
-                        </p>
-                        {story.category && (
-                          <span className="inline-block px-2 py-1 bg-orange-50 text-orange-700 rounded text-xs">
-                            {story.category}
-                          </span>
-                        )}
-                      </Link>
-                    )}
-                  />
-                )}
+                
 
                 {/* Articles Results */}
                 {results.articles && results.articles.length > 0 && (searchType === 'all' || searchType === 'articles') && (

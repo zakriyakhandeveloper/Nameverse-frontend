@@ -52,10 +52,10 @@ const UniversalSearch = () => {
     setIsLoading(true);
 
     try {
-      const result = await searchNames(searchQuery.trim());
+      const result = await searchNames(searchQuery.trim(), { limit: 10 });
       
       if (result.success) {
-        const results = result.results || [];
+        const results = result.data || [];
         setNameResults(results);
         
         if (results.length > 0) {
@@ -169,10 +169,19 @@ const UniversalSearch = () => {
   const handleResultClick = (result) => {
     setIsOpen(false);
     setSelectedIndex(-1);
-    
-    const religion = result.religion?.toLowerCase() || 'global';
+
+    // API returns "Islam" but we need "islamic" for the URL
+    const religionMap = {
+      'islam': 'islamic',
+      'islamic': 'islamic',
+      'hindu': 'hindu',
+      'hinduism': 'hindu',
+      'christian': 'christian',
+      'christianity': 'christian',
+    };
+    const religion = religionMap[result.religion?.toLowerCase()] || 'islamic';
     const slug = result.slug || result.name?.toLowerCase().replace(/\s+/g, '-');
-    router.push(`/names/${religion}/${slug}`);
+    router.push(`/names/${religion}/english/${slug}`);
   };
 
   // Clear search
