@@ -24,7 +24,8 @@ async function getNameData(religion, lang) {
 
 // ---------------- METADATA (100/100 SEO) ----------------
 export async function generateMetadata({ params }) {
-  const { religion, lang } = params;
+  const resolvedParams = await params;
+  const { religion, lang } = resolvedParams;
   const DOMAIN = process.env.NEXT_PUBLIC_SITE_URL || "https://example.com";
   const data = await getNameData(religion, lang);
 
@@ -123,7 +124,8 @@ export function generateViewport() {
 
 // ---------------- MAIN PAGE ----------------
 export default async function NamePage({ params }) {
-  const { religion, lang } = params;
+  const resolvedParams = await params;
+  const { religion, lang } = resolvedParams;
   const DOMAIN = process.env.NEXT_PUBLIC_SITE_URL || "https://example.com";
   const data = await getNameData(religion, lang);
 

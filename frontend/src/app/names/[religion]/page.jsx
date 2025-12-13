@@ -21,7 +21,8 @@ export async function generateStaticParams() {
 // METADATA
 // ==========================================
 export async function generateMetadata({ params }) {
-  const { religion } = params;
+  const resolvedParams = await params;
+  const { religion } = resolvedParams;
   const religionTitle = religion.charAt(0).toUpperCase() + religion.slice(1);
 
   return {
@@ -97,7 +98,8 @@ export function generateViewport() {
 // PAGE COMPONENT
 // ==========================================
 export default async function ReligionNamesPage({ params }) {
-  const { religion } = params;
+  const resolvedParams = await params;
+  const { religion } = resolvedParams;
 
   if (!RELIGIONS.includes(religion)) {
     notFound();

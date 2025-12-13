@@ -215,6 +215,27 @@ export default function BabyNamesClient({ initialData, initialReligion = 'islami
     [selectedFilters]
   );
 
+  // Dynamic page title and subtitle based on religion
+  const pageTitle = useMemo(() => {
+    const religionTitles = {
+      islamic: 'Islamic Baby Names',
+      christian: 'Christian Baby Names',
+      hindu: 'Hindu Baby Names',
+      all: 'All Baby Names'
+    };
+    return religionTitles[religion] || 'Baby Names';
+  }, [religion]);
+
+  const pageSubtitle = useMemo(() => {
+    const subtitles = {
+      islamic: 'Beautiful Muslim names with meanings',
+      christian: 'Biblical & traditional Christian names',
+      hindu: 'Sacred Hindu names with origins',
+      all: 'Names from all traditions'
+    };
+    return subtitles[religion] || 'With meanings & origins';
+  }, [religion]);
+
   const LoadingSkeleton = () => (
     <div className="space-y-2">
       {[1, 2, 3, 4].map(i => (

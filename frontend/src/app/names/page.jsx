@@ -13,8 +13,9 @@ export const revalidate = 86400; // 24 hours in seconds
 
 // ✅ Generate Dynamic Metadata (for Google, social, and rich snippets)
 export async function generateMetadata({ searchParams }) {
+  const resolvedParams = await searchParams;
   // Collect applied filters (like ?gender=boy&origin=arabic)
-  const filters = Object.entries(searchParams)
+  const filters = Object.entries(resolvedParams || {})
     .filter(([key, value]) => value && key !== 'page')
     .map(([key, value]) => `${key}: ${value}`)
     .join(', ');
@@ -85,14 +86,14 @@ export async function generateMetadata({ searchParams }) {
 async function fetchInitialData(searchParams = {}) {
   try {
     // Get filters with ISR cache - this rarely changes
-    const filters = await fetchFilters();
+    const filters = await fetchFilters('islamic');
 
     const params = {
-      page: searchParams.page || '1',
+      page: searchParams?.page || '1',
       limit: '20',
-      religion: searchParams.religion || '',
-      origin: searchParams.origin || '',
-      gender: searchParams.gender || '',
+      religion: searchParams?.religion || 'islamic',
+      origin: searchParams?.origin || '',
+      gender: searchParams?.gender || '',
     };
 
     // Fetch names with shorter revalidation for fresh data
@@ -169,8 +170,9 @@ function generateStructuredData(names) {
 
 // ✅ Main Page - Now statically generated with ISR
 export default async function AllNamesPage({ searchParams }) {
+  const resolvedParams = await searchParams;
   // Fetch data for the initial render
-  const initialData = await fetchInitialData(searchParams);
+  const initialData = await fetchInitialData(resolvedParams || {});
   const structuredData = generateStructuredData(initialData.names || []);
 
   return (

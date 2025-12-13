@@ -24,7 +24,8 @@ export async function generateStaticParams() {
 
 // ---------------- Dynamic Metadata ----------------
 export async function generateMetadata({ searchParams }) {
-  const { category = "All Categories", query = "" } = searchParams || {};
+  const resolvedParams = await searchParams;
+  const { category = "All Categories", query = "" } = resolvedParams || {};
   const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://nameverse.com";
   
   const title = query
@@ -69,8 +70,8 @@ export async function generateMetadata({ searchParams }) {
 }
 
 // ---------------- Fetch Articles ----------------
-async function fetchArticles(searchParams = {}) {
-  const { category = "All Categories", query = "" } = searchParams || {};
+async function fetchArticles(resolvedParams = {}) {
+  const { category = "All Categories", query = "" } = resolvedParams || {};
   let articles = [];
   let categories = [];
 
@@ -123,14 +124,15 @@ function generateStructuredData(articles = []) {
 
 // ---------------- Main ISR Page ----------------
 export default async function ArticleExplorer({ searchParams }) {
-  const { articles, categories } = await fetchArticles(searchParams);
+  const resolvedParams = await searchParams;
+  const { articles, categories } = await fetchArticles(resolvedParams || {});
 
   const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://nameverse.com";
 
   const categoryOptions = ["All Categories", ...categories];
-  const selectedLabel = searchParams.query
-    ? `Search: "${searchParams.query}"`
-    : searchParams.category || "All Categories";
+  const selectedLabel = resolvedParams?.query
+    ? `Search: "${resolvedParams.query}"`
+    : resolvedParams?.category || "All Categories";
 
   const structuredData = generateStructuredData(articles);
 
@@ -164,7 +166,7 @@ export default async function ArticleExplorer({ searchParams }) {
         {/* Article Grid */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8">
-            {searchParams.query ? `Search Results for "${searchParams.query}"` : "Latest Articles"}
+            {resolvedParams?.query ? `Search Results for "${resolvedParams.query}"` : "Latest Articles"}
           </h2>
           <ArticleGrid articles={articles} isLoading={false} />
         </div>

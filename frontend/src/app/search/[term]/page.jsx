@@ -20,7 +20,8 @@ const fetchSearchResults = async (term) => {
 
 // ---------------- Metadata ----------------
 export const generateMetadata = async ({ params }) => {
-  const { term } = params;
+  const resolvedParams = await params;
+  const { term } = resolvedParams;
   const decodedTerm = decodeURIComponent(term);
   const { names, totalNames } = await fetchSearchResults(decodedTerm);
 
@@ -65,7 +66,8 @@ export const revalidate = 300; // ISR every 5 minutes
 
 // ---------------- Main Search Page ----------------
 export default async function SearchPage({ params }) {
-  const { term } = params;
+  const resolvedParams = await params;
+  const { term } = resolvedParams;
   const decodedTerm = decodeURIComponent(term);
   const { names, totalNames } = await fetchSearchResults(decodedTerm);
 
