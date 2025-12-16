@@ -267,8 +267,10 @@ if (typeof window !== 'undefined') {
   console.log('💡 API Testing utilities loaded. Use window.testAPI.quick() to run a quick test.');
 }
 
-export default {
+const testAPI = {
   testAllEndpoints,
   quickTest,
   testEndpoint,
 };
+
+export default testAPI;
