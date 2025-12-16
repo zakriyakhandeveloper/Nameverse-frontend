@@ -82,11 +82,11 @@ async function fetchArticles(resolvedParams = {}) {
 
     // Fetch articles based on category or query
     if (query?.trim()) {
-      articles = await searchArticles(query);
+      articles = await searchArticles(query, { limit: 8 });
     } else if (category && category !== "All Categories") {
-      articles = await getArticlesByCategory(category, 12);
+      articles = await getArticlesByCategory(category, 8);
     } else {
-      articles = await getLatestArticles(12);
+      articles = await getLatestArticles(8);
     }
   } catch (error) {
     console.error("Error fetching articles for ISR:", error);

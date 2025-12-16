@@ -1,9 +1,8 @@
-'use client'
+"use client"
 
 import { useState, useEffect, useMemo, useCallback, memo } from 'react'
 import { Heart, Share2, ChevronLeft, Star, Hash, Gem, Palette, Calendar, Users } from 'lucide-react'
 
-// Memoized components for better performance
 const StatCard = memo(({ value, label, icon: Icon, gradient }) => (
   <div className="bg-white rounded-xl p-4 border border-gray-200 hover:shadow-md transition-shadow">
     <div className={`w-10 h-10 mb-3 rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center`}>
@@ -49,7 +48,6 @@ export default function NameClient({ data, initialLanguage }) {
   const [isFavorite, setIsFavorite] = useState(false)
   const [selectedLanguage, setSelectedLanguage] = useState(initialLanguage)
 
-  // Load favorites from localStorage on mount
   useEffect(() => {
     try {
       const favorites = JSON.parse(localStorage.getItem('favoriteNames') || '[]')
@@ -87,7 +85,6 @@ export default function NameClient({ data, initialLanguage }) {
       data.language.forEach(lang => languages.add(lang.toLowerCase()))
     }
     
-    // Ensure selected language is included
     if (languageConfig[selectedLanguage]) {
       languages.add(selectedLanguage)
     }
@@ -150,13 +147,11 @@ export default function NameClient({ data, initialLanguage }) {
       ? `/names/${religionPath}/${namePath}`
       : `/names/${religionPath}/${lang}/${namePath}`
     
-    // Use prefetch hint for faster navigation
     const link = document.createElement('link')
     link.rel = 'prefetch'
     link.href = newUrl
     document.head.appendChild(link)
     
-    // Navigate after a tiny delay to allow prefetch
     setTimeout(() => {
       window.location.href = newUrl
     }, 50)
@@ -207,7 +202,6 @@ export default function NameClient({ data, initialLanguage }) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
         <div className="max-w-5xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between mb-4">
@@ -231,7 +225,6 @@ export default function NameClient({ data, initialLanguage }) {
             </button>
           </div>
           
-          {/* Language selector */}
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
             {availableLanguages.map(lang => (
               <LanguageButton
@@ -240,7 +233,7 @@ export default function NameClient({ data, initialLanguage }) {
                 config={languageConfig[lang] || { name: lang, flag: '🌐' }}
                 isSelected={selectedLanguage === lang}
                 gradient={config.gradient}
-                onClick={() => handleLanguageChange(lang)}
+                onClick={() => setSelectedLanguage(lang)}
               />
             ))}
           </div>
@@ -248,7 +241,6 @@ export default function NameClient({ data, initialLanguage }) {
       </header>
 
       <main className="max-w-5xl mx-auto px-4 py-8 space-y-6">
-        {/* Hero Section */}
         <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm hover:shadow-md transition-shadow">
           <div className="flex flex-col items-center text-center">
             <div className={`w-20 h-20 mb-5 rounded-2xl bg-gradient-to-br ${config.gradient} flex items-center justify-center shadow-lg`}>
@@ -301,7 +293,6 @@ export default function NameClient({ data, initialLanguage }) {
           </div>
         </div>
 
-        {/* Long Meaning */}
         {translation.longMeaning && (
           <InfoSection title="Deep Meaning" icon={Heart} gradient={config.gradient}>
             <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
@@ -310,7 +301,6 @@ export default function NameClient({ data, initialLanguage }) {
           </InfoSection>
         )}
 
-        {/* Lucky Stats Grid */}
         {(data.lucky_number || data.lucky_day || data.lucky_stone || data.lucky_colors?.length > 0) && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {data.lucky_number && (
@@ -333,7 +323,6 @@ export default function NameClient({ data, initialLanguage }) {
           </div>
         )}
 
-        {/* Lucky Colors */}
         {data.lucky_colors?.length > 0 && (
           <InfoSection title="Lucky Colors" icon={Palette} gradient={config.gradient}>
             <div className="flex flex-wrap gap-5">
@@ -350,7 +339,6 @@ export default function NameClient({ data, initialLanguage }) {
           </InfoSection>
         )}
 
-        {/* Celebrity Usage */}
         {data.celebrity_usage?.length > 0 && (
           <InfoSection title="Notable Personalities" icon={Users} gradient={config.gradient}>
             <div className="space-y-3">
@@ -366,7 +354,6 @@ export default function NameClient({ data, initialLanguage }) {
           </InfoSection>
         )}
 
-        {/* Related Names */}
         {data.related_names?.length > 0 && (
           <InfoSection title="Related Names" icon={Users} gradient={config.gradient}>
             <div className="flex flex-wrap gap-2">

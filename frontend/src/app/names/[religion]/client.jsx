@@ -138,7 +138,7 @@ function NameCard({ name, onFavorite, isFavorite, religion }) {
           </div>
         </div>
         <a
-          href={`/names/${religion}/english/${name.slug}`}
+          href={`/names/${religion}/${name.slug}`}
           className="px-3 py-1.5 bg-gray-900 text-white rounded-lg text-xs font-semibold hover:bg-gray-800 transition-colors"
         >
           View Details

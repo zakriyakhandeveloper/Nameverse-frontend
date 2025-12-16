@@ -1,4 +1,5 @@
 import GlobalSearchClient from './GlobalSearchClient';
+import { Suspense } from 'react';
 
 export const metadata = {
   title: 'Search - Find Names & Articles | NameVerse',
@@ -7,5 +8,9 @@ export const metadata = {
 };
 
 export default function SearchPage() {
-  return <GlobalSearchClient />;
+  return (
+    <Suspense fallback={<div className="p-6 text-center text-gray-600">Loading search…</div>}>
+      <GlobalSearchClient />
+    </Suspense>
+  );
 }

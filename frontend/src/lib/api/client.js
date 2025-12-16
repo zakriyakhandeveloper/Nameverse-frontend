@@ -13,6 +13,29 @@
 import axios from 'axios';
 import { env } from '@/config/env';
 
+class RateLimiter {
+  constructor(max, windowMs) {
+    this.max = max;
+    this.windowMs = windowMs;
+    this.count = 0;
+    this.windowStart = Date.now();
+  }
+  async schedule() {
+    const now = Date.now();
+    if (now - this.windowStart >= this.windowMs) {
+      this.windowStart = now;
+      this.count = 0;
+    }
+    if (this.count >= this.max) {
+      const wait = this.windowMs - (now - this.windowStart);
+      await new Promise((r) => setTimeout(r, Math.max(wait, 200)));
+      this.windowStart = Date.now();
+      this.count = 0;
+    }
+    this.count++;
+  }
+}
+
 /**
  * In-memory cache for GET requests
  */
@@ -108,6 +131,8 @@ export const apiClient = axios.create({
   maxBodyLength: Infinity,
 });
 
+const rateLimiter = new RateLimiter(env.limits.maxRequestsPerWindow, env.limits.windowMs);
+
 /**
  * Request Interceptor
  * - Request deduplication
@@ -117,6 +142,7 @@ export const apiClient = axios.create({
  */
 apiClient.interceptors.request.use(
   async (config) => {
+    await rateLimiter.schedule();
     const requestId = `${Date.now()}-${Math.random()}`;
     config.requestId = requestId;
     config.metadata = { startTime: Date.now() };

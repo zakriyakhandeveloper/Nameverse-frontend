@@ -27,7 +27,7 @@ const geistMono = Geist_Mono({
 
 // ✅ Global SEO Metadata
 export const metadata = {
-  title: "Baby Names & Meanings — Muslim, Hindu, Christian | NameVerse",
+  title: "NameVerse — Baby Names & Meanings | Muslim, Hindu, Christian",
   description:
     "Explore 65,000+ baby names with meanings, origins, and numerology. Discover Islamic, Hindu, and Christian names in Urdu, Arabic, Hindi & English. Find Quranic, Biblical, and modern baby names A–Z.",
   keywords:

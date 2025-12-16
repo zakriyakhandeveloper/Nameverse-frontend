@@ -86,7 +86,7 @@ export default function TrendingNames() {
       'christianity': 'christian',
     };
     const religion = religionMap[name.religion?.toLowerCase()] || selectedReligion || 'islamic';
-    window.location.href = `/names/${religion}/english/${name.slug}`;
+    window.location.href = `/names/${religion}/${name.slug}`;
   };
 
   const selectedFilter = religionFilters.find(f => f.value === selectedReligion) || religionFilters[0];

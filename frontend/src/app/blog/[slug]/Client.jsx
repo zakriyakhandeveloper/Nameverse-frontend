@@ -66,7 +66,7 @@ const getCategoryFilter = (category) => {
 // Create clickable link from name
 const createNameLink = (name, categoryFilter) => {
   const nameSlug = name.toLowerCase().replace(/\s+/g, '-');
-  return `/names/${categoryFilter}/english/${nameSlug}`;
+  return `/names/${categoryFilter}/${nameSlug}`;
 };
 
 // Render text with clickable names from name_links array
@@ -101,7 +101,7 @@ const renderTextWithNameLinks = (text, nameLinks, categoryFilter) => {
     // Add the clickable name
     const name = match[0];
     const nameSlug = name.toLowerCase().replace(/\s+/g, '-');
-    const href = `/names/${categoryFilter}/english/${nameSlug}`;
+    const href = `/names/${categoryFilter}/${nameSlug}`;
     
     parts.push({
       type: 'link',
@@ -584,7 +584,15 @@ function ArticleClientInner({ article, latestArticles = [] }) {
                   );
                 })
               ) : (
-                <p className="text-gray-500 text-xl">Content not available</p>
+                <>
+                  {article.summary ? (
+                    <p className="text-gray-800 text-xl leading-[1.9] mb-8 font-light">
+                      {renderTextWithNameLinks(article.summary, article.name_links, categoryFilter)}
+                    </p>
+                  ) : (
+                    <p className="text-gray-500 text-xl">Content not available</p>
+                  )}
+                </>
               )}
             </div>
 

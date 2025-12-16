@@ -181,7 +181,7 @@ const UniversalSearch = () => {
     };
     const religion = religionMap[result.religion?.toLowerCase()] || 'islamic';
     const slug = result.slug || result.name?.toLowerCase().replace(/\s+/g, '-');
-    router.push(`/names/${religion}/english/${slug}`);
+    router.push(`/names/${religion}/${slug}`);
   };
 
   // Clear search

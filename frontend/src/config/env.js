@@ -64,6 +64,20 @@ export const env = {
     gaId: process.env.NEXT_PUBLIC_GA_ID || '',
     gtmId: process.env.NEXT_PUBLIC_GTM_ID || '',
   },
+ 
+  // Limits
+  limits: {
+    maxRequestsPerWindow: parseInt(process.env.NEXT_PUBLIC_RATE_LIMIT || '60', 10),
+    windowMs: parseInt(process.env.NEXT_PUBLIC_RATE_WINDOW_MS || '60000', 10),
+  },
+ 
+  // Build
+  build: {
+    static: process.env.NEXT_PUBLIC_BUILD_STATIC === 'true',
+    staticNamesLimit: parseInt(process.env.NEXT_PUBLIC_STATIC_NAMES_LIMIT || '10', 10),
+    staticLangLimit: parseInt(process.env.NEXT_PUBLIC_STATIC_LANG_LIMIT || '0', 10),
+    skipMetadataFetch: process.env.NEXT_PUBLIC_SKIP_METADATA_FETCH === 'true',
+  },
 };
 
 // Export default

@@ -233,7 +233,7 @@ export default function GlobalSearchClient() {
                       return (
                         <Link
                           key={name._id}
-                          href={`/names/${religion}/english/${name.slug}`}
+                          href={`/names/${religion}/${name.slug}`}
                           className="block p-4 bg-white rounded-lg border-2 border-gray-100 hover:border-purple-300 hover:shadow-md transition-all"
                         >
                           <h3 className="text-lg font-bold text-gray-900 mb-1">{name.name}</h3>

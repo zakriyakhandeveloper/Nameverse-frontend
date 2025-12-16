@@ -239,7 +239,7 @@ function NameCard({ name, viewMode, index, searchTerm, router }) {
     'christianity': 'christian',
   };
   const religion = religionMap[name.religion?.toLowerCase()] || 'islamic';
-  const url = `/names/${religion}/english/${name.slug || name.name?.toLowerCase().replace(/\s+/g, '-')}`;
+  const url = `/names/${religion}/${name.slug || name.name?.toLowerCase().replace(/\s+/g, '-')}`;
 
   return (
     <article
