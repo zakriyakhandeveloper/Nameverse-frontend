@@ -1,6 +1,14 @@
 /**
  * Articles API Client - Optimized for Backend Endpoints
  * Replaces Supabase with MongoDB backend API calls
+ *
+ * Backend Endpoints (as per ALL_ROUTES.txt):
+ * - GET /api/v1/articles - Get paginated articles with filters
+ * - GET /api/v1/articles/latest?limit=10 - Get latest articles
+ * - GET /api/v1/articles/categories - Get all categories
+ * - GET /api/v1/articles/search?q=keyword - Search articles
+ * - GET /api/v1/articles/:slug - Get single article by slug
+ *
  * Features:
  * - Full integration with backend API
  * - Response caching via apiClient
@@ -287,7 +295,7 @@ export async function countArticles() {
 
     return data.pagination?.total || data.pagination?.totalCount || 0;
   } catch (error) {
-    console.error('Error counting articles:', error);
+    
     return 0;
   }
 }

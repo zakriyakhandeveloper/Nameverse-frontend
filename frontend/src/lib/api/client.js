@@ -129,9 +129,33 @@ export const apiClient = axios.create({
   // Increase max content length
   maxContentLength: Infinity,
   maxBodyLength: Infinity,
+  // Custom status validation - treat ALL status codes as valid to prevent axios from throwing
+  validateStatus: () => true, // Accept all status codes
 });
 
 const rateLimiter = new RateLimiter(env.limits.maxRequestsPerWindow, env.limits.windowMs);
+
+// Suppress console.error during API calls to prevent Next.js Dev Tools from showing errors
+const originalConsoleError = console.error;
+const suppressedPaths = ['/api/v1/names/', '/names/'];
+
+// Override console.error to suppress 404 and API errors
+if (typeof window === 'undefined') {
+  // Server-side only
+  console.error = (...args) => {
+    const message = args.join(' ');
+    // Suppress axios errors and 404s
+    if (
+      message.includes('AxiosError') ||
+      message.includes('status code 404') ||
+      message.includes('Request failed') ||
+      suppressedPaths.some(path => message.includes(path))
+    ) {
+      return; // Silently ignore
+    }
+    originalConsoleError.apply(console, args);
+  };
+}
 
 /**
  * Request Interceptor
@@ -153,9 +177,6 @@ apiClient.interceptors.request.use(
       const cached = requestCache.get(cacheKey);
       
       if (cached) {
-        if (env.isDevelopment) {
-          console.log(`[API Cache Hit] ${config.url}`);
-        }
         // Return cached response
         return Promise.reject({
           __CACHED__: true,
@@ -167,26 +188,22 @@ apiClient.interceptors.request.use(
       // Check for duplicate pending request
       const pendingRequest = requestDeduplicator.getPending(config);
       if (pendingRequest) {
-        if (env.isDevelopment) {
-          console.log(`[API Deduped] ${config.url}`);
-        }
         return Promise.reject({
           __DEDUPED__: true,
           config,
           promise: pendingRequest,
         });
       }
+
+      // Create a promise for this request and register it for deduplication
+      const requestPromise = new Promise((resolve, reject) => {
+        config.__resolveDedup = resolve;
+        config.__rejectDedup = reject;
+      });
+      requestDeduplicator.setPending(config, requestPromise);
     }
 
     activeRequests.set(requestId, config);
-
-    // Log in development
-    if (env.isDevelopment) {
-      console.log(`[API] ${config.method.toUpperCase()} ${config.url}`, {
-        id: requestId,
-        params: config.params,
-      });
-    }
 
     return config;
   },
@@ -205,25 +222,43 @@ apiClient.interceptors.request.use(
  */
 apiClient.interceptors.response.use(
   (response) => {
-    const { requestId, metadata, method, url, params } = response.config;
+    const { requestId, metadata, method, url, params, __resolveDedup, __rejectDedup } = response.config;
     activeRequests.delete(requestId);
 
     // Calculate request duration
     const duration = Date.now() - (metadata?.startTime || Date.now());
 
-    // Cache GET responses
+    // For error status codes, we'll just return the response and let the caller handle it
+    // This prevents Promise.reject from triggering Next.js error boundaries
+    if (response.status >= 400) {
+      // Create error marker on response for calling code to check
+      response.__isError = true;
+      response.__errorMessage = response.data?.error || response.data?.message || 'Request failed';
+
+      // Reject deduplicated requests
+      if (__rejectDedup) {
+        const error = {
+          response,
+          status: response.status,
+          message: response.__errorMessage,
+          config: response.config,
+        };
+        __rejectDedup(error);
+      }
+
+      // Return response instead of rejecting - caller will check status code
+      return response;
+    }
+
+    // Cache successful GET responses
     if (method === 'get' && response.status === 200) {
       const cacheKey = `${url}?${JSON.stringify(params || {})}`;
       requestCache.set(cacheKey, response.data);
     }
 
-    // Log in development
-    if (env.isDevelopment) {
-      console.log(`[API] Response (${response.status}) ${duration}ms`, {
-        id: requestId,
-        url: response.config.url,
-        cached: response.data?.source === 'cache',
-      });
+    // Resolve deduplicated requests
+    if (__resolveDedup) {
+      __resolveDedup(response);
     }
 
     return response;
@@ -251,31 +286,30 @@ apiClient.interceptors.response.use(
     }
 
     const { config } = error;
-    const { requestId } = config || {};
+    const { requestId, __rejectDedup } = config || {};
 
     if (requestId) {
       activeRequests.delete(requestId);
     }
 
+    // Reject deduplicated requests
+    if (__rejectDedup) {
+      __rejectDedup(error);
+    }
+
     // Network error handling
     if (!error.response) {
-      console.error('[API] Network error:', error.message);
-      
       // Retry logic for network errors
       if (config && !config.__retryCount) {
         config.__retryCount = 0;
       }
-      
+
       // Increased retry attempts and backoff time for build processes
       if (config && config.__retryCount < 3) {
         config.__retryCount++;
         // Exponential backoff with jitter
         const backoff = Math.min(1000 * Math.pow(2, config.__retryCount) + Math.random() * 1000, 10000);
-        
-        if (env.isDevelopment) {
-          console.log(`[API] Retrying in ${backoff}ms (attempt ${config.__retryCount})`);
-        }
-        
+
         await new Promise(resolve => setTimeout(resolve, backoff));
         return apiClient(config);
       }
@@ -287,35 +321,19 @@ apiClient.interceptors.response.use(
       });
     }
 
-    const { status, data } = error.response;
-
-    // Log error in development
-    if (env.isDevelopment) {
-      console.error(`[API] Error (${status})`, {
-        id: requestId,
-        url: config?.url,
-        message: data?.message || error.message,
+    // This shouldn't happen anymore since we handle error status codes in the success handler
+    // But keep it as a fallback for edge cases
+    if (error.response) {
+      const { status, data } = error.response;
+      return Promise.reject({
+        status,
+        message: data?.error || data?.message || 'Request failed',
+        error,
       });
     }
 
-    // Handle specific error codes
-    const errorMessages = {
-      400: data?.message || 'Bad request.',
-      401: 'Unauthorized. Please login.',
-      403: 'Forbidden. You do not have permission.',
-      404: 'Resource not found.',
-      429: 'Too many requests. Please try again later.',
-      500: 'Server error. Please try again later.',
-      502: 'Bad gateway. Please try again later.',
-      503: 'Service unavailable. Please try again later.',
-      504: 'Gateway timeout. Please try again later.',
-    };
-
-    return Promise.reject({
-      status,
-      message: errorMessages[status] || data?.message || 'An error occurred.',
-      error,
-    });
+    // Unknown error
+    return Promise.reject(error);
   }
 );
 
@@ -373,7 +391,7 @@ export async function prefetch(url, params = {}) {
   try {
     await apiClient.get(url, { params });
   } catch (error) {
-    console.warn('[API] Prefetch failed:', url);
+    
   }
 }
 

@@ -90,7 +90,7 @@ export default function NamesClient({ initialData, filterOptions, searchParams }
       setNames(data.data?.names || []);
       setPagination(data.data?.pagination || {});
     } catch (error) {
-      console.error('Error fetching names:', error);
+      
     } finally {
       setIsLoading(false);
     }

@@ -55,7 +55,7 @@ async function fetchNames(religion, params) {
     const response = await fetch(`${API_BASE}/api/v1/names?${queryParams}`);
     return await response.json();
   } catch (error) {
-    console.error('Fetch error:', error);
+    
     return { success: false, data: [], pagination: {} };
   }
 }

@@ -29,11 +29,11 @@ const colors = {
  * Logger utility
  */
 const logger = {
-  success: (msg) => console.log(`${colors.green}✓${colors.reset} ${msg}`),
-  error: (msg) => console.log(`${colors.red}✗${colors.reset} ${msg}`),
-  warning: (msg) => console.log(`${colors.yellow}⚠${colors.reset} ${msg}`),
-  info: (msg) => console.log(`${colors.blue}ℹ${colors.reset} ${msg}`),
-  section: (msg) => console.log(`\n${colors.cyan}━━━ ${msg} ━━━${colors.reset}\n`),
+  success: (msg) => ,
+  error: (msg) => ,
+  warning: (msg) => ,
+  info: (msg) => ,
+  section: (msg) => ,
 };
 
 /**
@@ -79,9 +79,9 @@ class APITester {
    */
   printSummary() {
     logger.section('Test Summary');
-    console.log(`Total Tests: ${this.results.total}`);
-    console.log(`${colors.green}Passed: ${this.results.passed}${colors.reset}`);
-    console.log(`${colors.red}Failed: ${this.results.failed}${colors.reset}`);
+    
+    
+    
     console.log(
       `Success Rate: ${((this.results.passed / this.results.total) * 100).toFixed(2)}%\n`
     );
@@ -268,6 +268,6 @@ async function runTests() {
 // Run tests
 runTests().catch((error) => {
   logger.error(`Test suite crashed: ${error.message}`);
-  console.error(error);
+  
   process.exit(1);
 });

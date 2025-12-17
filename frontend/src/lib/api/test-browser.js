@@ -185,24 +185,24 @@ export async function quickTest() {
   try {
     // Test 1: Health
     const { data: health } = await apiClient.get('/health');
-    console.log('✅ Health:', health.status);
+    
 
     // Test 2: Filters
     const filters = await namesAPI.fetchFilters('islamic');
-    console.log('✅ Filters:', `${filters.totalNames} names available`);
+    
 
     // Test 3: Names
     const names = await namesAPI.fetchNames({ religion: 'islamic', limit: 5 });
-    console.log('✅ Names:', `${names.data.length} names fetched`);
+    
 
     // Test 4: Search
     const search = await namesAPI.searchNames('ali');
-    console.log('✅ Search:', `${search.count} results found`);
+    
 
-    console.log('\n✅ All quick tests passed!');
+    
     return true;
   } catch (error) {
-    console.error('\n❌ Quick test failed:', error.message);
+    
     return false;
   }
 }
@@ -247,10 +247,10 @@ export async function testEndpoint(endpoint, params = {}) {
 
   try {
     const result = await tests[endpoint]();
-    console.log(result.success ? '✅ Success' : '❌ Failed', result.data);
+    
     return result;
   } catch (error) {
-    console.error('❌ Error:', error.message);
+    
     return { success: false, error: error.message };
   }
 }

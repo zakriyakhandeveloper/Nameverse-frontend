@@ -27,6 +27,8 @@ export {
   fetchAllFilters,
   fetchReligionFilters,
   fetchNamesWithAdvancedFilters,
+  fetchRelatedNames,
+  fetchSimilarNames,
 } from './names';
 
 // Stories API removed

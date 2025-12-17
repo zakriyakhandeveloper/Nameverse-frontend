@@ -61,7 +61,7 @@ export default function ArticlesPage() {
         const latestArticles = await getLatestArticles(12);
         setArticles(latestArticles);
       } catch (error) {
-        console.error('Error loading initial data:', error);
+        
       } finally {
         setIsLoading(false);
       }
@@ -92,7 +92,7 @@ export default function ArticlesPage() {
           setArticles(categoryArticles);
         }
       } catch (error) {
-        console.error('Error loading category articles:', error);
+        
       } finally {
         setIsLoading(false);
       }
@@ -126,7 +126,7 @@ export default function ArticlesPage() {
         const searchResults = await searchArticles(searchQuery);
         setArticles(searchResults);
       } catch (error) {
-        console.error('Error searching articles:', error);
+        
       } finally {
         setIsSearching(false);
       }

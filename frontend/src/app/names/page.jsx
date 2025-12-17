@@ -105,7 +105,7 @@ async function fetchInitialData(searchParams = {}) {
       pagination: namesData.pagination || null,
     };
   } catch (error) {
-    console.error('❌ Error fetching initial data:', error);
+    
     // Return fallback data that allows the page to render
     return { 
       filters: null, 
@@ -182,7 +182,7 @@ export default async function AllNamesPage({ searchParams }) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
-      <BabyNamesClient initialData={initialData} initialReligion="all" />
+      <BabyNamesClient initialData={initialData} initialReligion="islamic" />
     </>
   );
 }

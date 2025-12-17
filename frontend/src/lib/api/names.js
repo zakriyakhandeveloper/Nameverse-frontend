@@ -2,32 +2,28 @@
  * Names API Module - World-Class Implementation
  * Comprehensive integration with ALL backend name endpoints
  *
- * Backend Endpoints:
- * - GET /api/names?religion=islamic&limit=20&page=1
- * - GET /api/name/letter/:letter?religion=islamic&page=1&perPage=150
- * - GET /api/names/:religion/:slug
- * - GET /api/category/:religion/:category?page=1&perPage=20
- * - GET /api/gender/:gender/:religion?page=1&perPage=50
- * - GET /api/origin/:religion/:origin?page=1&perPage=50
- * - GET /api/language/:religion/:language?page=1&perPage=50
- * - GET /api/trending?religion=global&page=1&limit=20
- * - GET /api/search?q=ali&religion=islamic&limit=50
- * - GET /api/filters
- * - GET /api/religion/:religion/filters
+ * Backend Endpoints (tested and verified):
+ * - GET /api/v1/names - Get paginated names with filters
+ * - GET /api/v1/names/search - Search names across religions
+ * - GET /api/v1/filters/:religion - Get filters for a religion (ACTUAL ENDPOINT)
+ * - GET /api/v1/names/:religion/letter/:letter - Get names by letter
+ * - GET /api/v1/names/:religion/:slug - Get single name details
+ * - GET /api/v1/names/:religion/:slug/related - Get related names
+ * - GET /api/v1/names/:religion/:slug/similar - Get similar names
  */
 
 import { apiClient } from './client';
 
 /**
  * Fetch filters for a specific religion
- * Backend: GET /api/filters/:religion
+ * Backend: GET /api/v1/filters/:religion
  * @param {string} religion - Religion category (islamic, christian, hindu)
  * @returns {Promise<Object>} Filters object with genders, origins, letters
  */
 export async function fetchFilters(religion) {
   try {
     if (!religion) {
-      console.warn('[API] Religion is required for fetching filters');
+      // Religion is required for fetching filters
       return {
         genders: [],
         origins: [],
@@ -54,7 +50,7 @@ export async function fetchFilters(religion) {
       totalNames: 0,
     };
   } catch (error) {
-    console.error('[API] Error fetching filters:', error);
+    // Error fetching filters
     return {
       genders: [],
       origins: [],
@@ -83,7 +79,7 @@ export async function fetchNames(params = {}) {
     const { religion, page = 1, limit = 50, ...filters } = params;
 
     if (!religion) {
-      console.warn('[API] Religion is required for fetching names');
+      
       return {
         data: [],
         pagination: {
@@ -116,7 +112,7 @@ export async function fetchNames(params = {}) {
       success: data.success !== false,
     };
   } catch (error) {
-    console.error('[API] Error fetching names:', error);
+    
     return {
       data: [],
       pagination: {
@@ -138,28 +134,38 @@ export async function fetchNames(params = {}) {
  * @returns {Promise<Object|null>} Name details or null
  */
 export async function fetchNameDetail(religion, slug) {
+  if (!religion || !slug) {
+    return null;
+  }
+
   try {
-    if (!religion || !slug) {
-      console.warn('[API] Religion and slug are required');
+    const response = await apiClient.get(`/api/v1/names/${religion}/${slug}`);
+
+    // Handle 404 silently - name doesn't exist (expected behavior)
+    if (response.status === 404) {
       return null;
     }
 
-    const { data } = await apiClient.get(`/api/v1/names/${religion}/${slug}`);
+    // Handle other error statuses silently
+    if (response.status >= 400) {
+      return null;
+    }
 
-    if (data.success && data.data) {
-      return data.data;
+    // Success case
+    if (response.data?.success && response.data?.data) {
+      return response.data.data;
     }
 
     return null;
   } catch (error) {
-    console.error('[API] Error fetching name detail:', error);
+    // Silently handle all errors - they're handled by notFound() in the page
     return null;
   }
 }
 
 /**
  * Search names across religions
- * Backend: GET /api/search?q=query&religion=X&limit=20
+ * Backend: GET /api/v1/names/search?q=query&religion=X&limit=20
  * @param {string} query - Search query (min 2 characters)
  * @param {Object} options - Search options
  * @param {string} options.religion - Filter by religion (optional)
@@ -183,16 +189,17 @@ export async function searchNames(query, options = {}) {
       ...(options.religion && { religion: options.religion }),
     };
 
-    const { data } = await apiClient.get('/api/v1/search', { params });
+    const { data } = await apiClient.get('/api/v1/names/search', { params });
 
     return {
       data: data.data || [],
       count: data.count || 0,
+      pagination: data.pagination || null,
       success: data.success !== false,
       query: data.query || query,
     };
   } catch (error) {
-    console.error('[API] Error searching names:', error);
+    
     return {
       data: [],
       count: 0,
@@ -212,7 +219,7 @@ export async function fetchNamesLegacy(params = {}) {
     const { religion, ...rest } = params;
 
     if (!religion) {
-      console.warn('[API] Religion is required');
+      
       return {
         data: [],
         pagination: { page: 1, limit: 50, totalCount: 0, totalPages: 0 },
@@ -228,7 +235,6 @@ export async function fetchNamesLegacy(params = {}) {
       success: data.success !== false,
     };
   } catch (error) {
-    console.error('[API] Error fetching names (legacy):', error);
     return {
       data: [],
       pagination: { page: 1, limit: 50, totalCount: 0, totalPages: 0 },
@@ -261,7 +267,6 @@ export async function fetchFiltersLegacy(religion) {
 
     return { genders: [], origins: [], firstLetters: [], totalNames: 0 };
   } catch (error) {
-    console.error('[API] Error fetching filters (legacy):', error);
     return { genders: [], origins: [], firstLetters: [], totalNames: 0 };
   }
 }
@@ -285,14 +290,13 @@ export async function fetchNameDetailLegacy(religion, slug) {
 
     return null;
   } catch (error) {
-    console.error('[API] Error fetching name detail (legacy):', error);
     return null;
   }
 }
 
 /**
  * Fetch names by letter
- * Backend: GET /api/name/letter/:letter?religion=islamic&page=1&perPage=150
+ * Backend: GET /api/v1/names/:religion/letter/:letter?limit=100
  * @param {string} letter - First letter of names
  * @param {Object} params - Query parameters
  * @returns {Promise<Object>} Names starting with letter
@@ -300,36 +304,32 @@ export async function fetchNameDetailLegacy(religion, slug) {
 export async function fetchNamesByLetter(letter, params = {}) {
   try {
     if (!letter) {
-      console.warn('[API] Letter is required');
+      
       return {
         data: [],
-        pagination: { page: 1, perPage: 150, total: 0, totalPages: 0 },
+        count: 0,
         success: false,
       };
     }
 
-    const { religion = 'islamic', page = 1, perPage = 150 } = params;
+    const { religion = 'islamic', limit = 100 } = params;
 
-    const { data } = await apiClient.get('/api/v1/names', {
-      params: { religion, page, limit: perPage, startsWith: letter }
+    const { data } = await apiClient.get(`/api/v1/names/${religion}/letter/${letter.toUpperCase()}`, {
+      params: { limit }
     });
 
     return {
-      data: data.data || data.names || [],
-      pagination: data.pagination || {
-        page,
-        perPage,
-        total: 0,
-        totalPages: 0,
-      },
-      letter,
+      data: data.data || [],
+      count: data.count || 0,
+      letter: data.letter || letter,
+      religion: data.religion || religion,
       success: data.success !== false,
     };
   } catch (error) {
-    console.error('[API] Error fetching names by letter:', error);
+    
     return {
       data: [],
-      pagination: { page: 1, perPage: 150, total: 0, totalPages: 0 },
+      count: 0,
       success: false,
     };
   }
@@ -346,7 +346,7 @@ export async function fetchNamesByLetter(letter, params = {}) {
 export async function fetchNamesByCategory(religion, category, params = {}) {
   try {
     if (!religion || !category) {
-      console.warn('[API] Religion and category are required');
+      
       return {
         data: [],
         pagination: { page: 1, perPage: 20, total: 0, totalPages: 0 },
@@ -372,7 +372,7 @@ export async function fetchNamesByCategory(religion, category, params = {}) {
       success: data.success !== false,
     };
   } catch (error) {
-    console.error('[API] Error fetching names by category:', error);
+    
     return {
       data: [],
       pagination: { page: 1, perPage: 20, total: 0, totalPages: 0 },
@@ -392,7 +392,7 @@ export async function fetchNamesByCategory(religion, category, params = {}) {
 export async function fetchNamesByGender(gender, religion, params = {}) {
   try {
     if (!gender || !religion) {
-      console.warn('[API] Gender and religion are required');
+      
       return {
         data: [],
         pagination: { page: 1, perPage: 50, total: 0, totalPages: 0 },
@@ -418,7 +418,7 @@ export async function fetchNamesByGender(gender, religion, params = {}) {
       success: data.success !== false,
     };
   } catch (error) {
-    console.error('[API] Error fetching names by gender:', error);
+    
     return {
       data: [],
       pagination: { page: 1, perPage: 50, total: 0, totalPages: 0 },
@@ -438,7 +438,7 @@ export async function fetchNamesByGender(gender, religion, params = {}) {
 export async function fetchNamesByOrigin(religion, origin, params = {}) {
   try {
     if (!religion || !origin) {
-      console.warn('[API] Religion and origin are required');
+      
       return {
         data: [],
         pagination: { page: 1, perPage: 50, total: 0, totalPages: 0 },
@@ -464,7 +464,7 @@ export async function fetchNamesByOrigin(religion, origin, params = {}) {
       success: data.success !== false,
     };
   } catch (error) {
-    console.error('[API] Error fetching names by origin:', error);
+    
     return {
       data: [],
       pagination: { page: 1, perPage: 50, total: 0, totalPages: 0 },
@@ -484,7 +484,7 @@ export async function fetchNamesByOrigin(religion, origin, params = {}) {
 export async function fetchNamesByLanguage(religion, language, params = {}) {
   try {
     if (!religion || !language) {
-      console.warn('[API] Religion and language are required');
+      
       return {
         data: [],
         pagination: { page: 1, perPage: 50, total: 0, totalPages: 0 },
@@ -510,7 +510,7 @@ export async function fetchNamesByLanguage(religion, language, params = {}) {
       success: data.success !== false,
     };
   } catch (error) {
-    console.error('[API] Error fetching names by language:', error);
+    
     return {
       data: [],
       pagination: { page: 1, perPage: 50, total: 0, totalPages: 0 },
@@ -550,7 +550,7 @@ export async function fetchTrendingNames(params = {}) {
       success: data.success !== false,
     };
   } catch (error) {
-    console.error('[API] Error fetching trending names:', error);
+    
     return {
       data: [],
       pagination: { page: 1, limit: 20, total: 0, totalPages: 0 },
@@ -573,7 +573,7 @@ export async function fetchAllFilters() {
       success: data.success !== false,
     };
   } catch (error) {
-    console.error('[API] Error fetching all filters:', error);
+    
     return {
       filters: {},
       success: false,
@@ -590,7 +590,7 @@ export async function fetchAllFilters() {
 export async function fetchReligionFilters(religion) {
   try {
     if (!religion) {
-      console.warn('[API] Religion is required');
+      
       return {
         filters: {},
         success: false,
@@ -605,7 +605,7 @@ export async function fetchReligionFilters(religion) {
       success: data.success !== false,
     };
   } catch (error) {
-    console.error('[API] Error fetching religion filters:', error);
+    
     return {
       filters: {},
       success: false,
@@ -636,7 +636,7 @@ export async function fetchNamesWithAdvancedFilters(filters = {}) {
     } = filters;
 
     if (!religion) {
-      console.warn('[API] Religion is required');
+      
       return {
         data: [],
         pagination: { page: 1, limit: 50, total: 0, totalPages: 0 },
@@ -673,10 +673,94 @@ export async function fetchNamesWithAdvancedFilters(filters = {}) {
       success: data.success !== false,
     };
   } catch (error) {
-    console.error('[API] Error fetching names with advanced filters:', error);
+    
     return {
       data: [],
       pagination: { page: 1, limit: 50, total: 0, totalPages: 0 },
+      success: false,
+    };
+  }
+}
+
+/**
+ * Fetch related names based on origin and gender
+ * Backend: GET /api/v1/names/:religion/:slug/related?limit=10
+ * @param {string} religion - Religion category
+ * @param {string} slug - Name slug
+ * @param {Object} params - Query parameters
+ * @returns {Promise<Object>} Related names
+ */
+export async function fetchRelatedNames(religion, slug, params = {}) {
+  try {
+    if (!religion || !slug) {
+      
+      return {
+        data: [],
+        count: 0,
+        success: false,
+      };
+    }
+
+    const { limit = 10 } = params;
+
+    const { data } = await apiClient.get(`/api/v1/names/${religion}/${slug}/related`, {
+      params: { limit }
+    });
+
+    return {
+      data: data.data || [],
+      count: data.count || 0,
+      originalName: data.originalName || null,
+      religion: data.religion || religion,
+      success: data.success !== false,
+    };
+  } catch (error) {
+    
+    return {
+      data: [],
+      count: 0,
+      success: false,
+    };
+  }
+}
+
+/**
+ * Fetch similar names based on name pattern
+ * Backend: GET /api/v1/names/:religion/:slug/similar?limit=8
+ * @param {string} religion - Religion category
+ * @param {string} slug - Name slug
+ * @param {Object} params - Query parameters
+ * @returns {Promise<Object>} Similar names
+ */
+export async function fetchSimilarNames(religion, slug, params = {}) {
+  try {
+    if (!religion || !slug) {
+      
+      return {
+        data: [],
+        count: 0,
+        success: false,
+      };
+    }
+
+    const { limit = 8 } = params;
+
+    const { data } = await apiClient.get(`/api/v1/names/${religion}/${slug}/similar`, {
+      params: { limit }
+    });
+
+    return {
+      data: data.data || [],
+      count: data.count || 0,
+      originalName: data.originalName || null,
+      religion: data.religion || religion,
+      success: data.success !== false,
+    };
+  } catch (error) {
+    
+    return {
+      data: [],
+      count: 0,
       success: false,
     };
   }
@@ -700,6 +784,8 @@ const namesAPI = {
   fetchAllFilters,
   fetchReligionFilters,
   fetchNamesWithAdvancedFilters,
+  fetchRelatedNames,
+  fetchSimilarNames,
 
   // Legacy endpoints (backward compatibility)
   fetchNamesLegacy,

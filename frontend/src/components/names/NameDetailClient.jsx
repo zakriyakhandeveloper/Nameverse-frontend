@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useEffect, useMemo, useCallback, memo } from 'react'
-import { Heart, Share2, ChevronLeft, Star, Hash, Gem, Palette, Calendar, Users } from 'lucide-react'
+import { Heart, Share2, ChevronLeft, Star, Hash, Gem, Palette, Calendar, Users, Sparkles, Globe } from 'lucide-react'
+import { fetchRelatedNames, fetchSimilarNames } from '@/lib/api/names'
 
 const StatCard = memo(({ value, label, icon: Icon, gradient }) => (
   <div className="bg-white rounded-xl p-4 border border-gray-200 hover:shadow-md transition-shadow">
@@ -29,33 +30,63 @@ const InfoSection = memo(({ title, icon: Icon, children, gradient }) => (
 ))
 InfoSection.displayName = 'InfoSection'
 
-const LanguageButton = memo(({ lang, config, isSelected, gradient, onClick }) => (
-  <button 
-    onClick={onClick}
-    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
-      isSelected 
-        ? `bg-gradient-to-r ${gradient} text-white shadow-md` 
-        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-    }`}
-  >
-    <span>{config.flag}</span>
-    <span>{config.name}</span>
-  </button>
-))
-LanguageButton.displayName = 'LanguageButton'
-
 export default function NameClient({ data, initialLanguage }) {
   const [isFavorite, setIsFavorite] = useState(false)
-  const [selectedLanguage, setSelectedLanguage] = useState(initialLanguage)
+  const [activeTab, setActiveTab] = useState('overview')
+  const [relatedNames, setRelatedNames] = useState([])
+  const [similarNames, setSimilarNames] = useState([])
+  const [loadingRelated, setLoadingRelated] = useState(false)
+  const [loadingSimilar, setLoadingSimilar] = useState(false)
+
+  const getReligionPath = useCallback(() => {
+    const rel = data.religion?.toLowerCase() || 'islamic'
+    if (rel === 'islam') return 'islamic'
+    if (rel === 'hinduism') return 'hindu'
+    if (rel === 'christianity') return 'christian'
+    return rel
+  }, [data.religion])
 
   useEffect(() => {
     try {
       const favorites = JSON.parse(localStorage.getItem('favoriteNames') || '[]')
       setIsFavorite(favorites.includes(data.slug || data.name.toLowerCase()))
     } catch (error) {
-      console.error('Error loading favorites:', error)
+      
     }
   }, [data])
+
+  useEffect(() => {
+    const loadRelatedAndSimilarNames = async () => {
+      const religionPath = getReligionPath()
+      const slug = data.slug || data.name.toLowerCase()
+
+      setLoadingRelated(true)
+      try {
+        const relatedResponse = await fetchRelatedNames(religionPath, slug, { limit: 10 })
+        if (relatedResponse.success && relatedResponse.data) {
+          setRelatedNames(relatedResponse.data)
+        }
+      } catch (error) {
+        
+      } finally {
+        setLoadingRelated(false)
+      }
+
+      setLoadingSimilar(true)
+      try {
+        const similarResponse = await fetchSimilarNames(religionPath, slug, { limit: 8 })
+        if (similarResponse.success && similarResponse.data) {
+          setSimilarNames(similarResponse.data)
+        }
+      } catch (error) {
+        
+      } finally {
+        setLoadingSimilar(false)
+      }
+    }
+
+    loadRelatedAndSimilarNames()
+  }, [data, getReligionPath])
 
   const languageConfig = useMemo(() => ({
     arabic: { name: 'العربية', flag: '🇸🇦', dir: 'rtl' },
@@ -74,52 +105,24 @@ export default function NameClient({ data, initialLanguage }) {
   const availableLanguages = useMemo(() => {
     const languages = new Set()
     const languageFields = ['in_arabic', 'in_urdu', 'in_hindi', 'in_pashto', 'in_english', 'in_hebrew', 'in_greek', 'in_latin', 'in_sanskrit', 'in_tamil', 'in_telugu']
-    
+
     languageFields.forEach(field => {
       if (data[field]?.name) {
         languages.add(field.replace('in_', ''))
       }
     })
-    
+
     if (data.language) {
       data.language.forEach(lang => languages.add(lang.toLowerCase()))
     }
-    
-    if (languageConfig[selectedLanguage]) {
-      languages.add(selectedLanguage)
-    }
-    
-    return Array.from(languages)
-  }, [data, selectedLanguage, languageConfig])
 
-  const translation = useMemo(() => {
-    const langField = `in_${selectedLanguage}`
-    
-    if (data[langField]?.name) {
-      return {
-        name: data[langField].name,
-        meaning: data[langField].meaning,
-        longMeaning: data[langField].long_meaning
-      }
-    }
-    
-    if (data.meanings_by_language?.[selectedLanguage]) {
-      return {
-        name: data.meanings_by_language[selectedLanguage].name || data.name,
-        meaning: data.meanings_by_language[selectedLanguage].meaning || data.short_meaning,
-        longMeaning: data.meanings_by_language[selectedLanguage].long_meaning || data.long_meaning
-      }
-    }
-    
-    return {
-      name: data.name,
-      meaning: data.short_meaning,
-      longMeaning: data.long_meaning
-    }
-  }, [data, selectedLanguage])
+    languages.add('english')
+
+    return Array.from(languages)
+  }, [data])
 
   const religion = useMemo(() => data.religion?.toLowerCase() || 'islamic', [data.religion])
-  
+
   const religionConfig = useMemo(() => ({
     islamic: { gradient: 'from-emerald-500 to-teal-600', emoji: '☪️' },
     islam: { gradient: 'from-emerald-500 to-teal-600', emoji: '☪️' },
@@ -128,40 +131,14 @@ export default function NameClient({ data, initialLanguage }) {
     christian: { gradient: 'from-blue-500 to-indigo-600', emoji: '✝️' },
     christianity: { gradient: 'from-blue-500 to-indigo-600', emoji: '✝️' },
   }), [])
-  
+
   const config = religionConfig[religion] || religionConfig.islamic
-
-  const getReligionPath = useCallback(() => {
-    const rel = data.religion?.toLowerCase() || 'islamic'
-    if (rel === 'islam') return 'islamic'
-    if (rel === 'hinduism') return 'hindu'
-    if (rel === 'christianity') return 'christian'
-    return rel
-  }, [data.religion])
-
-  const handleLanguageChange = useCallback((lang) => {
-    const religionPath = getReligionPath()
-    const namePath = data.slug || data.name.toLowerCase()
-    
-    const newUrl = lang === 'english'
-      ? `/names/${religionPath}/${namePath}`
-      : `/names/${religionPath}/${lang}/${namePath}`
-    
-    const link = document.createElement('link')
-    link.rel = 'prefetch'
-    link.href = newUrl
-    document.head.appendChild(link)
-    
-    setTimeout(() => {
-      window.location.href = newUrl
-    }, 50)
-  }, [data, getReligionPath])
 
   const handleFavoriteToggle = useCallback(() => {
     try {
       const favorites = JSON.parse(localStorage.getItem('favoriteNames') || '[]')
       const nameId = data.slug || data.name.toLowerCase()
-      
+
       if (favorites.includes(nameId)) {
         const updated = favorites.filter(id => id !== nameId)
         localStorage.setItem('favoriteNames', JSON.stringify(updated))
@@ -172,7 +149,7 @@ export default function NameClient({ data, initialLanguage }) {
         setIsFavorite(true)
       }
     } catch (error) {
-      console.error('Error toggling favorite:', error)
+      
     }
   }, [data])
 
@@ -180,8 +157,8 @@ export default function NameClient({ data, initialLanguage }) {
     try {
       if (navigator.share) {
         await navigator.share({
-          title: `${translation.name} - Name Meaning`,
-          text: translation.meaning,
+          title: `${data.name} - Name Meaning`,
+          text: data.short_meaning,
           url: window.location.href
         })
       } else {
@@ -190,186 +167,352 @@ export default function NameClient({ data, initialLanguage }) {
       }
     } catch (error) {
       if (error.name !== 'AbortError') {
-        console.log('Share cancelled or failed')
+        
       }
     }
-  }, [translation])
+  }, [data])
 
-  const handleRelatedNameClick = useCallback((name) => {
+  const handleRelatedNameClick = useCallback((nameObj) => {
     const religionPath = getReligionPath()
-    window.location.href = `/names/${religionPath}/${name.toLowerCase()}`
+    const slug = typeof nameObj === 'string' ? nameObj.toLowerCase() : (nameObj.slug || nameObj.name.toLowerCase())
+    window.location.href = `/names/${religionPath}/${slug}`
   }, [getReligionPath])
+
+  const tabs = [
+    { id: 'overview', label: 'Overview', icon: Star },
+    { id: 'languages', label: 'All Languages', icon: Globe },
+    { id: 'lucky', label: 'Lucky Details', icon: Sparkles },
+    { id: 'related', label: 'Related Names', icon: Users },
+  ]
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
-        <div className="max-w-5xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between mb-4">
-            <button 
-              onClick={() => window.history.back()} 
-              className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
+      {/* Sticky Header */}
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center justify-between">
+            <button
+              onClick={() => window.history.back()}
+              className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
               aria-label="Go back"
             >
               <ChevronLeft className="w-5 h-5 text-gray-700" />
             </button>
-            <button 
-              onClick={handleFavoriteToggle}
-              className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all ${
-                isFavorite 
-                  ? `bg-gradient-to-r ${config.gradient} shadow-md` 
-                  : 'bg-gray-100 hover:bg-gray-200'
-              }`}
-              aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
-            >
-              <Heart className={`w-5 h-5 ${isFavorite ? 'fill-white text-white' : 'text-gray-700'}`} />
-            </button>
-          </div>
-          
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-            {availableLanguages.map(lang => (
-              <LanguageButton
-                key={lang}
-                lang={lang}
-                config={languageConfig[lang] || { name: lang, flag: '🌐' }}
-                isSelected={selectedLanguage === lang}
-                gradient={config.gradient}
-                onClick={() => setSelectedLanguage(lang)}
-              />
-            ))}
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleShare}
+                className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
+                aria-label="Share"
+              >
+                <Share2 className="w-5 h-5 text-gray-700" />
+              </button>
+              <button
+                onClick={handleFavoriteToggle}
+                className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${
+                  isFavorite
+                    ? `bg-gradient-to-r ${config.gradient} shadow-md`
+                    : 'bg-gray-100 hover:bg-gray-200'
+                }`}
+                aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+              >
+                <Heart className={`w-5 h-5 ${isFavorite ? 'fill-white text-white' : 'text-gray-700'}`} />
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 py-8 space-y-6">
-        <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm hover:shadow-md transition-shadow">
-          <div className="flex flex-col items-center text-center">
-            <div className={`w-20 h-20 mb-5 rounded-2xl bg-gradient-to-br ${config.gradient} flex items-center justify-center shadow-lg`}>
-              <span className="text-3xl font-bold text-white">{translation.name.charAt(0)}</span>
+      {/* Hero Section */}
+      <section className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className={`inline-flex w-24 h-24 mb-6 rounded-2xl bg-gradient-to-br ${config.gradient} items-center justify-center shadow-lg`}>
+              <span className="text-4xl font-bold text-white">{data.name.charAt(0)}</span>
             </div>
-            
-            <h1 
-              className="text-4xl sm:text-5xl font-bold text-gray-900 mb-2" 
-              dir={languageConfig[selectedLanguage]?.dir}
-            >
-              {translation.name}
+
+            <h1 className="text-5xl sm:text-6xl font-bold text-gray-900 mb-4">
+              {data.name}
             </h1>
-            
-            <p className="text-lg text-gray-600 mb-6 max-w-2xl">{translation.meaning}</p>
-            
-            <div className="flex flex-wrap justify-center gap-2 mb-6">
-              <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium bg-gradient-to-r ${config.gradient} text-white shadow-sm`}>
+
+            <p className="text-xl text-gray-600 mb-6">{data.short_meaning}</p>
+
+            <div className="flex flex-wrap justify-center gap-3">
+              <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-gradient-to-r ${config.gradient} text-white shadow-sm`}>
                 {config.emoji} {religion.charAt(0).toUpperCase() + religion.slice(1)}
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium bg-gray-100 text-gray-700">
+              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700">
                 {data.gender === 'female' || data.gender === 'Female' ? '👧' : '👦'} {data.gender}
               </span>
               {data.origin && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium bg-gray-100 text-gray-700">
+                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700">
                   📍 {data.origin}
                 </span>
               )}
             </div>
-
-            <div className="flex gap-3 w-full max-w-sm">
-              <button 
-                onClick={handleFavoriteToggle}
-                className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all ${
-                  isFavorite 
-                    ? `bg-gradient-to-r ${config.gradient} text-white shadow-md` 
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                <Heart className={`w-4 h-4 ${isFavorite ? 'fill-white' : ''}`} />
-                {isFavorite ? 'Saved' : 'Save Name'}
-              </button>
-              <button 
-                onClick={handleShare}
-                className="px-4 py-2.5 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-                aria-label="Share"
-              >
-                <Share2 className="w-4 h-4 text-gray-700" />
-              </button>
-            </div>
           </div>
         </div>
+      </section>
 
-        {translation.longMeaning && (
-          <InfoSection title="Deep Meaning" icon={Heart} gradient={config.gradient}>
-            <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
-              {translation.longMeaning}
-            </p>
-          </InfoSection>
-        )}
+      {/* Tab Navigation */}
+      <nav className="bg-white border-b border-gray-200 sticky top-[73px] z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex gap-1 overflow-x-auto scrollbar-hide">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-6 py-4 font-semibold text-sm whitespace-nowrap border-b-2 transition-all ${
+                  activeTab === tab.id
+                    ? `border-current bg-gradient-to-r ${config.gradient} bg-clip-text text-transparent`
+                    : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                }`}
+              >
+                <tab.icon className="w-4 h-4" />
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </nav>
 
-        {(data.lucky_number || data.lucky_day || data.lucky_stone || data.lucky_colors?.length > 0) && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {data.lucky_number && (
-              <StatCard value={data.lucky_number} label="Lucky Number" icon={Hash} gradient={config.gradient} />
+      {/* Tab Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Overview Tab */}
+        {activeTab === 'overview' && (
+          <div className="space-y-6 animate-fadeIn">
+            {data.long_meaning && (
+              <InfoSection title="Deep Meaning" icon={Heart} gradient={config.gradient}>
+                <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+                  {data.long_meaning}
+                </p>
+              </InfoSection>
             )}
-            {data.lucky_day && (
-              <StatCard value={data.lucky_day} label="Lucky Day" icon={Calendar} gradient={config.gradient} />
+
+            {(data.lucky_number || data.lucky_day || data.lucky_stone || data.lucky_colors?.length > 0) && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {data.lucky_number && (
+                  <StatCard value={data.lucky_number} label="Lucky Number" icon={Hash} gradient={config.gradient} />
+                )}
+                {data.lucky_day && (
+                  <StatCard value={data.lucky_day} label="Lucky Day" icon={Calendar} gradient={config.gradient} />
+                )}
+                {data.lucky_stone && (
+                  <StatCard value={data.lucky_stone} label="Lucky Stone" icon={Gem} gradient={config.gradient} />
+                )}
+                {data.lucky_colors?.length > 0 && (
+                  <StatCard
+                    value={data.lucky_colors.length}
+                    label={`Lucky Color${data.lucky_colors.length > 1 ? 's' : ''}`}
+                    icon={Palette}
+                    gradient={config.gradient}
+                  />
+                )}
+              </div>
             )}
-            {data.lucky_stone && (
-              <StatCard value={data.lucky_stone} label="Lucky Stone" icon={Gem} gradient={config.gradient} />
-            )}
-            {data.lucky_colors?.length > 0 && (
-              <StatCard 
-                value={data.lucky_colors.length} 
-                label={`Lucky Color${data.lucky_colors.length > 1 ? 's' : ''}`} 
-                icon={Palette} 
-                gradient={config.gradient} 
-              />
+
+            {data.celebrity_usage?.length > 0 && (
+              <InfoSection title="Notable Personalities" icon={Users} gradient={config.gradient}>
+                <div className="space-y-3">
+                  {data.celebrity_usage.map((celebrity, i) => (
+                    <div key={i} className="flex items-start gap-3 p-4 bg-amber-50 rounded-lg border border-amber-200">
+                      <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-400 to-yellow-400 flex items-center justify-center flex-shrink-0">
+                        <Star className="w-5 h-5 text-white fill-white" />
+                      </div>
+                      <p className="text-sm text-gray-700 leading-relaxed pt-1">{celebrity}</p>
+                    </div>
+                  ))}
+                </div>
+              </InfoSection>
             )}
           </div>
         )}
 
-        {data.lucky_colors?.length > 0 && (
-          <InfoSection title="Lucky Colors" icon={Palette} gradient={config.gradient}>
-            <div className="flex flex-wrap gap-5">
-              {data.lucky_colors.map((color, i) => (
-                <div key={i} className="flex flex-col items-center gap-2">
-                  <div 
-                    className="w-20 h-20 rounded-xl shadow-md border-2 border-white ring-1 ring-gray-200 transition-transform hover:scale-105" 
-                    style={{ backgroundColor: color.toLowerCase() }} 
-                  />
-                  <span className="text-xs font-medium text-gray-600">{color}</span>
-                </div>
-              ))}
+        {/* Languages Tab - All Languages in One View */}
+        {activeTab === 'languages' && (
+          <div className="space-y-6 animate-fadeIn">
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Name in All Languages</h2>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                {availableLanguages.map(lang => {
+                  const langField = `in_${lang}`
+                  const translation = data[langField] || data.meanings_by_language?.[lang] || {}
+                  const langConfig = languageConfig[lang] || { name: lang, flag: '🌐', dir: 'ltr' }
+
+                  if (!translation.name && lang !== 'english') return null
+
+                  return (
+                    <div key={lang} className={`p-5 rounded-lg border-2 border-gray-200 hover:border-gray-300 transition-all bg-gradient-to-br from-white to-gray-50`}>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">{langConfig.flag}</span>
+                          <span className="font-bold text-gray-900">{langConfig.name}</span>
+                        </div>
+                        <Globe className="w-5 h-5 text-gray-400" />
+                      </div>
+
+                      <div className={`space-y-3 ${langConfig.dir === 'rtl' ? 'text-right' : 'text-left'}`} dir={langConfig.dir}>
+                        <div>
+                          <span className="text-xs font-semibold text-gray-500 uppercase block mb-1">Name</span>
+                          <p className="text-2xl font-bold text-gray-900">
+                            {lang === 'english' ? data.name : (translation.name || data.name)}
+                          </p>
+                        </div>
+
+                        <div>
+                          <span className="text-xs font-semibold text-gray-500 uppercase block mb-1">Meaning</span>
+                          <p className="text-sm text-gray-700 leading-relaxed">
+                            {lang === 'english'
+                              ? (data.short_meaning || data.meaning)
+                              : (translation.meaning || data.short_meaning)}
+                          </p>
+                        </div>
+
+                        {translation.long_meaning && (
+                          <div>
+                            <span className="text-xs font-semibold text-gray-500 uppercase block mb-1">Detailed Meaning</span>
+                            <p className="text-sm text-gray-600 leading-relaxed line-clamp-4">
+                              {translation.long_meaning}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
-          </InfoSection>
+          </div>
         )}
 
-        {data.celebrity_usage?.length > 0 && (
-          <InfoSection title="Notable Personalities" icon={Users} gradient={config.gradient}>
-            <div className="space-y-3">
-              {data.celebrity_usage.map((celebrity, i) => (
-                <div key={i} className="flex items-start gap-3 p-4 bg-amber-50 rounded-lg border border-amber-200 hover:border-amber-300 transition-colors">
-                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-400 to-yellow-400 flex items-center justify-center flex-shrink-0">
-                    <Star className="w-5 h-5 text-white fill-white" />
+        {/* Lucky Details Tab */}
+        {activeTab === 'lucky' && (
+          <div className="space-y-6 animate-fadeIn">
+            {data.lucky_colors?.length > 0 && (
+              <InfoSection title="Lucky Colors" icon={Palette} gradient={config.gradient}>
+                <div className="flex flex-wrap gap-6">
+                  {data.lucky_colors.map((color, i) => (
+                    <div key={i} className="flex flex-col items-center gap-2">
+                      <div
+                        className="w-24 h-24 rounded-xl shadow-md border-2 border-white ring-1 ring-gray-200 transition-transform hover:scale-105"
+                        style={{ backgroundColor: color.toLowerCase() }}
+                      />
+                      <span className="text-sm font-medium text-gray-600">{color}</span>
+                    </div>
+                  ))}
+                </div>
+              </InfoSection>
+            )}
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {data.lucky_number && (
+                <InfoSection title="Lucky Number" icon={Hash} gradient={config.gradient}>
+                  <div className="text-center py-6">
+                    <div className={`inline-flex w-24 h-24 rounded-2xl bg-gradient-to-br ${config.gradient} items-center justify-center shadow-lg mb-4`}>
+                      <span className="text-4xl font-bold text-white">{data.lucky_number}</span>
+                    </div>
+                    {data.numerology_meaning && (
+                      <p className="text-sm text-gray-600 mt-4">{data.numerology_meaning}</p>
+                    )}
                   </div>
-                  <p className="text-sm text-gray-700 leading-relaxed pt-1">{celebrity}</p>
-                </div>
-              ))}
+                </InfoSection>
+              )}
+
+              {data.lucky_day && (
+                <InfoSection title="Lucky Day" icon={Calendar} gradient={config.gradient}>
+                  <div className="text-center py-6">
+                    <p className="text-3xl font-bold text-gray-900 mb-2">{data.lucky_day}</p>
+                    <p className="text-sm text-gray-600">Best day for important decisions</p>
+                  </div>
+                </InfoSection>
+              )}
+
+              {data.lucky_stone && (
+                <InfoSection title="Lucky Stone" icon={Gem} gradient={config.gradient}>
+                  <div className="text-center py-6">
+                    <div className="inline-flex w-20 h-20 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 items-center justify-center shadow-lg mb-4">
+                      <Gem className="w-10 h-10 text-white" />
+                    </div>
+                    <p className="text-2xl font-bold text-gray-900">{data.lucky_stone}</p>
+                  </div>
+                </InfoSection>
+              )}
             </div>
-          </InfoSection>
+          </div>
         )}
 
-        {data.related_names?.length > 0 && (
-          <InfoSection title="Related Names" icon={Users} gradient={config.gradient}>
-            <div className="flex flex-wrap gap-2">
-              {data.related_names.map((name, i) => (
-                <button
-                  key={i}
-                  onClick={() => handleRelatedNameClick(name)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium bg-gradient-to-r ${config.gradient} text-white shadow-sm hover:shadow-md transition-all hover:scale-105`}
-                >
-                  {name}
-                </button>
-              ))}
-            </div>
-          </InfoSection>
+        {/* Related Names Tab */}
+        {activeTab === 'related' && (
+          <div className="space-y-6 animate-fadeIn">
+            {(relatedNames.length > 0 || data.related_names?.length > 0) && (
+              <InfoSection title="Related Names" icon={Users} gradient={config.gradient}>
+                {loadingRelated ? (
+                  <div className="flex gap-2 animate-pulse">
+                    {[...Array(5)].map((_, i) => (
+                      <div key={i} className="h-9 w-20 bg-gray-200 rounded-lg" />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {(relatedNames.length > 0 ? relatedNames : data.related_names || []).map((name, i) => {
+                      const displayName = typeof name === 'string' ? name : name.name
+                      const meaning = typeof name === 'object' ? name.short_meaning : null
+                      return (
+                        <button
+                          key={i}
+                          onClick={() => handleRelatedNameClick(name)}
+                          className={`group relative p-4 rounded-lg text-left bg-gradient-to-r ${config.gradient} text-white shadow-sm hover:shadow-md transition-all hover:scale-105`}
+                        >
+                          <div className="font-bold text-lg mb-1">{displayName}</div>
+                          {meaning && <div className="text-sm text-white/80">{meaning}</div>}
+                        </button>
+                      )
+                    })}
+                  </div>
+                )}
+              </InfoSection>
+            )}
+
+            {similarNames.length > 0 && (
+              <InfoSection title="Similar Names" icon={Sparkles} gradient={config.gradient}>
+                {loadingSimilar ? (
+                  <div className="flex gap-2 animate-pulse">
+                    {[...Array(4)].map((_, i) => (
+                      <div key={i} className="h-9 w-20 bg-gray-200 rounded-lg" />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    {similarNames.map((name, i) => (
+                      <button
+                        key={i}
+                        onClick={() => handleRelatedNameClick(name)}
+                        className="group relative p-4 rounded-lg text-left border-2 border-gray-300 bg-white text-gray-700 hover:border-gray-400 shadow-sm hover:shadow-md transition-all hover:scale-105"
+                      >
+                        <div className="font-bold text-lg mb-1">{name.name}</div>
+                        {name.short_meaning && <div className="text-sm text-gray-600">{name.short_meaning}</div>}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </InfoSection>
+            )}
+          </div>
         )}
       </main>
+
+      <style jsx>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.3s ease-out;
+        }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
     </div>
   )
 }

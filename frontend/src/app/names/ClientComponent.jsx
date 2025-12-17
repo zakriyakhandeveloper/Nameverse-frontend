@@ -56,7 +56,7 @@ export default function BabyNamesClient({ initialData, initialReligion = 'islami
         }
       }
     } catch (error) {
-      console.error('Error loading filters from cache:', error);
+      
     }
     return null;
   }, []);
@@ -69,7 +69,7 @@ export default function BabyNamesClient({ initialData, initialReligion = 'islami
         timestamp: Date.now()
       }));
     } catch (error) {
-      console.error('Error saving filters to cache:', error);
+      
     }
   }, []);
 
@@ -97,7 +97,7 @@ export default function BabyNamesClient({ initialData, initialReligion = 'islami
           saveFiltersToCache(religion, freshFilters);
         }
       } catch (error) {
-        console.error('Error fetching fresh filters:', error);
+        
       }
     } else {
       setFiltersLoading(true);
@@ -118,7 +118,7 @@ export default function BabyNamesClient({ initialData, initialReligion = 'islami
           saveFiltersToCache(religion, freshFilters);
         }
       } catch (error) {
-        console.error('Error fetching filters:', error);
+        
       }
       setFiltersLoading(false);
     }
@@ -140,7 +140,7 @@ export default function BabyNamesClient({ initialData, initialReligion = 'islami
         setCurrentPage(page);
       }
     } catch (error) {
-      console.error('Error fetching names:', error);
+      
     }
     setLoading(false);
   }, [religion, selectedFilters]);

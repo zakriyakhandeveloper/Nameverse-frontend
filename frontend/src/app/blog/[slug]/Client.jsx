@@ -147,7 +147,7 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error('Article Error:', error, errorInfo);
+    
   }
 
   render() {
@@ -300,22 +300,11 @@ const RelatedArticleCard = memo(({ article }) => (
     href={`/blog/${article.slug}`}
     className="group block overflow-hidden bg-white rounded-xl border-2 border-gray-200 hover:border-blue-300 transition-all duration-300 hover:shadow-xl hover:-translate-y-2"
   >
-    <div className="h-48 bg-gradient-to-br from-gray-200 to-gray-300 overflow-hidden relative">
-      {article.cover_image_url ? (
-        <Image
-          src={`/article/${article.cover_image_url.split('/').pop()}`}
-          alt={article.title}
-          fill
-          className="object-cover group-hover:scale-110 transition-transform duration-500"
-          loading="lazy"
-        />
-      ) : (
-        <div className={`w-full h-full bg-gradient-to-br ${getGradientBg(article.id)} flex items-center justify-center`}>
-          <span className="text-white/90 font-bold text-3xl">
-            {article.category?.charAt(0).toUpperCase() || 'A'}
-          </span>
-        </div>
-      )}
+    <div className="h-48 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 overflow-hidden relative flex items-center justify-center">
+      <div className="text-center">
+        <span className="text-white font-black text-4xl tracking-tight">NameVerse</span>
+        <p className="text-white/80 text-sm mt-1">{article.category || 'Article'}</p>
+      </div>
     </div>
     <div className="p-5">
       <span className="inline-block text-xs font-bold text-blue-600 uppercase tracking-widest mb-3">
@@ -404,7 +393,7 @@ function ArticleClientInner({ article, latestArticles = [] }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('Failed to copy:', err);
+      
     }
   }, []);
 

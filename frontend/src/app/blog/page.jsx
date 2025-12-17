@@ -89,7 +89,7 @@ async function fetchArticles(resolvedParams = {}) {
       articles = await getLatestArticles(8);
     }
   } catch (error) {
-    console.error("Error fetching articles for ISR:", error);
+    
   }
 
   return { articles, categories };

@@ -44,10 +44,12 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params, searchParams }) {
-  const selectedReligion = params?.religion || 'islamic';
-  const selectedLetter = params?.letter?.toUpperCase() || 'A';
+  const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
+  const selectedReligion = resolvedParams?.religion || 'islamic';
+  const selectedLetter = resolvedParams?.letter?.toUpperCase() || 'A';
   const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com';
-  const currentPage = parseInt(searchParams?.page || 1);
+  const currentPage = parseInt(resolvedSearchParams?.page || 1);
 
   const canonicalUrl = `${SITE_URL}/names/${selectedReligion}/letter/${selectedLetter.toLowerCase()}`;
   const ogImage = `${SITE_URL}/og-image.png`;
@@ -92,14 +94,16 @@ export async function generateMetadata({ params, searchParams }) {
 }
 
 export default async function NamesDatabaseServer({ params, searchParams }) {
+  const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
   const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:5000/api';
   const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com';
 
-  const selectedReligion = params?.religion || 'islamic';
-  const selectedLetter = params?.letter?.toUpperCase() || 'A';
-  const currentPage = parseInt(searchParams?.page || 1);
-  const perPage = parseInt(searchParams?.perPage || 20);
-  const sortBy = searchParams?.sort || 'popularity';
+  const selectedReligion = resolvedParams?.religion || 'islamic';
+  const selectedLetter = resolvedParams?.letter?.toUpperCase() || 'A';
+  const currentPage = parseInt(resolvedSearchParams?.page || 1);
+  const perPage = parseInt(resolvedSearchParams?.perPage || 20);
+  const sortBy = resolvedSearchParams?.sort || 'popularity';
 
   let names = [];
   let totalResults = 0;
@@ -123,13 +127,13 @@ export default async function NamesDatabaseServer({ params, searchParams }) {
       }
     } else {
       // Use fallback data when API returns an error
-      console.warn(`API returned ${response.status}, using fallback data`);
+      
       names = FALLBACK_NAMES;
       totalResults = FALLBACK_NAMES.length;
       isFallback = true;
     }
   } catch (error) {
-    console.error('Error fetching names, using fallback data:', error);
+    
     // Use fallback data when API is unreachable
     names = FALLBACK_NAMES;
     totalResults = FALLBACK_NAMES.length;

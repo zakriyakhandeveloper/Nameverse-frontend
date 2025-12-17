@@ -7,7 +7,7 @@ export const revalidate = 60; // ISR every 60 seconds
 
 // ---------------- METADATA ----------------
 export async function generateMetadata({ params }) {
-  const { slug } = params;
+  const { slug } = await params;
 
   try {
     const article = await getArticleBySlug(slug);
@@ -61,7 +61,7 @@ export async function generateMetadata({ params }) {
       robots: { index: true, follow: true },
     };
   } catch (error) {
-    console.error('❌ Error generating metadata:', error);
+    
     return {
       title: 'Article | Nameverse',
       description: 'Read insightful articles on Nameverse.',
@@ -71,13 +71,13 @@ export async function generateMetadata({ params }) {
 
 // ---------------- PAGE ----------------
 export default async function ArticlePage({ params }) {
-  const { slug } = params;
+  const { slug } = await params;
 
   try {
     // Fetch article
     const article = await getArticleBySlug(slug);
     if (!article) {
-      console.warn(`⚠️ Article not found for slug: ${slug}`);
+      
       return notFound();
     }
 
@@ -113,7 +113,7 @@ export default async function ArticlePage({ params }) {
       </>
     );
   } catch (error) {
-    console.error('❌ Error fetching article:', error);
+    
 
     return (
       <div className="p-8 text-center text-red-600">

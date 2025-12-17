@@ -118,7 +118,7 @@ export async function getNamesData(religion, params = {}) {
 
     return enhancedData;
   } catch (error) {
-    console.error('Error fetching names:', error);
+    
     
     // Fallback to mock data if API fails
     return getMockNamesData(religion, page, limit, sort, gender);

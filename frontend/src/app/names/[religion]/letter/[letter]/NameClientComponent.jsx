@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Search, ChevronLeft, ChevronRight, Star, Heart, Globe, Sparkles, BookOpen, Tag, ArrowUp, Loader2, Filter, SlidersHorizontal, X
@@ -12,11 +12,24 @@ export default function NamesDatabaseClient({
   initialLetter = "A",
   initialPage = 1,
   perPageDefault = 20,
-  initialSort = "popularity"
+  initialSort = "popularity",
+  selectedReligion: propReligion,
+  selectedLetter: propLetter,
+  totalResults: propTotalResults
 }) {
   const router = useRouter();
-  const [selectedReligion, setSelectedReligion] = useState(initialReligion);
-  const [selectedLetter, setSelectedLetter] = useState(initialLetter);
+  const [isPending, startTransition] = useTransition();
+  const [selectedReligion, setSelectedReligion] = useState(propReligion || initialReligion);
+  const [selectedLetter, setSelectedLetter] = useState(propLetter || initialLetter);
+
+  // Sync state with props when they change (for dynamic imports)
+  useEffect(() => {
+    if (propReligion) setSelectedReligion(propReligion);
+  }, [propReligion]);
+
+  useEffect(() => {
+    if (propLetter) setSelectedLetter(propLetter);
+  }, [propLetter]);
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [sortBy, setSortBy] = useState(initialSort);
   const [searchTerm, setSearchTerm] = useState('');
@@ -28,7 +41,7 @@ export default function NamesDatabaseClient({
   const [showFilters, setShowFilters] = useState(false);
 
   const names = initialNames;
-  const totalResults = initialTotal;
+  const totalResults = propTotalResults || initialTotal;
   const perPage = perPageDefault;
 
   const religions = useMemo(() => [
@@ -50,12 +63,18 @@ export default function NamesDatabaseClient({
   }, []);
 
   const handleReligionChange = useCallback((religion) => {
-    router.push(`/names/${religion}/letter/${selectedLetter.toLowerCase()}`);
-  }, [selectedLetter, router]);
+    startTransition(() => {
+      setSelectedReligion(religion);
+      router.push(`/names/${religion}/${selectedLetter.toLowerCase()}`);
+    });
+  }, [selectedLetter, router, startTransition]);
 
   const handleLetterChange = useCallback((letter) => {
-    router.push(`/names/${selectedReligion}/letter/${letter.toLowerCase()}`);
-  }, [selectedReligion, router]);
+    startTransition(() => {
+      setSelectedLetter(letter);
+      router.push(`/names/${selectedReligion}/${letter.toLowerCase()}`);
+    });
+  }, [selectedReligion, router, startTransition]);
 
   const handlePageChange = useCallback((number) => {
     setCurrentPage(number);
@@ -307,7 +326,8 @@ export default function NamesDatabaseClient({
                   <button
                     key={letter}
                     onClick={() => handleLetterChange(letter)}
-                    className={`aspect-square rounded-xl font-bold text-sm transition-all transform ${
+                    disabled={isPending}
+                    className={`aspect-square rounded-xl font-bold text-sm transition-all transform disabled:opacity-50 ${
                       selectedLetter === letter
                         ? `bg-gradient-to-br ${currentReligion?.color} text-white shadow-lg scale-110`
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105'

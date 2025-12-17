@@ -68,7 +68,7 @@ async function fetchNames(religion, params = {}) {
       ...params,
     });
   } catch (error) {
-    console.error('Fetch names error:', error);
+    
     return { success: false, data: [], pagination: { totalPages: 1, totalCount: 0 } };
   }
 }
@@ -78,7 +78,7 @@ async function fetchFilters(religion) {
     const filtersData = await fetchFiltersAPI(religion);
     return { success: !!filtersData, filters: filtersData || {} };
   } catch (error) {
-    console.error('Fetch filters error:', error);
+    
     return { success: false, filters: {} };
   }
 }

@@ -58,7 +58,7 @@ const ArticleCard = ({ article, index }) => {
           url: `/blog/${article.slug}`,
         });
       } catch (err) {
-        console.log('Share cancelled');
+        
       }
     }
   };

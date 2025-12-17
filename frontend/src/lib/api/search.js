@@ -86,7 +86,7 @@ export async function globalSearch(query, options = {}) {
         };
     }
   } catch (error) {
-    console.error('[Global Search API] Error:', error);
+    
     return {
       names: [],
       articles: [],
@@ -155,7 +155,7 @@ export async function quickSearch(query, options = {}) {
       query: trimmedQuery,
     };
   } catch (error) {
-    console.error('[Quick Search API] Error:', error);
+    
     return {
       suggestions: [],
       success: false,
@@ -240,7 +240,7 @@ export async function advancedSearch(query, filters = {}) {
       success: true,
     };
   } catch (error) {
-    console.error('[Advanced Search API] Error:', error);
+    
     return {
       names: [],
       articles: [],
