@@ -29,11 +29,11 @@ const colors = {
  * Logger utility
  */
 const logger = {
-  success: (msg) => ,
-  error: (msg) => ,
-  warning: (msg) => ,
-  info: (msg) => ,
-  section: (msg) => ,
+  success: (msg) => {},
+  error: (msg) => {},
+  warning: (msg) => {},
+  info: (msg) => {},
+  section: (msg) => {},
 };
 
 /**
