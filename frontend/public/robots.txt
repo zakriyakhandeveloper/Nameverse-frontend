@@ -1,27 +1,23 @@
 # Robots.txt for NameVerse
-# Optimized for search engine crawling
+# https://nameverse.vercel.app
 
-# Allow all search engines
 User-agent: *
 Allow: /
-
-# Disallow admin and private areas
 Disallow: /api/
 Disallow: /_next/
 Disallow: /admin/
-Disallow: /private/
-
-# Allow important paths
-Allow: /names/
-Allow: /blog/
-Allow: /search/
-Allow: /about/
-
-# Crawl-delay for respectful crawling
-Crawl-delay: 1
 
 # Sitemaps
-Sitemap: https://nameverse.vercel.app/sitemap.xml
-Sitemap: https://nameverse.vercel.app/posts-sitemap.xml
-Sitemap: https://nameverse.vercel.app/sitemap-1.xml
-Sitemap: https://nameverse.vercel.app/sitemap-2.xml
+Sitemap: https://nameverse.vercel.app/sitemap-index.xml
+
+# Crawl-delay (optional, adjust as needed)
+Crawl-delay: 1
+
+# Specific bot rules
+User-agent: Googlebot
+Allow: /
+Sitemap: https://nameverse.vercel.app/sitemap-index.xml
+
+User-agent: Bingbot
+Allow: /
+Sitemap: https://nameverse.vercel.app/sitemap-index.xml
