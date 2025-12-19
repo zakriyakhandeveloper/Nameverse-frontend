@@ -1,14 +1,16 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Search, X, Loader2, User, MapPin, Heart, Sparkles, ChevronRight, TrendingUp, ExternalLink } from 'lucide-react';
+import { Search, X, Loader2, User, MapPin, Heart, Sparkles, ChevronRight, TrendingUp, ExternalLink, BookOpen, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { searchNames } from '@/lib/api/names';
+import { searchArticles } from '@/lib/api/articles';
 
 const UniversalSearch = () => {
   const [query, setQuery] = useState('');
   const [nameResults, setNameResults] = useState([]);
+  const [articleResults, setArticleResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -37,10 +39,11 @@ const UniversalSearch = () => {
     return { icon: Sparkles, color: 'text-purple-600', bg: 'bg-purple-100' };
   };
 
-  // Fetch names
-  const fetchNames = useCallback(async (searchQuery) => {
+  // Fetch names and articles
+  const fetchResults = useCallback(async (searchQuery) => {
     if (!searchQuery || searchQuery.trim().length < 2) {
       setNameResults([]);
+      setArticleResults([]);
       setIsOpen(false);
       setHasSearched(false);
       setIsLoading(false);
@@ -52,26 +55,28 @@ const UniversalSearch = () => {
     setIsLoading(true);
 
     try {
-      const result = await searchNames(searchQuery.trim());
-      
-      if (result.success) {
-        const data = result;
-        const results = result.results || [];
-        setNameResults(results);
-        
-        if (results.length > 0) {
-          setIsOpen(true);
-        } else {
-          setError('No names found. Try different keywords.');
-        }
+      // Search both names and articles in parallel
+      const [namesResult, articlesResult] = await Promise.all([
+        searchNames(searchQuery.trim(), { limit: 5 }),
+        searchArticles(searchQuery.trim(), { limit: 5 })
+      ]);
+
+      const names = namesResult.success ? (namesResult.data || []) : [];
+      const articles = Array.isArray(articlesResult) ? articlesResult : [];
+
+      setNameResults(names);
+      setArticleResults(articles);
+
+      if (names.length > 0 || articles.length > 0) {
+        setIsOpen(true);
       } else {
-        setError('Search failed. Please try again.');
-        setNameResults([]);
+        setError('No results found. Try different keywords.');
       }
     } catch (err) {
       console.error('Search error:', err);
       setError('Connection error. Please check your internet.');
       setNameResults([]);
+      setArticleResults([]);
     } finally {
       setIsLoading(false);
     }
@@ -85,10 +90,11 @@ const UniversalSearch = () => {
 
     if (query.trim().length >= 2) {
       debounceRef.current = setTimeout(() => {
-        fetchNames(query);
+        fetchResults(query);
       }, 250);
     } else {
       setNameResults([]);
+      setArticleResults([]);
       setIsOpen(false);
       setHasSearched(false);
       setIsLoading(false);
@@ -100,7 +106,7 @@ const UniversalSearch = () => {
         clearTimeout(debounceRef.current);
       }
     };
-  }, [query, fetchNames]);
+  }, [query, fetchResults]);
 
   // Click outside handler
   useEffect(() => {
@@ -115,7 +121,8 @@ const UniversalSearch = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const hasResults = nameResults.length > 0;
+  const hasResults = nameResults.length > 0 || articleResults.length > 0;
+  const totalResults = nameResults.length + articleResults.length;
 
   // Keyboard navigation
   const handleKeyDown = (e) => {
@@ -126,23 +133,29 @@ const UniversalSearch = () => {
       return;
     }
 
+    const allResults = [...nameResults, ...articleResults];
+
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
-        setSelectedIndex(prev => 
-          prev < nameResults.length - 1 ? prev + 1 : 0
+        setSelectedIndex(prev =>
+          prev < allResults.length - 1 ? prev + 1 : 0
         );
         break;
       case 'ArrowUp':
         e.preventDefault();
-        setSelectedIndex(prev => 
-          prev > 0 ? prev - 1 : nameResults.length - 1
+        setSelectedIndex(prev =>
+          prev > 0 ? prev - 1 : allResults.length - 1
         );
         break;
       case 'Enter':
         e.preventDefault();
-        if (selectedIndex >= 0 && nameResults[selectedIndex]) {
-          handleResultClick(nameResults[selectedIndex]);
+        if (selectedIndex >= 0 && allResults[selectedIndex]) {
+          if (selectedIndex < nameResults.length) {
+            handleResultClick(allResults[selectedIndex], 'name');
+          } else {
+            handleResultClick(allResults[selectedIndex], 'article');
+          }
         } else if (query.trim()) {
           handleSearchSubmit(e);
         }
@@ -167,19 +180,26 @@ const UniversalSearch = () => {
   };
 
   // Handle result selection
-  const handleResultClick = (result) => {
+  const handleResultClick = (result, type = 'name') => {
     setIsOpen(false);
     setSelectedIndex(-1);
-    
-    const religion = result.religion?.toLowerCase() || 'global';
-    const slug = result.slug || result.name?.toLowerCase().replace(/\s+/g, '-');
-    router.push(`/names/${religion}/${slug}`);
+
+    if (type === 'article') {
+      // Navigate to article page
+      router.push(`/blog/${result.slug}`);
+    } else {
+      // Navigate to name page
+      const religion = result.religion?.toLowerCase() || 'global';
+      const slug = result.slug || result.name?.toLowerCase().replace(/\s+/g, '-');
+      router.push(`/names/${religion}/${slug}`);
+    }
   };
 
   // Clear search
   const clearSearch = () => {
     setQuery('');
     setNameResults([]);
+    setArticleResults([]);
     setIsOpen(false);
     setSelectedIndex(-1);
     setError(null);
@@ -303,8 +323,18 @@ const UniversalSearch = () => {
                 <div className="sticky top-0 bg-white/95 backdrop-blur-xl border-b border-gray-200 px-4 py-3 flex items-center justify-between z-10">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-semibold text-gray-900">
-                      Names ({nameResults.length})
+                      {totalResults} Result{totalResults !== 1 ? 's' : ''}
                     </span>
+                    {nameResults.length > 0 && (
+                      <span className="text-xs text-gray-500">
+                        {nameResults.length} Name{nameResults.length !== 1 ? 's' : ''}
+                      </span>
+                    )}
+                    {articleResults.length > 0 && (
+                      <span className="text-xs text-gray-500">
+                        {articleResults.length} Article{articleResults.length !== 1 ? 's' : ''}
+                      </span>
+                    )}
                     {isLoading && <Loader2 className="w-3 h-3 animate-spin text-indigo-600" />}
                   </div>
                   <p className="text-xs text-gray-500 hidden sm:block">
@@ -328,7 +358,7 @@ const UniversalSearch = () => {
                         initial={{ opacity: 0, x: -8 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.02 }}
-                        onClick={() => handleResultClick(result)}
+                        onClick={() => handleResultClick(result, 'name')}
                         onMouseEnter={() => setSelectedIndex(index)}
                         className={`w-full px-4 py-3 flex items-start gap-3 transition-all duration-200 border-l-4 group ${
                           isSelected
@@ -371,6 +401,67 @@ const UniversalSearch = () => {
                               <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-lg">
                                 <MapPin className="w-3 h-3 text-gray-500" aria-hidden="true" />
                                 {result.origin}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </motion.button>
+                    );
+                  })}
+
+                  {/* Article Results */}
+                  {articleResults.map((article, index) => {
+                    const articleIndex = nameResults.length + index;
+                    const isSelected = selectedIndex === articleIndex;
+
+                    return (
+                      <motion.button
+                        key={article.id || article.slug}
+                        initial={{ opacity: 0, x: -8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: articleIndex * 0.02 }}
+                        onClick={() => handleResultClick(article, 'article')}
+                        onMouseEnter={() => setSelectedIndex(articleIndex)}
+                        className={`w-full px-4 py-3 flex items-start gap-3 transition-all duration-200 border-l-4 group ${
+                          isSelected
+                            ? 'bg-purple-50 border-purple-200 shadow-inner'
+                            : 'border-transparent hover:bg-gray-50/80'
+                        }`}
+                        role="option"
+                        aria-selected={isSelected}
+                      >
+                        {/* Article Icon Badge */}
+                        <div className={`flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-sm group-hover:shadow-md transition-all duration-200 ${isSelected ? 'scale-110' : ''}`}>
+                          <FileText className="w-5 h-5 text-white" aria-hidden="true" />
+                        </div>
+
+                        {/* Article Content */}
+                        <div className="flex-1 text-left min-w-0">
+                          <div className="flex items-start justify-between gap-2 mb-1">
+                            <h3 className="font-semibold text-gray-900 text-base truncate">
+                              {highlightText(article.title, query)}
+                            </h3>
+                            <ChevronRight className={`w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5 group-hover:text-gray-600 transition-all duration-200 ${isSelected ? 'translate-x-1' : ''}`} aria-hidden="true" />
+                          </div>
+
+                          <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                            {highlightText(article.excerpt || article.subtitle || article.summary, query)}
+                          </p>
+
+                          {/* Article Metadata */}
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-purple-100 text-purple-700 text-xs font-semibold rounded-lg border border-purple-200">
+                              <BookOpen className="w-3 h-3" aria-hidden="true" />
+                              Article
+                            </span>
+                            {article.category && (
+                              <span className="inline-flex items-center px-2.5 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-lg">
+                                {article.category}
+                              </span>
+                            )}
+                            {article.read_time_minutes && (
+                              <span className="inline-flex items-center px-2.5 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-lg">
+                                {article.read_time_minutes} min read
                               </span>
                             )}
                           </div>

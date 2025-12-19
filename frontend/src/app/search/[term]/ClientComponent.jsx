@@ -11,20 +11,24 @@ import { useState, useTransition, useMemo, useCallback } from 'react';
 
 export default function SearchResultsClient({
   initialNames,
+  initialArticles = [],
   searchTerm,
-  totalNames
+  totalNames,
+  totalArticles = 0
 }) {
   const router = useRouter();
 
-  const dynamicTitle = `${searchTerm} - Best Names & Meanings | NameVerse`;
-  const dynamicDescription = `Discover ${totalNames} names for ${searchTerm}. Expert meanings, origins, and inspiration for your search.`;
+  const totalResults = totalNames + totalArticles;
+  const dynamicTitle = `${searchTerm} - Names & Articles | NameVerse`;
+  const dynamicDescription = `Discover ${totalResults} results for ${searchTerm}. Expert meanings, origins, articles, and inspiration for your search.`;
   const canonicalURL = `https://yourdomain.com/search/${encodeURIComponent(searchTerm)}`;
 
   const [viewMode, setViewMode] = useState('grid');
   const [isPending, startTransition] = useTransition();
+  const [activeTab, setActiveTab] = useState('all');
 
   const displayNames = initialNames;
-  const totalResults = displayNames.length;
+  const displayArticles = initialArticles;
 
   // SEO Schemas
   const faqSchema = {
@@ -110,7 +114,7 @@ export default function SearchResultsClient({
             <h1 className="text-2xl font-extrabold text-indigo-900 tracking-tight">{searchTerm}</h1>
             <span className="text-base text-indigo-700 font-semibold">({totalResults} results)</span>
           </div>
-          
+
           <div className="flex gap-1 bg-gray-50 rounded-md px-2 py-1">
             <button
               onClick={() => setViewMode('grid')}
@@ -137,26 +141,85 @@ export default function SearchResultsClient({
           </div>
         </nav>
 
+        {/* Tabs for filtering */}
+        <div className="max-w-4xl mx-auto px-4 mb-6">
+          <div className="flex gap-2 border-b border-gray-200">
+            <button
+              onClick={() => setActiveTab('all')}
+              className={`px-4 py-2 font-semibold border-b-2 transition-colors ${
+                activeTab === 'all'
+                  ? 'border-indigo-700 text-indigo-700'
+                  : 'border-transparent text-gray-600 hover:text-indigo-600'
+              }`}
+            >
+              All ({totalResults})
+            </button>
+            <button
+              onClick={() => setActiveTab('names')}
+              className={`px-4 py-2 font-semibold border-b-2 transition-colors ${
+                activeTab === 'names'
+                  ? 'border-indigo-700 text-indigo-700'
+                  : 'border-transparent text-gray-600 hover:text-indigo-600'
+              }`}
+            >
+              Names ({totalNames})
+            </button>
+            <button
+              onClick={() => setActiveTab('articles')}
+              className={`px-4 py-2 font-semibold border-b-2 transition-colors ${
+                activeTab === 'articles'
+                  ? 'border-indigo-700 text-indigo-700'
+                  : 'border-transparent text-gray-600 hover:text-indigo-600'
+              }`}
+            >
+              Articles ({totalArticles})
+            </button>
+          </div>
+        </div>
+
         <section className="max-w-4xl mx-auto px-4 pt-2 pb-6" role="main">
           {isPending ? (
             <SkeletonResults />
           ) : totalResults === 0 ? (
             <EmptyState searchTerm={searchTerm} />
           ) : (
-            <div className="mb-12">
-              <h2 className="text-xl font-bold text-indigo-900 mb-5">Names & Meanings</h2>
-              <ResultGrid viewMode={viewMode}>
-                {displayNames.map((name, idx) => (
-                  <NameCard
-                    key={name._id || idx}
-                    name={name}
-                    viewMode={viewMode}
-                    index={idx}
-                    searchTerm={searchTerm}
-                    router={router}
-                  />
-                ))}
-              </ResultGrid>
+            <div className="space-y-12">
+              {/* Names Section */}
+              {(activeTab === 'all' || activeTab === 'names') && displayNames.length > 0 && (
+                <div>
+                  <h2 className="text-xl font-bold text-indigo-900 mb-5">Names & Meanings</h2>
+                  <ResultGrid viewMode={viewMode}>
+                    {displayNames.map((name, idx) => (
+                      <NameCard
+                        key={name._id || idx}
+                        name={name}
+                        viewMode={viewMode}
+                        index={idx}
+                        searchTerm={searchTerm}
+                        router={router}
+                      />
+                    ))}
+                  </ResultGrid>
+                </div>
+              )}
+
+              {/* Articles Section */}
+              {(activeTab === 'all' || activeTab === 'articles') && displayArticles.length > 0 && (
+                <div>
+                  <h2 className="text-xl font-bold text-indigo-900 mb-5">Articles</h2>
+                  <ResultGrid viewMode={viewMode}>
+                    {displayArticles.map((article, idx) => (
+                      <ArticleCard
+                        key={article.id || article.slug || idx}
+                        article={article}
+                        viewMode={viewMode}
+                        searchTerm={searchTerm}
+                        router={router}
+                      />
+                    ))}
+                  </ResultGrid>
+                </div>
+              )}
             </div>
           )}
         </section>
@@ -263,6 +326,44 @@ function NameCard({ name, viewMode, index, searchTerm, router }) {
           {name.origin}
         </span>
       )}
+    </article>
+  );
+}
+
+function ArticleCard({ article, viewMode, searchTerm, router }) {
+  const url = `/blog/${article.slug}`;
+
+  return (
+    <article
+      onClick={() => router.push(url)}
+      className="group transition-transform duration-300 hover:scale-[1.038] hover:shadow-xl rounded-2xl border border-gray-100 bg-white px-6 py-7 flex flex-col items-start cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-400"
+      tabIndex={0}
+      aria-label={`Read article: ${article.title}`}
+      role="button"
+    >
+      <h3
+        className="text-2xl font-extrabold text-indigo-900 mb-3 tracking-tight group-hover:text-purple-700 transition-colors"
+        itemProp="name"
+      >
+        {article.title}
+      </h3>
+      {(article.excerpt || article.subtitle || article.summary) && (
+        <p className="text-gray-700 text-base mb-2 line-clamp-2">
+          {article.excerpt || article.subtitle || article.summary}
+        </p>
+      )}
+      <div className="flex flex-wrap items-center gap-2 mt-2">
+        {article.category && (
+          <span className="inline-block text-xs px-2 py-0.5 bg-purple-100 text-purple-800 rounded font-bold uppercase tracking-wider">
+            {article.category}
+          </span>
+        )}
+        {article.read_time_minutes && (
+          <span className="inline-block text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded font-medium">
+            {article.read_time_minutes} min read
+          </span>
+        )}
+      </div>
     </article>
   );
 }
