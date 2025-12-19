@@ -227,18 +227,42 @@ export default function SearchResultsClient({
         <section className="bg-white px-4 py-10 border-t border-gray-100 mt-8 shadow-sm">
           <div className="max-w-2xl mx-auto">
             <h2 className="text-2xl font-extrabold text-indigo-900 mb-5">
-              {searchTerm} — Names & Meanings Guide
+              Complete Guide to {searchTerm} Names & Meanings
             </h2>
-            <ul className="space-y-3 text-base text-gray-800 font-semibold list-disc pl-6">
+
+            {/* Enhanced SEO Content */}
+            <div className="prose prose-indigo max-w-none mb-6">
+              <p className="text-base text-gray-700 leading-relaxed mb-4">
+                Discover the perfect baby name related to <strong className="text-indigo-700">{searchTerm}</strong> from our comprehensive database of 60,000+ names.
+                Whether you're searching for Islamic names, Christian names, or Hindu names, our collection provides detailed meanings,
+                cultural origins, and spiritual significance to help you make the best choice for your baby.
+              </p>
+
+              <p className="text-base text-gray-700 leading-relaxed mb-4">
+                Each name in our {searchTerm} collection comes with authentic translations in multiple languages including English,
+                Urdu, Arabic, and Hindi. We provide pronunciation guides, numerology insights, lucky numbers, and personality traits
+                associated with each name to give you a complete understanding of your chosen name's significance.
+              </p>
+            </div>
+
+            <h3 className="text-xl font-bold text-indigo-900 mb-4">Why Choose a Name from {searchTerm}?</h3>
+            <ul className="space-y-3 text-base text-gray-800 font-semibold list-disc pl-6 mb-6">
               <li>
-                Explore the origin, cultural background, and symbolism of names related to{' '}
-                <strong>{searchTerm}</strong>.
+                <strong>Deep Cultural Heritage:</strong> Explore the origin, cultural background, and symbolism of names related to{' '}
+                <strong>{searchTerm}</strong>, connecting your baby to centuries of tradition and meaning.
               </li>
               <li>
-                Discover rich meanings, etymology, linguistic notes, and usage across different cultures.
+                <strong>Comprehensive Information:</strong> Discover rich meanings, etymology, linguistic notes, and usage patterns across different cultures and time periods.
               </li>
-              <li>Access comprehensive information about name origins, popularity, and significance.</li>
-              <li>Enhance your knowledge about naming traditions and cultural heritage.</li>
+              <li>
+                <strong>Multiple Language Support:</strong> Access authentic pronunciations and meanings in English, Urdu, Arabic, Hindi, and other languages.
+              </li>
+              <li>
+                <strong>Spiritual Significance:</strong> Learn about the religious and spiritual importance of each name in Islamic, Christian, or Hindu traditions.
+              </li>
+              <li>
+                <strong>Numerology & Lucky Elements:</strong> Enhance your knowledge about naming traditions including lucky numbers, colors, stones, and personality traits.
+              </li>
             </ul>
             <div className="bg-white rounded-xl border border-gray-100 p-6 mt-8 shadow-md">
               <h3 className="font-bold text-indigo-900 mb-2">Frequently Asked Questions</h3>

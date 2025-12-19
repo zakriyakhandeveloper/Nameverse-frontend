@@ -2,6 +2,9 @@ import NameClient from '@/components/names/NameDetailClient';
 import { fetchNameDetail, fetchNamesByLetter } from '@/lib/api/names';
 import { notFound } from 'next/navigation';
 import dynamic from 'next/dynamic';
+import { validateMetaDescription, generateNameMetaDescription } from '@/lib/seo/meta-helpers';
+import { generateNameProductSchema, generateFAQSchema } from '@/lib/seo/structured-data';
+import { generateNameFAQ } from '@/lib/seo/content-helpers';
 
 // Dynamically import the letter page component
 const NamesDatabaseClient = dynamic(() => import('../letter/[letter]/NameClientComponent'), {
@@ -40,17 +43,38 @@ export async function generateMetadata({ params }) {
   }
   const titleName = nameData.name || slug.replace(/[-_]/g, ' ');
   const religionTitle = religion.charAt(0).toUpperCase() + religion.slice(1);
-  const desc = nameData.short_meaning || nameData.meaning || `Discover the meaning of ${titleName}.`;
+
+  // Generate SEO-optimized description
+  const desc = validateMetaDescription(generateNameMetaDescription(nameData));
+
+  // Enhanced keywords for better SEO
+  const keywords = [
+    titleName,
+    `${titleName} name meaning`,
+    `${titleName} ${religionTitle} name`,
+    `${titleName} origin`,
+    `${titleName} baby name`,
+    nameData.gender ? `${nameData.gender} names` : 'baby names',
+    `${religionTitle} names`,
+    nameData.origin ? `${nameData.origin} names` : '',
+    'baby name meanings',
+    'name origins',
+    'cultural baby names'
+  ].filter(Boolean).join(', ');
+
   return {
-    title: `${titleName} Meaning | ${religionTitle} Names`,
+    title: `${titleName} Name Meaning & Origin | ${religionTitle} ${nameData.gender || ''} Baby Name`,
     description: desc,
-    alternates: { canonical: `/names/${religion}/${slug}` },
+    keywords,
+    authors: [{ name: 'NameVerse' }],
+    alternates: { canonical: `https://nameverse.vercel.app/names/${religion}/${slug}` },
     openGraph: {
-      title: `${titleName} - ${religionTitle} Name Meaning`,
+      title: `${titleName} - ${religionTitle} Name Meaning & Origin`,
       description: desc,
       type: 'article',
+      url: `https://nameverse.vercel.app/names/${religion}/${slug}`,
       siteName: 'NameVerse',
-      images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630 }],
+      images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: `${titleName} - ${religionTitle} baby name meaning` }],
     },
     twitter: {
       card: 'summary_large_image',
@@ -58,7 +82,7 @@ export async function generateMetadata({ params }) {
       description: desc,
       images: [`${SITE_URL}/og-image.png`],
     },
-    robots: { index: true, follow: true },
+    robots: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 },
   };
 }
 
@@ -87,5 +111,28 @@ export default async function NameSlugPage({ params }) {
   // Regular name detail page
   const data = await fetchNameDetail(religion, slug);
   if (!data) return notFound();
-  return <NameClient data={data} initialLanguage="english" />;
+
+  // Generate structured data schemas
+  const productSchema = generateNameProductSchema(data, religion, slug);
+  const faqSchema = generateFAQSchema(generateNameFAQ(data));
+
+  return (
+    <>
+      {/* Product Schema for Rich Snippets */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
+
+      {/* FAQ Schema */}
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
+
+      <NameClient data={data} initialLanguage="english" />
+    </>
+  );
 }
