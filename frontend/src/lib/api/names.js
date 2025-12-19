@@ -165,7 +165,7 @@ export async function fetchNameDetail(religion, slug) {
 
 /**
  * Search names across religions
- * Backend: GET /api/v1/names/search?q=query&religion=X&limit=20
+ * Backend: GET /api/v1/search?q=query&limit=20
  * @param {string} query - Search query (min 2 characters)
  * @param {Object} options - Search options
  * @param {string} options.religion - Filter by religion (optional)
@@ -189,7 +189,7 @@ export async function searchNames(query, options = {}) {
       ...(options.religion && { religion: options.religion }),
     };
 
-    const { data } = await apiClient.get('/api/v1/names/search', { params });
+    const { data } = await apiClient.get('/api/v1/search', { params });
 
     return {
       data: data.data || [],
@@ -199,7 +199,7 @@ export async function searchNames(query, options = {}) {
       query: data.query || query,
     };
   } catch (error) {
-    
+
     return {
       data: [],
       count: 0,
