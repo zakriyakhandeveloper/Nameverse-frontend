@@ -9,8 +9,9 @@ const Hero = () => {
       icon: Globe,
       gradient: 'from-emerald-500 to-teal-600',
       url: '/names/islamic',
-      count: '25K+',
-      description: 'Arabic & Quranic names',
+      count: '25,000+',
+      description: 'Quranic & Arabic baby names with meanings in Urdu',
+      fullDescription: 'Explore 25,000+ authentic Islamic baby names including Quranic names for boys and girls, names of Prophets and Sahaba, and Arabic origin names. Each Muslim baby name includes verified meanings in Urdu and Arabic with spiritual significance and pronunciation guides.',
       bgColor: 'bg-emerald-50'
     },
     {
@@ -19,8 +20,9 @@ const Hero = () => {
       icon: Heart,
       gradient: 'from-orange-500 to-red-600',
       url: '/names/hindu',
-      count: '20K+',
-      description: 'Sanskrit & Hindi names',
+      count: '20,000+',
+      description: 'Sanskrit & Hindi names with Vedic meanings',
+      fullDescription: 'Discover 20,000+ Hindu baby names from Sanskrit, Hindi, Tamil, and other Indian languages. Find Hindu boy names and Hindu girl names inspired by Hindu deities like Lord Krishna and Lord Shiva, Vedic literature, Indian culture, and modern Bollywood trends with pronunciation guides.',
       bgColor: 'bg-orange-50'
     },
     {
@@ -29,8 +31,9 @@ const Hero = () => {
       icon: Award,
       gradient: 'from-blue-500 to-indigo-600',
       url: '/names/christian',
-      count: '15K+',
-      description: 'Biblical & European names',
+      count: '15,000+',
+      description: 'Biblical names with verse references & saint names',
+      fullDescription: 'Browse 15,000+ Christian baby names with Biblical origins from Old and New Testament, traditional saint names, and European Christian heritage. Each Christian boy name and Christian girl name includes verse references, spiritual meanings, Christian historical significance, and pronunciation guides.',
       bgColor: 'bg-blue-50'
     }
   ];
@@ -42,9 +45,10 @@ const Hero = () => {
   ];
 
   const trustIndicators = [
-    { icon: Star, text: 'Verified Meanings', color: 'text-amber-600', bg: 'bg-amber-50' },
-    { icon: Lock, text: 'Privacy First', color: 'text-blue-600', bg: 'bg-blue-50' },
-    { icon: TrendingUp, text: '1M+ Happy Parents', color: 'text-emerald-600', bg: 'bg-emerald-50' }
+    { icon: Star, text: '99% Verified Name Meanings', color: 'text-amber-600', bg: 'bg-amber-50' },
+    { icon: Lock, text: 'Expert-Reviewed Content', color: 'text-blue-600', bg: 'bg-blue-50' },
+    { icon: TrendingUp, text: '5M+ Parents Worldwide Trust NameVerse', color: 'text-emerald-600', bg: 'bg-emerald-50' },
+    { icon: BookOpen, text: '60K+ Names in 15+ Languages', color: 'text-purple-600', bg: 'bg-purple-50' }
   ];
 
   return (
@@ -71,16 +75,13 @@ const Hero = () => {
           {/* Main heading */}
           <div className="space-y-4 text-center">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 leading-tight px-2">
-              Find the Perfect
+              Find Your Baby's Perfect Name
               <span className="block bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mt-2">
-                Baby Boy and Girl Name with Verified Meanings
+                60,000+ Verified Names with Meanings from Islamic, Hindu & Christian Traditions
               </span>
             </h1>
-            <h2 className="text-lg sm:text-xl md:text-2xl text-gray-600 font-medium px-4 max-w-3xl mx-auto">
-              Explore 65,000+ authentic baby names with meanings, origins, and cultural stories
-            </h2>
-            <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed px-4">
-              Explore over 65,000 unique and authentic baby names from Islamic, Hindu, and Christian traditions. Discover each name's meaning, origin, and cultural story to choose the perfect baby name that reflects your family's heritage and love.
+            <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-medium px-4 max-w-3xl mx-auto">
+              Discover the perfect baby boy or girl name from 60,000+ verified options with complete meanings in English, Urdu, Arabic & Hindi, pronunciation guides, and cultural significance
             </p>
           </div>
 
