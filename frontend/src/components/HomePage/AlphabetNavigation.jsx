@@ -48,7 +48,7 @@ const AlphabetNavigation = () => {
               transition={{ delay: 0.02 * index }}
             >
               <Link
-                href={`/names/letter/${letter.toLowerCase()}`}
+                href={`/names/islamic/letter/${letter.toLowerCase()}`}
                 className="group relative aspect-square flex items-center justify-center bg-white border-2 border-indigo-100 rounded-xl font-bold text-xl sm:text-2xl text-gray-700 hover:border-indigo-500 hover:bg-gradient-to-br hover:from-indigo-500 hover:to-purple-600 hover:text-white hover:shadow-xl hover:scale-110 transition-all duration-300"
                 aria-label={`Browse baby names starting with ${letter}`}
               >
@@ -76,7 +76,7 @@ const AlphabetNavigation = () => {
             {['A', 'M', 'S', 'Z', 'R', 'F'].map((letter) => (
               <Link
                 key={letter}
-                href={`/names/letter/${letter.toLowerCase()}`}
+                href={`/names/islamic/letter/${letter.toLowerCase()}`}
                 className="px-4 py-2 bg-white border border-indigo-200 rounded-full text-sm font-semibold text-indigo-600 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all"
               >
                 {letter === 'A' && 'Baby Names Starting with A'}

@@ -113,10 +113,10 @@ const PopularNamesSection = () => {
             </div>
 
             <Link
-              href="/names/islamic?gender=male"
+              href="/names/islamic"
               className="mt-6 block w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-center font-bold rounded-xl hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg transition-all"
             >
-              View All Boy Names →
+              View All Islamic Boy Names →
             </Link>
           </motion.div>
 
@@ -165,10 +165,10 @@ const PopularNamesSection = () => {
             </div>
 
             <Link
-              href="/names/islamic?gender=female"
+              href="/names/hindu"
               className="mt-6 block w-full py-3 bg-gradient-to-r from-pink-600 to-rose-600 text-white text-center font-bold rounded-xl hover:from-pink-700 hover:to-rose-700 hover:shadow-lg transition-all"
             >
-              View All Girl Names →
+              View All Hindu Girl Names →
             </Link>
           </motion.div>
         </div>
