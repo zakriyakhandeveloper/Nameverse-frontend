@@ -7,7 +7,7 @@ const DOMAIN = process.env.NEXT_PUBLIC_SITE_URL || "https://yourdomain.com";
 export const metadata = {
   title: "60,000+ Baby Names with Meanings | Islamic, Hindu, Christian Names 2025 | NameVerse",
   description:
-    "Discover your baby's perfect name from 60,000+ verified names with meanings in English, Urdu, Arabic & Hindi. Browse Islamic, Hindu & Christian baby boy and girl names with cultural origins, pronunciation guides, and spiritual significance.",
+    "Find 60,000+ baby names with meanings in English, Urdu, Arabic & Hindi. Explore Islamic, Hindu & Christian names with origins and pronunciation guides.",
   keywords: [
     // Primary high-volume keywords
     "baby names with meanings",
