@@ -148,7 +148,8 @@ Rate Limit: 100 requests/day per IP (unlimited for nameverse.vercel.app)
     Examples:
       curl "http://localhost:5000/api/v1/articles"
       curl "http://localhost:5000/api/v1/articles?page=1&limit=5"
-      curl "http://localhost:5000/api/v1/articles?category=Baby%20Naming%20Trends&limit=10"
+      curl "
+      "
       curl "http://localhost:5000/api/v1/articles?sort=views&limit=5"
 
 14. GET /api/v1/articles/latest
