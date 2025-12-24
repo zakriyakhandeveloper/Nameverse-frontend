@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback, useTransition } from 'react';
-import { 
-  Search, X, Filter, ChevronLeft, ChevronRight, Heart, Globe, Star, BookOpen, User
+import { useState, useEffect, useMemo, useCallback, useTransition, memo } from 'react';
+import {
+  Search, X, Filter, ChevronLeft, ChevronRight, Heart, Globe, Star, BookOpen, User, Hash
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -72,7 +72,7 @@ function normalizeGender(gender) {
 // COMPONENTS
 // ==========================================
 
-function NameCard({ name, onFavorite, isFavorite, religion }) {
+const NameCard = memo(function NameCard({ name, onFavorite, isFavorite, religion }) {
   const genderColors = {
     male: 'bg-blue-50 text-blue-700 border-blue-200',
     female: 'bg-pink-50 text-pink-700 border-pink-200',
@@ -83,26 +83,29 @@ function NameCard({ name, onFavorite, isFavorite, religion }) {
   const normalized = normalizeGender(name.gender);
 
   return (
-    <article className="bg-white rounded-xl p-4 border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200">
+    <article className="bg-white rounded-xl p-4 border border-gray-200 hover:border-gray-400 hover:shadow-xl transition-all duration-300 group">
       <div className="flex items-start justify-between gap-3 mb-3">
         <div className="flex-1 min-w-0">
-          <h3 className="text-lg font-bold text-gray-900 mb-1 leading-tight">
-            {name.name}
-          </h3>
+          <a href={`/names/${religion}/${name.slug}`} className="block group-hover:scale-105 transition-transform duration-200">
+            <h3 className="text-lg font-bold text-gray-900 mb-1 leading-tight hover:text-blue-600 transition-colors">
+              {name.name}
+            </h3>
+          </a>
           <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${genderColors[normalized]}`}>
             <User className="w-3 h-3" />
             {name.gender}
           </span>
         </div>
-        
+
         <button
           onClick={(e) => {
             e.preventDefault();
+            e.stopPropagation();
             onFavorite(name._id);
           }}
           className={`flex-shrink-0 p-2 rounded-full transition-all ${
-            isFavorite 
-              ? 'bg-red-50 text-red-500' 
+            isFavorite
+              ? 'bg-red-50 text-red-500'
               : 'bg-gray-50 text-gray-400 hover:bg-red-50 hover:text-red-500'
           }`}
           aria-label="Add to favorites"
@@ -111,42 +114,36 @@ function NameCard({ name, onFavorite, isFavorite, religion }) {
         </button>
       </div>
 
-      <p className="text-gray-600 text-sm leading-relaxed mb-3 line-clamp-2">
-        {name.short_meaning || name.meaning || name.long_meaning?.substring(0, 100)}
+      <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3">
+        {name.short_meaning || name.meaning || name.long_meaning || 'Meaningful name with deep cultural significance'}
       </p>
-
-      {name.origin && (
-        <div className="flex items-center gap-2 text-xs text-gray-500 mb-3">
-          <Globe className="w-3.5 h-3.5" />
-          <span className="font-medium">{name.origin}</span>
-        </div>
-      )}
 
       <div className="flex items-center justify-between pt-3 border-t border-gray-100">
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1">
-            <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
-            <span className="text-xs font-semibold text-gray-700">
-              {name.rating || (Math.random() * 2 + 3).toFixed(1)}
+          {name.lucky_number && (
+            <div className="flex items-center gap-1" title="Lucky Number">
+              <Hash className="w-3.5 h-3.5 text-purple-500" />
+              <span className="text-xs font-semibold text-gray-700">
+                {name.lucky_number}
+              </span>
+            </div>
+          )}
+          {name.origin && (
+            <span className="text-xs text-gray-500 font-medium">
+              {name.origin}
             </span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Heart className="w-3.5 h-3.5 text-red-500" />
-            <span className="text-xs font-semibold text-gray-700">
-              {name.favorites ? `${(name.favorites / 1000).toFixed(1)}K` : Math.floor(Math.random() * 50)}
-            </span>
-          </div>
+          )}
         </div>
         <a
           href={`/names/${religion}/${name.slug}`}
-          className="px-3 py-1.5 bg-gray-900 text-white rounded-lg text-xs font-semibold hover:bg-gray-800 transition-colors"
+          className="px-4 py-2 bg-gradient-to-r from-gray-900 to-gray-700 text-white rounded-lg text-xs font-semibold hover:from-gray-800 hover:to-gray-600 transition-all shadow-sm hover:shadow-md"
         >
-          View Details
+          Explore →
         </a>
       </div>
     </article>
   );
-}
+});
 
 function SkeletonCard() {
   return (
@@ -264,7 +261,7 @@ export default function ReligiousNamesBrowser({
 
   const currentReligion = RELIGIONS.find(r => r.id === religion) || RELIGIONS[0];
 
-  // Load names when filters change
+  // Load names when filters change with optimized debouncing
   useEffect(() => {
     if (page === 1 && !gender && !search && !startsWith && sort === 'asc' && names.length > 0) {
       return;
@@ -289,11 +286,15 @@ export default function ReligiousNamesBrowser({
             setTotalCount(data.pagination?.totalCount || 0);
           }
         })
+        .catch(error => {
+          console.error('Error fetching names:', error);
+          setNames([]);
+        })
         .finally(() => setLoading(false));
-    }, 300);
+    }, search ? 500 : 100); // Longer debounce for search
 
     return () => clearTimeout(timer);
-  }, [page, pageSize, sort, gender, search, startsWith, religion]);
+  }, [page, pageSize, sort, gender, search, startsWith, religion, names.length]);
 
   const handleReligionChange = (newReligion) => {
     setReligion(newReligion);
@@ -327,7 +328,12 @@ export default function ReligiousNamesBrowser({
     });
   }, []);
 
-  const activeFilters = [gender, search, startsWith, sort !== 'asc'].filter(Boolean).length;
+  const activeFilters = useMemo(
+    () => [gender, search, startsWith, sort !== 'asc'].filter(Boolean).length,
+    [gender, search, startsWith, sort]
+  );
+
+  const filteredNames = useMemo(() => names, [names]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -550,10 +556,10 @@ export default function ReligiousNamesBrowser({
               <SkeletonCard key={i} />
             ))}
           </div>
-        ) : names.length > 0 ? (
+        ) : filteredNames.length > 0 ? (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {names.map(name => (
+              {filteredNames.map(name => (
                 <NameCard
                   key={name._id}
                   name={name}

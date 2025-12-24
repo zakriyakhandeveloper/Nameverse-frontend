@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import {
   Sparkles, BookOpen, Heart, Brain, Gem, Calendar, Palette, Hash,
   Languages, Volume2, Users, Link2, Tag, Book, Share2, Bookmark,
-  TrendingUp, Globe, Star, MessageCircle, ChevronDown, ChevronUp
+  TrendingUp, Globe, Star, MessageCircle, ChevronDown, ChevronUp, Home
 } from 'lucide-react'
 
 // Religion-based theme configuration
@@ -203,10 +203,20 @@ const FAQItem = ({ question, answer }) => {
 // Main Component
 export default function NameClient({ data, initialLanguage }) {
   const [isFavorite, setIsFavorite] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
 
   // Get religion theme
   const religion = data.religion?.toLowerCase() || 'islamic'
   const theme = religionThemes[religion] || religionThemes.islamic
+
+  // Track scroll position for sticky header
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 100)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   // Get native script name
   const nativeScriptName = data.in_arabic?.name || data.in_hebrew?.name || data.in_sanskrit?.name || data.name
@@ -303,15 +313,56 @@ export default function NameClient({ data, initialLanguage }) {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Sticky Mini Header */}
+      <div className={`fixed top-0 left-0 right-0 z-50 bg-white shadow-md transition-all duration-300 ${isScrolled ? 'translate-y-0' : '-translate-y-full'}`}>
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <a href={`/names/${religion}`} className="text-gray-600 hover:text-gray-900 transition-colors">
+              <ChevronUp className="w-5 h-5 transform rotate-90" />
+            </a>
+            <div>
+              <h2 className="font-bold text-gray-900">{data.name}</h2>
+              <p className="text-xs text-gray-600">{data.short_meaning}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleShare}
+              className="p-2 text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              <Share2 size={20} />
+            </button>
+            <button
+              onClick={handleFavoriteToggle}
+              className={`p-2 transition-colors ${isFavorite ? 'text-red-500' : 'text-gray-600 hover:text-red-500'}`}
+            >
+              <Bookmark size={20} className={isFavorite ? 'fill-current' : ''} />
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Hero Section */}
       <section className={`bg-gradient-to-br ${theme.gradient} py-12 sm:py-16 px-4`}>
         <div className="max-w-6xl mx-auto">
-          {/* Breadcrumb */}
-          <nav className="text-sm mb-6 text-white/80">
-            <a href="/" className="hover:text-white">Home</a> &gt;
-            <a href={`/names/${religion}`} className="hover:text-white ml-1">{religion} Names</a> &gt;
-            <a href={`/names/${religion}/${data.gender?.toLowerCase()}`} className="hover:text-white ml-1">{data.gender}</a> &gt;
-            <span className="text-white ml-1">{data.name}</span>
+          {/* Enhanced Breadcrumb with Icons */}
+          <nav className="flex items-center gap-2 text-sm mb-6 text-white/80 flex-wrap">
+            <a href="/" className="hover:text-white transition-colors flex items-center gap-1">
+              <Home size={16} />
+              <span>Home</span>
+            </a>
+            <span>/</span>
+            <a href="/names" className="hover:text-white transition-colors">Names</a>
+            <span>/</span>
+            <a href={`/names/${religion}`} className="hover:text-white transition-colors capitalize">{religion}</a>
+            {data.gender && (
+              <>
+                <span>/</span>
+                <span className="text-white capitalize">{data.gender}</span>
+              </>
+            )}
+            <span>/</span>
+            <span className="text-white font-semibold">{data.name}</span>
           </nav>
 
           {/* Main Name Display */}
@@ -377,6 +428,52 @@ export default function NameClient({ data, initialLanguage }) {
         </div>
       </section>
 
+      {/* Quick Info Bar */}
+      {(data.category || data.themes || data.language) && (
+        <section className="py-8 px-4 bg-white border-b border-gray-200">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex flex-wrap gap-4">
+              {data.category && data.category.length > 0 && (
+                <div>
+                  <h3 className="text-xs font-semibold text-gray-500 uppercase mb-2">Categories</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {data.category.map((cat, idx) => (
+                      <span key={idx} className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
+                        {cat}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {data.themes && data.themes.length > 0 && (
+                <div>
+                  <h3 className="text-xs font-semibold text-gray-500 uppercase mb-2">Themes</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {data.themes.map((theme, idx) => (
+                      <span key={idx} className="px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">
+                        {theme}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {data.language && data.language.length > 0 && (
+                <div>
+                  <h3 className="text-xs font-semibold text-gray-500 uppercase mb-2">Languages</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {data.language.map((lang, idx) => (
+                      <span key={idx} className="px-3 py-1 bg-green-50 text-green-700 rounded-full text-sm font-medium">
+                        {lang}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Meanings Section */}
       <section className="py-12 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
@@ -395,11 +492,11 @@ export default function NameClient({ data, initialLanguage }) {
                 theme={theme}
               />
             )}
-            {data.themes && data.themes.length > 0 && (
+            {data.numerology_meaning && (
               <MeaningCard
                 icon={Sparkles}
-                title="Symbolism"
-                content={data.themes.join(", ")}
+                title="Numerology"
+                content={data.numerology_meaning}
                 theme={theme}
               />
             )}
