@@ -31,15 +31,42 @@ export async function generateMetadata({ searchParams }) {
     : `Explore thousands of baby names from all religions and cultures with meanings, origins, numerology, and lucky traits. Find unique boy and girl names for your baby.`;
 
   const keywords = [
+    // Core baby name keywords
     'baby names',
-    'boy names',
-    'girl names',
+    'baby names with meanings',
+    'baby boy names',
+    'baby girl names',
     'unique baby names',
-    'modern baby names',
+    'modern baby names 2025',
     'baby name meanings',
     'baby name origins',
     'baby name finder',
-    'baby name list'
+    'baby name list',
+
+    // Religious keywords
+    'Islamic baby names',
+    'Muslim baby names',
+    'Islamic names',
+    'Christian baby names',
+    'Biblical baby names',
+    'Hindu baby names',
+    'Sanskrit baby names',
+
+    // Question-based keywords
+    'what are some baby names',
+    'how to choose baby name',
+    'best baby names 2025',
+    'popular baby names',
+    'trending baby names',
+
+    // Feature keywords
+    'baby names with lucky stones',
+    'baby names with numerology',
+    'baby names by religion',
+    'baby names by origin',
+    'baby names A to Z',
+    'verified baby names',
+    'authentic baby names'
   ].join(', ');
 
   const canonicalUrl = `${SITE_URL}/names`;
@@ -142,29 +169,102 @@ function generateStructuredData(names) {
     "@type": "ListItem",
     position: index + 1,
     name: n.name,
-    url: `${SITE_URL}/names/${n.slug}`,
+    url: `${SITE_URL}/names/${n.religion || 'islamic'}/${n.slug}`,
+    description: n.short_meaning || n.long_meaning
   }));
 
   return {
     "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    "name": "All Baby Names — Meanings & Origins",
-    "description": "Browse the top baby names from all cultures with meanings, numerology, and origin details.",
-    "url": `${SITE_URL}/names`,
-    "isPartOf": {
-      "@type": "WebSite",
-      "name": "NameVerse",
-      "url": SITE_URL
-    },
-    "mainEntity": {
-      "@type": "ItemList",
-      "itemListElement": nameItems
-    },
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": `${SITE_URL}/search?query={search_term_string}`,
-      "query-input": "required name=search_term_string"
-    }
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": `${SITE_URL}/names#webpage`,
+        "name": "60,000+ Baby Names with Meanings | Islamic, Hindu & Christian Names",
+        "description": "Browse verified baby names from all cultures with meanings, numerology, origins, and lucky traits. Find unique Islamic, Hindu, and Christian baby names for boys and girls.",
+        "url": `${SITE_URL}/names`,
+        "isPartOf": {
+          "@type": "WebSite",
+          "@id": `${SITE_URL}/#website`,
+          "name": "NameVerse",
+          "url": SITE_URL
+        },
+        "breadcrumb": {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": SITE_URL
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "All Baby Names",
+              "item": `${SITE_URL}/names`
+            }
+          ]
+        },
+        "mainEntity": {
+          "@type": "ItemList",
+          "name": "Baby Names Collection",
+          "description": "Comprehensive list of baby names from Islamic, Hindu, and Christian traditions",
+          "itemListElement": nameItems
+        },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": `${SITE_URL}/search?query={search_term_string}`
+          },
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${SITE_URL}/#website`,
+        "name": "NameVerse",
+        "url": SITE_URL,
+        "publisher": {
+          "@type": "Organization",
+          "@id": `${SITE_URL}/#organization`,
+          "name": "NameVerse",
+          "logo": {
+            "@type": "ImageObject",
+            "url": `${SITE_URL}/logo.png`
+          }
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How many baby names does NameVerse have?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "NameVerse features over 60,000 verified baby names including 25,000+ Islamic names, 20,000+ Hindu names, and 15,000+ Christian names with complete meanings, origins, and lucky traits."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What information is provided for each baby name?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Each baby name includes verified meaning, cultural origin, gender, pronunciation, numerology, lucky day, lucky color, lucky stone, themes, and complete cultural context verified by religious experts."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I filter baby names by religion and origin?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, you can filter baby names by religion (Islamic, Hindu, Christian), gender (boy, girl, unisex), origin (Arabic, Sanskrit, Hebrew, etc.), letter (A-Z), themes, lucky attributes, and many other criteria."
+            }
+          }
+        ]
+      }
+    ]
   };
 }
 

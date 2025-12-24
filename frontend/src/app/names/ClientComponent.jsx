@@ -331,46 +331,23 @@ export default function BabyNamesClient({ initialData, initialReligion = 'islami
 
   return (
     <>
-      {/* SEO Content Section - Hidden but crawlable */}
-      <div className="sr-only">
-        <h1>Islamic Baby Names with Meanings | Muslim Names for Boys and Girls</h1>
-        <p>
-          Discover beautiful Islamic baby names with authentic meanings from the Quran and Arabic origins. 
-          Browse thousands of Muslim baby names for boys and girls, including modern Islamic names, 
-          traditional Arabic names, and Quranic names with detailed meanings, origins, and lucky stones.
-        </p>
-        <h2>Popular Islamic Baby Names</h2>
-        <p>
-          Find the perfect Islamic name for your baby boy or girl. Our comprehensive database includes 
-          names from various Islamic cultures including Arabic, Persian, Turkish, and Urdu origins. 
-          Each name comes with its meaning, lucky day, lucky color, and lucky stone according to Islamic numerology.
-        </p>
-        <h3>Islamic Baby Boy Names</h3>
-        <p>
-          Browse authentic Muslim boy names from the Quran and Islamic tradition. Popular choices include 
-          Muhammad, Ahmad, Ali, Hassan, Hussain, Omar, Usman, Ibrahim, Yusuf, and Zakariya.
-        </p>
-        <h3>Islamic Baby Girl Names</h3>
-        <p>
-          Explore beautiful Muslim girl names with deep Islamic meanings. Top choices include 
-          Aisha, Fatima, Khadijah, Maryam, Zainab, Hafsa, Ruqayyah, Aminah, Sarah, and Asma.
-        </p>
-        <h3>Quranic Baby Names</h3>
-        <p>
-          Names mentioned in the Holy Quran carry special significance. Discover Quranic names for boys and girls 
-          with their exact meanings and contexts from Islamic scripture.
-        </p>
-        <keywords>
-          Islamic baby names, Muslim baby names, Arabic baby names, Quranic names, Islamic boy names, 
-          Muslim girl names, baby names with meanings, Islamic name meanings, Arabic names for boys, 
-          Arabic names for girls, modern Islamic names, traditional Muslim names, Islamic names from Quran,
-          baby name finder, Islamic baby name generator, Muslim baby name search, lucky Islamic names,
-          Islamic names with lucky stones, Islamic numerology names
-        </keywords>
-      </div>
-
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-        {/* Lightweight Header */}
+        {/* Breadcrumb Navigation */}
+        <nav className="bg-white border-b border-gray-200">
+          <div className="max-w-6xl mx-auto px-4 py-3">
+            <ol className="flex items-center gap-2 text-sm flex-wrap">
+              <li>
+                <a href="/" className="text-indigo-600 hover:text-indigo-800 font-medium transition-colors">
+                  Home
+                </a>
+              </li>
+              <li className="text-gray-400">/</li>
+              <li className="text-gray-700 font-semibold">All Baby Names</li>
+            </ol>
+          </div>
+        </nav>
+
+        {/* Enhanced Header with proper H1 */}
         <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
           <div className="max-w-6xl mx-auto px-4 py-4 sm:py-6">
             <div className="flex items-center justify-between mb-4">
@@ -380,11 +357,11 @@ export default function BabyNamesClient({ initialData, initialReligion = 'islami
                 </div>
                 <div>
                   <h1 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                    {pageTitle}
+                    {pageTitle} with Meanings & Origins
                   </h1>
-                  <h2 className="text-sm sm:text-base text-gray-600 font-medium hidden sm:block">
-                    {pageSubtitle}
-                  </h2>
+                  <p className="text-sm sm:text-base text-gray-600 font-medium hidden sm:block">
+                    {pageSubtitle} - Browse 60,000+ verified names
+                  </p>
                 </div>
               </div>
               

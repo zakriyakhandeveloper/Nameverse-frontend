@@ -25,32 +25,55 @@ export async function generateMetadata({ params }) {
   const { religion } = resolvedParams;
   const religionTitle = religion.charAt(0).toUpperCase() + religion.slice(1);
 
+  const metadataMap = {
+    islamic: {
+      title: `25,000+ Islamic Baby Names with Meanings | Muslim Names from Quran | NameVerse`,
+      description: `Discover authentic Islamic baby names with Quranic references and verified meanings in English, Urdu & Arabic. Browse 25,000+ Muslim baby names for boys and girls with spiritual significance, pronunciation guides, and lucky traits.`,
+      keywords: `Islamic baby names, Muslim baby names, Islamic names, Quranic baby names, Arabic baby names, Muslim boy names, Muslim girl names, Islamic names for boys, Islamic names for girls, baby boy islamic names, islamic names wiki, meaning of islamic names urdu, islamic names urdu pakistan, what are some muslim names, what do muslim names mean, how do muslim names work, Quranic names for boys, Quranic names for girls`
+    },
+    christian: {
+      title: `15,000+ Christian Baby Names with Meanings | Biblical Names | NameVerse`,
+      description: `Explore authentic Christian baby names with Biblical references and saint connections. Browse 15,000+ Christian names for boys and girls with scripture verses, Hebrew/Greek origins, and spiritual significance.`,
+      keywords: `Christian baby names, Biblical baby names, Christian names, saint names, Biblical boy names, Biblical girl names, Christian names for boys, Christian names for girls, names from the Bible, Catholic baby names, Protestant baby names, Orthodox Christian names, Hebrew baby names, Greek baby names`
+    },
+    hindu: {
+      title: `20,000+ Hindu Baby Names with Meanings | Sanskrit Names | NameVerse`,
+      description: `Find beautiful Hindu baby names from Sanskrit with Vedic meanings and deity connections. Browse 20,000+ Hindu names for boys and girls inspired by gods, goddesses, and ancient Indian wisdom.`,
+      keywords: `Hindu baby names, Sanskrit baby names, Hindu names, Vedic baby names, Indian baby names, Hindu boy names, Hindu girl names, Sanskrit names for boys, Sanskrit names for girls, Lord Krishna names, Lord Shiva names, Goddess Lakshmi names, Tamil baby names, Hindi baby names`
+    }
+  };
+
+  const metadata = metadataMap[religion] || metadataMap.islamic;
+
   return {
-    title: `${religionTitle} Baby Names - Meanings & Origins | Name Database`,
-    description: `Discover authentic ${religionTitle} baby names with verified meanings, cultural context, and pronunciation guides. Browse thousands of traditional and modern names for boys and girls.`,
-    keywords: `${religionTitle} names, baby names, ${religionTitle} baby names, name meanings, boy names, girl names, religious names`,
+    title: metadata.title,
+    description: metadata.description,
+    keywords: metadata.keywords,
+    alternates: {
+      canonical: `${SITE_URL}/names/${religion}`,
+    },
     openGraph: {
       title: `${religionTitle} Baby Names - Complete Database`,
-      description: `Explore ${religionTitle} baby names with authentic meanings and cultural significance.`,
+      description: metadata.description,
       type: 'website',
-      url: `${SITE_URL}/religion/${religion}`,
+      url: `${SITE_URL}/names/${religion}`,
       siteName: 'NameVerse',
       images: [
         {
           url: `${SITE_URL}/og-image-${religion}.png`,
           width: 1200,
           height: 630,
-          alt: `${religionTitle} Baby Names`,
+          alt: `${religionTitle} Baby Names with Meanings`,
         },
       ],
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${religionTitle} Baby Names`,
-      description: `Explore ${religionTitle} baby names with meanings and origins.`,
+      title: metadata.title,
+      description: metadata.description,
       images: [`${SITE_URL}/og-image-${religion}.png`],
     },
-    robots: { index: true, follow: true },
+    robots: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 },
     authors: [{ name: 'NameVerse Team' }],
   };
 }
@@ -95,6 +118,72 @@ export function generateViewport() {
 }
 
 // ==========================================
+// GENERATE JSON-LD SCHEMA
+// ==========================================
+function generateStructuredData(religion, names, totalCount) {
+  const religionTitle = religion.charAt(0).toUpperCase() + religion.slice(1);
+
+  const nameItems = (names || []).slice(0, 20).map((n, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    name: n.name,
+    url: `${SITE_URL}/names/${religion}/${n.slug}`,
+    description: n.short_meaning || n.long_meaning
+  }));
+
+  const religionDescriptions = {
+    islamic: 'Authentic Islamic baby names with Quranic references and meanings in English, Urdu & Arabic',
+    christian: 'Biblical Christian baby names with scripture verses and saint connections',
+    hindu: 'Hindu baby names from Sanskrit with Vedic meanings and deity connections'
+  };
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": `${SITE_URL}/names/${religion}#webpage`,
+        "name": `${religionTitle} Baby Names with Meanings`,
+        "description": religionDescriptions[religion] || `${religionTitle} baby names with meanings`,
+        "url": `${SITE_URL}/names/${religion}`,
+        "isPartOf": {
+          "@type": "WebSite",
+          "@id": `${SITE_URL}/#website`,
+          "name": "NameVerse"
+        },
+        "breadcrumb": {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE_URL },
+            { "@type": "ListItem", "position": 2, "name": "Names", "item": `${SITE_URL}/names` },
+            { "@type": "ListItem", "position": 3, "name": `${religionTitle} Names`, "item": `${SITE_URL}/names/${religion}` }
+          ]
+        },
+        "mainEntity": {
+          "@type": "ItemList",
+          "name": `${religionTitle} Baby Names Collection`,
+          "numberOfItems": totalCount,
+          "itemListElement": nameItems
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": `How many ${religionTitle} baby names are available?`,
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": `NameVerse features ${totalCount.toLocaleString()}+ verified ${religionTitle} baby names with complete meanings, origins, pronunciations, and cultural significance.`
+            }
+          }
+        ]
+      }
+    ]
+  };
+}
+
+// ==========================================
 // PAGE COMPONENT
 // ==========================================
 export default async function ReligionNamesPage({ params }) {
@@ -116,13 +205,21 @@ export default async function ReligionNamesPage({ params }) {
   const initialTotalCount = namesData.success ? namesData.pagination?.totalCount || 0 : 0;
   const initialFilters = filtersData.success ? filtersData.filters || {} : {};
 
+  const structuredData = generateStructuredData(religion, initialNames, initialTotalCount);
+
   return (
-    <ReligiousNamesBrowser
-      initialReligion={religion}
-      initialNames={initialNames}
-      initialFilters={initialFilters}
-      initialTotalPages={initialTotalPages}
-      initialTotalCount={initialTotalCount}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <ReligiousNamesBrowser
+        initialReligion={religion}
+        initialNames={initialNames}
+        initialFilters={initialFilters}
+        initialTotalPages={initialTotalPages}
+        initialTotalCount={initialTotalCount}
+      />
+    </>
   );
 }
