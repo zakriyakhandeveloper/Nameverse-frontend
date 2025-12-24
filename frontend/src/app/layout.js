@@ -9,6 +9,7 @@ import PerformanceInit from "./performance";
 import StructuredData from "@/components/SEO/StructuredData";
 import GoogleBotMeta from "@/components/SEO/GoogleBotMeta";
 import { AppProvider } from "@/contexts/AppContext";
+import LoadingWrapper from "@/components/LoadingAnimation/LoadingWrapper";
 
 // Use environment variable or default - will be overridden client-side if needed
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://nameverse.vercel.app";
@@ -61,11 +62,22 @@ export const metadata = {
   },
   icons: {
     icon: [
-      { url: `/logo.png`, sizes: '32x32', type: 'image/png' },
-      { url: `/logo.png`, sizes: '16x16', type: 'image/png' },
+      { url: '/logo.png', sizes: '192x192', type: 'image/png' },
+      { url: '/logo.png', sizes: '512x512', type: 'image/png' },
+      { url: '/logo.png', sizes: '32x32', type: 'image/png' },
+      { url: '/logo.png', sizes: '16x16', type: 'image/png' },
     ],
-    shortcut: `/logo.png`,
-    apple: `/apple-touch.png`,
+    shortcut: '/logo.png',
+    apple: [
+      { url: '/apple-touch.png', sizes: '180x180', type: 'image/png' },
+      { url: '/logo.png', sizes: '152x152', type: 'image/png' },
+    ],
+    other: [
+      {
+        rel: 'mask-icon',
+        url: '/logo.png',
+      },
+    ],
   },
   manifest: `/manifest.json`, // Use relative path to avoid CORS issues
   category: "Baby Names, Culture, Religion",
@@ -118,11 +130,13 @@ export default function RootLayout({ children }) {
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-gray-900`}>
         <ErrorBoundary>
           <AppProvider>
-            <PerformanceInit />
-            <Navbar />
-            {children}
-            <AppInstallPopup />
-            <SWRegister /> {/* ✅ Service Worker registration */}
+            <LoadingWrapper>
+              <PerformanceInit />
+              <Navbar />
+              {children}
+              <AppInstallPopup />
+              <SWRegister /> {/* ✅ Service Worker registration */}
+            </LoadingWrapper>
           </AppProvider>
         </ErrorBoundary>
       </body>

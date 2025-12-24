@@ -33,7 +33,7 @@ const PopularNamesSection = () => {
   ];
 
   return (
-    <section className="py-12 sm:py-16 bg-gradient-to-br from-white via-purple-50/30 to-indigo-50/30">
+    <section className="py-10 sm:py-14 lg:py-16 bg-gradient-to-br from-white via-purple-50/30 to-indigo-50/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Section Header */}
         <div className="text-center mb-8 sm:mb-12">

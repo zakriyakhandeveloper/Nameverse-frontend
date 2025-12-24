@@ -17,15 +17,37 @@ export const metadata = {
     "unique baby names",
     "baby names 2025",
 
-    // Religious tradition keywords
+    // Islamic names - Core keywords
     "Islamic baby names",
-    "Hindu baby names",
-    "Christian baby names",
-    "Muslim baby names",
+    "Islamic names",
+    "muslim baby names",
+    "muslim islamic baby names",
+    "islamic names for boys",
+    "islamic names for girls",
+    "baby boy islamic names",
+    "islamic names wiki",
+    "islamic names of allah",
+
+    // Question-based Islamic keywords
+    "what are some muslim names",
+    "what do muslim names mean",
+    "how do muslim names work",
+
+    // Language-specific Islamic keywords
+    "meaning of islamic names urdu",
+    "islamic names urdu pakistan",
+    "urdu islamic names for girls",
+    "arabic names with urdu meanings",
+    "male islamic names",
+    "islamic tamil names",
+
+    // Religious tradition keywords
     "Muslim baby names from Quran",
     "Quranic baby names",
     "Quranic names for boys",
     "Quranic names for girls",
+    "Hindu baby names",
+    "Christian baby names",
     "Hindu baby names from Vedas",
     "Sanskrit baby names",
     "Biblical baby names",

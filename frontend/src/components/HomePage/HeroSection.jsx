@@ -45,22 +45,21 @@ const Hero = () => {
   ];
 
   const trustIndicators = [
-    { icon: Star, text: '99% Verified Name Meanings', color: 'text-amber-600', bg: 'bg-amber-50' },
-    { icon: Lock, text: 'Expert-Reviewed Content', color: 'text-blue-600', bg: 'bg-blue-50' },
-    { icon: TrendingUp, text: '5M+ Parents Worldwide Trust NameVerse', color: 'text-emerald-600', bg: 'bg-emerald-50' },
-    { icon: BookOpen, text: '60K+ Names in 15+ Languages', color: 'text-purple-600', bg: 'bg-purple-50' }
+    { icon: Star, text: 'Trusted by 5M+ Parents', color: 'text-amber-600', bg: 'bg-amber-50' },
+    { icon: Lock, text: 'Expert Verified', color: 'text-blue-600', bg: 'bg-blue-50' },
+    { icon: BookOpen, text: 'Multilingual Support', color: 'text-purple-600', bg: 'bg-purple-50' }
   ];
 
   return (
-    <section className="relative min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
+    <section className="relative w-full flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 py-12 sm:py-16 lg:py-20">
       {/* Background decoration */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <div className="absolute top-0 left-0 w-96 h-96 bg-indigo-100/40 rounded-full blur-3xl opacity-20" />
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-100/40 rounded-full blur-3xl opacity-20" />
       </div>
 
-      <main className="relative z-10 w-full px-4 sm:px-6 py-12 sm:py-16">
-        <div className="max-w-6xl mx-auto space-y-8 sm:space-y-12">
+      <div className="relative z-10 w-full px-4 sm:px-6 max-w-6xl mx-auto">
+        <div className="space-y-6 sm:space-y-8 lg:space-y-10">
           
           {/* Trust badge */}
           <div className="flex justify-center">
@@ -77,11 +76,11 @@ const Hero = () => {
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 leading-tight px-2">
               Find Your Baby's Perfect Name
               <span className="block bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mt-2">
-                60,000+ Verified Names with Meanings from Islamic, Hindu & Christian Traditions
+                60,000+ Verified Islamic, Hindu & Christian Names
               </span>
             </h1>
             <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-medium px-4 max-w-3xl mx-auto">
-              Discover the perfect baby boy or girl name from 60,000+ verified options with complete meanings in English, Urdu, Arabic & Hindi, pronunciation guides, and cultural significance
+              Discover authentic baby names with complete meanings in English, Urdu, Arabic & Hindi. Explore Islamic names, Hindu names, and Christian names with pronunciation guides and cultural significance.
             </p>
           </div>
 
@@ -107,40 +106,44 @@ const Hero = () => {
           </div>
 
           {/* Categories Grid - Enhanced Mobile */}
-          <div className="px-2">
+          <div className="w-full">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-6">
+              Explore Names by Tradition
+            </h2>
             {/* Mobile: Single column with better spacing */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto">
               {categories.map((category) => {
                 const Icon = category.icon;
                 return (
                   <a
                     key={category.id}
                     href={category.url}
-                    className={`group relative flex flex-col sm:items-center gap-4 p-5 sm:p-6 bg-white rounded-2xl shadow-lg hover:shadow-2xl border-2 border-gray-100 hover:border-indigo-300 transition-all duration-300 ${category.bgColor} hover:bg-white`}
+                    className="group relative flex flex-col p-5 sm:p-6 bg-white rounded-2xl shadow-md hover:shadow-xl border-2 border-gray-100 hover:border-indigo-300 transition-all duration-300"
                   >
                     {/* Mobile: Horizontal layout, Desktop: Vertical */}
-                    <div className="flex sm:flex-col items-center sm:items-center gap-4 sm:gap-4">
-                      <div className={`flex-shrink-0 bg-gradient-to-br ${category.gradient} p-4 rounded-xl text-white shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110`}>
-                        <Icon className="w-7 h-7 sm:w-8 sm:h-8" />
+                    <div className="flex sm:flex-col items-start sm:items-center gap-4 mb-3 sm:mb-0">
+                      <div className={`flex-shrink-0 bg-gradient-to-br ${category.gradient} p-3.5 sm:p-4 rounded-xl text-white shadow-md group-hover:shadow-lg transition-all duration-300 group-hover:scale-105`}>
+                        <Icon className="w-6 h-6 sm:w-7 sm:h-7" />
                       </div>
-                      
+
                       <div className="flex-1 sm:text-center text-left">
-                        <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-1">{category.name} Names</h3>
-                        <p className="text-base font-bold text-indigo-600 mb-2">{category.count}</p>
-                        <p className="text-sm text-gray-600 leading-relaxed hidden sm:block">{category.description}</p>
+                        <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-0.5 sm:mb-1">{category.name} Names</h3>
+                        <p className="text-sm sm:text-base font-bold text-indigo-600">{category.count}</p>
                       </div>
-                      
-                      {/* Mobile: Show arrow on right */}
-                      <ArrowRight className="w-5 h-5 text-indigo-600 flex-shrink-0 sm:hidden group-hover:translate-x-1 transition-transform" />
                     </div>
-                    
-                    {/* Mobile: Show description below */}
-                    <p className="text-sm text-gray-600 leading-relaxed sm:hidden -mt-2">{category.description}</p>
-                    
+
+                    {/* Description - visible on all screens */}
+                    <p className="text-xs sm:text-sm text-gray-600 leading-relaxed sm:text-center">{category.description}</p>
+
                     {/* Desktop: Hover explore button */}
-                    <div className="hidden sm:flex items-center gap-2 mt-auto opacity-0 group-hover:opacity-100 transition-all duration-300">
+                    <div className="hidden sm:flex items-center justify-center gap-2 mt-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
                       <span className="text-sm font-bold text-indigo-600">Explore</span>
                       <ArrowRight className="w-4 h-4 text-indigo-600" />
+                    </div>
+
+                    {/* Mobile: Show arrow */}
+                    <div className="sm:hidden absolute top-5 right-5">
+                      <ArrowRight className="w-5 h-5 text-indigo-600 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </a>
                 );
@@ -178,7 +181,7 @@ const Hero = () => {
             </a>
           </div>
         </div>
-      </main>
+      </div>
     </section>
   );
 };

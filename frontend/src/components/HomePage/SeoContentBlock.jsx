@@ -122,8 +122,8 @@ const CulturalImportance = () => {
   return (
     <>
       
-      <section 
-        className="py-12 sm:py-16 lg:py-24 bg-gradient-to-b from-white via-indigo-50/30 to-white" 
+      <section
+        className="py-10 sm:py-14 lg:py-16 bg-gradient-to-b from-white via-indigo-50/30 to-white"
         aria-labelledby="cultural-heading"
         itemScope
         itemType="https://schema.org/Article"
