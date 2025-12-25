@@ -40,11 +40,63 @@ export async function generateMetadata({ searchParams }) {
     ? `Latest articles in ${category} category`
     : "Explore latest articles and insights from NameVerse Blog.";
 
+  // Comprehensive keywords for blog pages
+  const keywords = [
+    // Core blog keywords
+    'baby name articles',
+    'baby naming tips',
+    'name meaning blog',
+    'baby naming guide',
+    'baby name blog',
+    'naming tips for parents',
+
+    // How-to keywords
+    'how to choose perfect baby name',
+    'how to pick a baby name',
+    'how to name your baby',
+    'baby naming advice',
+    'choosing baby name tips',
+
+    // Trend keywords
+    'baby name trends 2025',
+    'popular baby names 2025',
+    'trending baby names',
+    'modern baby name trends',
+    'baby name statistics',
+
+    // Cultural keywords
+    'cultural baby names',
+    'religious baby names',
+    'traditional baby names',
+    'ethnic baby names',
+    'baby names by culture',
+
+    // Informational keywords
+    'baby name meanings explained',
+    'baby name origins',
+    'baby name history',
+    'baby name research',
+    'baby name inspiration',
+    'baby name ideas',
+
+    // Parenting-related
+    'parenting tips',
+    'new parent guide',
+    'pregnancy tips',
+    'expecting parents',
+    'baby planning',
+
+    // Category-specific (if applicable)
+    category && category !== "All Categories" ? `${category} baby names` : '',
+    category && category !== "All Categories" ? `${category} naming guide` : ''
+  ].filter(Boolean).join(', ');
+
   const canonicalUrl = `${SITE_URL}/blog`;
 
   return {
     title,
     description,
+    keywords,
     alternates: { canonical: canonicalUrl },
     openGraph: {
       title,

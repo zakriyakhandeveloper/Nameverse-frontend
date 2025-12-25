@@ -56,16 +56,47 @@ export async function generateMetadata({ params, searchParams }) {
 
   // Keywords cluster for next-level SEO
   const keywordsArray = [
-    `${selectedReligion} baby names`,
+    // Core letter-specific keywords
+    `${selectedReligion} baby names starting with ${selectedLetter}`,
     `baby names starting with ${selectedLetter}`,
-    `popular ${selectedReligion} names`,
-    `boys names ${selectedLetter}`,
-    `girls names ${selectedLetter}`,
+    `${selectedReligion} names starting with ${selectedLetter}`,
+    `boy names starting with ${selectedLetter}`,
+    `girl names starting with ${selectedLetter}`,
+    `names beginning with ${selectedLetter}`,
+    `${selectedLetter} letter names`,
+
+    // Religion + letter combinations
+    `${selectedReligion} ${selectedLetter} names`,
+    `${selectedReligion} boy names starting with ${selectedLetter}`,
+    `${selectedReligion} girl names starting with ${selectedLetter}`,
+    `${selectedReligion} names beginning with ${selectedLetter}`,
+
+    // Popular/unique variations
+    `popular ${selectedReligion} names starting with ${selectedLetter}`,
+    `unique ${selectedLetter} names`,
+    `popular ${selectedLetter} names`,
+    `unique ${selectedReligion} ${selectedLetter} names`,
+    `best ${selectedLetter} names`,
+    `modern ${selectedLetter} names`,
+
+    // General religion keywords
+    `${selectedReligion} baby names`,
+    `${selectedReligion} names list`,
     `religious baby names`,
     `name meanings ${selectedReligion}`,
     `name origins ${selectedReligion}`,
+
+    // Gender-specific
+    `boys names ${selectedLetter}`,
+    `girls names ${selectedLetter}`,
+    `${selectedLetter} names for boys`,
+    `${selectedLetter} names for girls`,
+
+    // Long-tail
     `${selectedLetter} names for babies`,
-    `${selectedReligion} names list`
+    `${selectedReligion} baby names with ${selectedLetter}`,
+    `${selectedReligion} names that start with ${selectedLetter}`,
+    `baby names with letter ${selectedLetter}`
   ];
 
   return {

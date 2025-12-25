@@ -1,7 +1,7 @@
 
 import { NextResponse } from 'next/server';
 
-export function middleware(request) {
+export function proxy(request) {
   const url = request.nextUrl.clone();
   // Redirect /names/:religion/:lang/:slug -> /names/:religion/:slug
   const match = url.pathname.match(/^\/names\/([^/]+)\/([^/]+)\/([^/]+)\/?$/);

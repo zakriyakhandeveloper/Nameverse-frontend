@@ -34,30 +34,87 @@ export async function generateMetadata({ searchParams }) {
     // Core baby name keywords
     'baby names',
     'baby names with meanings',
+    'name meaning',
+    'names and meanings',
+    'baby name generator',
+    'what does my name mean',
     'baby boy names',
     'baby girl names',
+    'boy names',
+    'girl names',
     'unique baby names',
     'modern baby names 2025',
     'baby name meanings',
     'baby name origins',
     'baby name finder',
     'baby name list',
+    'popular baby names',
+    'trending baby names',
+    'best baby names 2025',
 
-    // Religious keywords
+    // Gender-specific keywords
+    'unisex baby names',
+    'gender neutral names',
+    'strong boy names',
+    'pretty girl names',
+    'masculine baby names',
+    'feminine baby names',
+
+    // Islamic/Muslim keywords
     'Islamic baby names',
     'Muslim baby names',
     'Islamic names',
+    'Quranic baby names',
+    'Muslim boy names',
+    'Muslim girl names',
+    'Arabic baby names',
+    'Islamic baby names in Urdu',
+    'Muslim names for newborn',
+    'Islamic names with meanings',
+    'Quranic names with English meanings',
+
+    // Christian/Biblical keywords
     'Christian baby names',
     'Biblical baby names',
+    'names from the Bible',
+    'Hebrew baby names',
+    'Catholic baby names',
+    'Christian names meaning',
+    'saint names',
+    'names of Jesus',
+    'Biblical names for twins',
+    'Christian boy names',
+    'Christian girl names',
+
+    // Hindu/Sanskrit keywords
     'Hindu baby names',
     'Sanskrit baby names',
+    'Indian baby names',
+    'Vedic baby names',
+    'Hindu god names',
+    'Hindu goddess names',
+    'Lord Krishna names',
+    'Goddess Lakshmi names',
+    'Tamil baby names',
+    'Sanskrit names for boy',
+    'Sanskrit names for girl',
 
     // Question-based keywords
     'what are some baby names',
     'how to choose baby name',
-    'best baby names 2025',
-    'popular baby names',
-    'trending baby names',
+    'what name should I give my baby',
+    'how to pick baby name',
+    'how to name your baby',
+    'what are good baby names',
+
+    // Long-tail keywords
+    'baby names with spiritual meaning',
+    'baby names that mean blessing',
+    'baby names that mean gift from god',
+    'baby names that mean love',
+    'baby names that mean strength',
+    'baby names that mean miracle',
+    'baby names with beautiful meanings',
 
     // Feature keywords
     'baby names with lucky stones',
@@ -66,7 +123,9 @@ export async function generateMetadata({ searchParams }) {
     'baby names by origin',
     'baby names A to Z',
     'verified baby names',
-    'authentic baby names'
+    'authentic baby names',
+    'baby name pronunciation',
+    'baby names with lucky numbers'
   ].join(', ');
 
   const canonicalUrl = `${SITE_URL}/names`;

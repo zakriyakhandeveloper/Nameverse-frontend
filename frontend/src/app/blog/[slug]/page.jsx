@@ -26,12 +26,41 @@ export async function generateMetadata({ params }) {
     const description =
       article.seo?.meta_description || article.summary || article.title;
 
+    // Enhanced keywords combining article-specific and general blog keywords
+    const baseKeywords = [
+      // Article-specific keywords from database
+      ...(article.seo?.keywords || []),
+
+      // General article keywords
+      'baby name articles',
+      'baby naming tips',
+      'name meaning blog',
+      'baby naming guide',
+
+      // Category-specific
+      article.category ? `${article.category} baby names` : '',
+      article.category ? `${article.category} articles` : '',
+
+      // Topic-related
+      'how to choose baby name',
+      'baby name inspiration',
+      'baby name ideas',
+      'baby naming advice',
+
+      // SEO optimization
+      'baby name trends',
+      'popular baby names',
+      'baby name meanings',
+      'cultural baby names',
+      'religious baby names'
+    ].filter(Boolean);
+
     const canonical = `${DOMAIN}/articles/${slug}`;
 
     return {
       title,
       description,
-      keywords: article.seo?.keywords?.join(', ') || 'articles, blog, nameverse',
+      keywords: baseKeywords.join(', '),
       alternates: {
         canonical,
         languages: { 'x-default': canonical, en: canonical },

@@ -49,17 +49,51 @@ export async function generateMetadata({ params }) {
 
   // Enhanced keywords for better SEO
   const keywords = [
+    // Core name keywords
     titleName,
     `${titleName} name meaning`,
+    `${titleName} meaning`,
+    `${titleName} name meaning in English`,
+    `${titleName} name meaning in Urdu`,
+
+    // Name-specific searches
     `${titleName} ${religionTitle} name`,
     `${titleName} origin`,
     `${titleName} baby name`,
+    `${titleName} pronunciation`,
+    `what does ${titleName} mean`,
+    `meaning of ${titleName}`,
+    `${titleName} name origin`,
+
+    // Name quality/decision keywords
+    `is ${titleName} a good name`,
+    `${titleName} name popularity`,
+    `${titleName} lucky number`,
+    `${titleName} numerology`,
+    `${titleName} lucky stone`,
+    `${titleName} lucky color`,
+
+    // Gender + religion combinations
     nameData.gender ? `${nameData.gender} names` : 'baby names',
+    nameData.gender ? `${religionTitle} ${nameData.gender} names` : `${religionTitle} names`,
     `${religionTitle} names`,
+    `${religionTitle} baby names`,
+
+    // Origin-specific
     nameData.origin ? `${nameData.origin} names` : '',
+    nameData.origin ? `${nameData.origin} baby names` : '',
+    nameData.origin ? `${nameData.origin} name meanings` : '',
+
+    // General categories
     'baby name meanings',
     'name origins',
-    'cultural baby names'
+    'cultural baby names',
+    'baby names with meanings',
+    'religious baby names',
+    'traditional baby names',
+
+    // Theme-based (if available)
+    nameData.themes && nameData.themes.length > 0 ? nameData.themes.join(', ') : ''
   ].filter(Boolean).join(', ');
 
   return {
