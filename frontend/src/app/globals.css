@@ -2,7 +2,7 @@
 @import "tw-animate-css";
 
 body {
-  @apply bg-gradient-to-b from-[#FFFFFF] to-[#FFF8E7]; /* White → Soft Cream gradient */
+  @apply bg-white; /* Clean white background */
 }
 @keyframes slide-up {
   from {

@@ -166,7 +166,7 @@ export default function HomePageClient() {
 
       <main
         role="main"
-        className="min-h-screen flex flex-col items-center justify-start bg-gray-50"
+        className="min-h-screen flex flex-col items-center justify-start bg-white"
       >
         {/* HeroSection - Above the fold */}
         <HeroSection />
@@ -182,9 +182,6 @@ export default function HomePageClient() {
 
         {/* Why Choose NameVerse - Trust building */}
         <WhyChooseSection />
-
-        {/* SEO Content Block - Cultural importance */}
-        <SEOContentBlock />
 
         {/* Comprehensive FAQ - Converted from hidden content */}
         <ComprehensiveFAQ />

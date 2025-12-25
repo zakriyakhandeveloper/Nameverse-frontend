@@ -33,80 +33,57 @@ const PopularNamesSection = () => {
   ];
 
   return (
-    <section className="py-10 sm:py-14 lg:py-16 bg-gradient-to-br from-white via-purple-50/30 to-indigo-50/30">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+    <section className="py-20 sm:py-24 bg-white">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Section Header */}
-        <div className="text-center mb-8 sm:mb-12">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-100 to-orange-100 border border-amber-200 rounded-full mb-4"
-          >
-            <TrendingUp className="w-5 h-5 text-amber-600" />
-            <span className="text-sm font-bold text-amber-800">Trending Now in 2025</span>
-          </motion.div>
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 rounded-full mb-4">
+            <TrendingUp className="w-4 h-4 text-amber-600" />
+            <span className="text-sm font-semibold text-amber-900">Trending in 2025</span>
+          </div>
 
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 mb-4"
-          >
-            Popular Baby Names This Month
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed"
-          >
-            Discover the most searched <span className="font-semibold text-indigo-600">baby boy names</span> and <span className="font-semibold text-indigo-600">baby girl names</span> chosen by thousands of parents worldwide in 2025. Our <span className="font-semibold text-indigo-600">popular baby names</span> list features trending <span className="font-semibold text-indigo-600">Islamic names</span>, <span className="font-semibold text-indigo-600">Hindu names</span>, and <span className="font-semibold text-indigo-600">Christian names</span> with beautiful meanings and cultural significance.
-          </motion.p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+            Popular Baby Names
+          </h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Discover the most searched names chosen by parents worldwide
+          </p>
         </div>
 
-        {/* Popular Names Grid */}
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
+        {/* Popular Names Grid - Simplified */}
+        <div className="grid lg:grid-cols-2 gap-6">
           {/* Boys Names */}
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="bg-white rounded-2xl border-2 border-blue-100 p-6 sm:p-8 shadow-lg hover:shadow-2xl transition-shadow"
-          >
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 sm:p-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
-                <Star className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                <Star className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-blue-600">Popular Baby Boy Names</h3>
-                <p className="text-sm text-gray-600">Trending boy names with meanings</p>
+                <h3 className="text-xl font-bold text-gray-900">Boy Names</h3>
+                <p className="text-sm text-gray-600">Top picks for boys</p>
               </div>
             </div>
 
-            <div className="space-y-3">
-              {popularBoyNames.map((name, index) => (
+            <div className="space-y-2">
+              {popularBoyNames.map((name) => (
                 <Link
                   key={name.slug}
                   href={`/names/${name.religion.toLowerCase()}/${name.slug}`}
-                  className="group block p-4 rounded-xl border border-gray-100 hover:border-blue-300 hover:bg-blue-50/50 transition-all"
+                  className="group block p-3 rounded-lg bg-white hover:shadow-md transition-all"
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-bold text-lg text-gray-900 group-hover:text-blue-600 transition-colors">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <h4 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
                           {name.name}
                         </h4>
-                        <span className="text-xs font-semibold px-2 py-1 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 rounded-full">
+                        <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded">
                           {name.religion}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-600 mb-1">{name.meaning}</p>
-                      <p className="text-xs text-gray-500">Origin: {name.origin}</p>
+                      <p className="text-sm text-gray-600">{name.meaning}</p>
                     </div>
-                    <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all flex-shrink-0 ml-2" />
+                    <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />
                   </div>
                 </Link>
               ))}
@@ -114,51 +91,44 @@ const PopularNamesSection = () => {
 
             <Link
               href="/names/islamic"
-              className="mt-6 block w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-center font-bold rounded-xl hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg transition-all"
+              className="mt-6 block w-full py-3 bg-blue-600 text-white text-center font-semibold rounded-lg hover:bg-blue-700 transition-colors"
             >
-              View All Islamic Boy Names →
+              View All Boy Names →
             </Link>
-          </motion.div>
+          </div>
 
           {/* Girls Names */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-            className="bg-white rounded-2xl border-2 border-pink-100 p-6 sm:p-8 shadow-lg hover:shadow-2xl transition-shadow"
-          >
+          <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-6 sm:p-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-600 rounded-xl flex items-center justify-center">
-                <Heart className="w-6 h-6 text-white fill-white" />
+              <div className="w-10 h-10 bg-pink-600 rounded-lg flex items-center justify-center">
+                <Heart className="w-5 h-5 text-white fill-white" />
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-pink-600">Popular Baby Girl Names</h3>
-                <p className="text-sm text-gray-600">Trending girl names with meanings</p>
+                <h3 className="text-xl font-bold text-gray-900">Girl Names</h3>
+                <p className="text-sm text-gray-600">Top picks for girls</p>
               </div>
             </div>
 
-            <div className="space-y-3">
-              {popularGirlNames.map((name, index) => (
+            <div className="space-y-2">
+              {popularGirlNames.map((name) => (
                 <Link
                   key={name.slug}
                   href={`/names/${name.religion.toLowerCase()}/${name.slug}`}
-                  className="group block p-4 rounded-xl border border-gray-100 hover:border-pink-300 hover:bg-pink-50/50 transition-all"
+                  className="group block p-3 rounded-lg bg-white hover:shadow-md transition-all"
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-bold text-lg text-gray-900 group-hover:text-pink-600 transition-colors">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <h4 className="font-semibold text-gray-900 group-hover:text-pink-600 transition-colors">
                           {name.name}
                         </h4>
-                        <span className="text-xs font-semibold px-2 py-1 bg-gradient-to-r from-pink-100 to-rose-100 text-pink-700 rounded-full">
+                        <span className="text-xs px-2 py-0.5 bg-pink-100 text-pink-700 rounded">
                           {name.religion}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-600 mb-1">{name.meaning}</p>
-                      <p className="text-xs text-gray-500">Origin: {name.origin}</p>
+                      <p className="text-sm text-gray-600">{name.meaning}</p>
                     </div>
-                    <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-pink-600 group-hover:translate-x-1 transition-all flex-shrink-0 ml-2" />
+                    <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-pink-600 group-hover:translate-x-0.5 transition-all" />
                   </div>
                 </Link>
               ))}
@@ -166,36 +136,12 @@ const PopularNamesSection = () => {
 
             <Link
               href="/names/hindu"
-              className="mt-6 block w-full py-3 bg-gradient-to-r from-pink-600 to-rose-600 text-white text-center font-bold rounded-xl hover:from-pink-700 hover:to-rose-700 hover:shadow-lg transition-all"
+              className="mt-6 block w-full py-3 bg-pink-600 text-white text-center font-semibold rounded-lg hover:bg-pink-700 transition-colors"
             >
-              View All Hindu Girl Names →
+              View All Girl Names →
             </Link>
-          </motion.div>
-        </div>
-
-        {/* SEO-Rich Bottom Description */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.5 }}
-          className="mt-12 max-w-5xl mx-auto bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-6 sm:p-8 border border-indigo-100"
-        >
-          <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 text-center">
-            Why These Are the Most Popular Baby Names in 2025
-          </h3>
-          <div className="space-y-4 text-sm sm:text-base text-gray-700 leading-relaxed">
-            <p>
-              Our <span className="font-semibold text-indigo-600">trending baby names 2025</span> list is based on real search data from millions of parents worldwide. These <span className="font-semibold text-indigo-600">popular baby names</span> represent a perfect blend of traditional values and modern appeal, combining <span className="font-semibold text-indigo-600">Islamic baby names</span> like Muhammad and Aisha with <span className="font-semibold text-indigo-600">Hindu baby names</span> like Arjun and Priya, and <span className="font-semibold text-indigo-600">Christian baby names</span> like Noah and Sophia.
-            </p>
-            <p>
-              Parents are increasingly choosing <span className="font-semibold text-indigo-600">meaningful baby names</span> that honor their cultural heritage while being easy to pronounce in multiple languages. Names like Zain, Maya, and Liam have become <span className="font-semibold text-indigo-600">popular baby boy names</span> and <span className="font-semibold text-indigo-600">baby girl names</span> because they carry beautiful meanings and work well across different cultures. Our verified database provides complete information including pronunciation in Urdu, Arabic, Hindi, and English, making it easy for parents to find the perfect name.
-            </p>
-            <p>
-              Whether you're looking for <span className="font-semibold text-indigo-600">unique baby names 2025</span>, <span className="font-semibold text-indigo-600">traditional Islamic names</span>, <span className="font-semibold text-indigo-600">Sanskrit Hindu names</span>, or <span className="font-semibold text-indigo-600">Biblical Christian names</span>, our popular names list provides inspiration backed by real trends and authentic cultural meanings. Each name is verified by religious and cultural experts to ensure accuracy and authenticity.
-            </p>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
