@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { validateMetaDescription, generateNameMetaDescription } from '@/lib/seo/meta-helpers';
 import { generateNameProductSchema, generateFAQSchema } from '@/lib/seo/structured-data';
 import { generateNameFAQ } from '@/lib/seo/content-helpers';
+import { validateAndSanitizeSlug, isSingleLetter } from '@/lib/utils/slugValidation';
 
 // Dynamically import the letter page component
 const NamesDatabaseClient = dynamic(() => import('../letter/[letter]/NameClientComponent'), {
@@ -19,7 +20,7 @@ export async function generateMetadata({ params }) {
   const { religion, slug } = await params;
 
   // If slug is a single letter, return metadata for letter page
-  if (slug && slug.length === 1 && /^[a-zA-Z]$/.test(slug)) {
+  if (isSingleLetter(slug)) {
     const religionTitle = religion.charAt(0).toUpperCase() + religion.slice(1);
     const letter = slug.toUpperCase();
     return {
@@ -37,7 +38,17 @@ export async function generateMetadata({ params }) {
     };
   }
 
-  const nameData = await fetchNameDetail(religion, slug);
+  // Validate and sanitize the slug
+  const sanitizedSlug = validateAndSanitizeSlug(slug);
+  if (!sanitizedSlug) {
+    return {
+      title: 'Invalid Name URL',
+      description: 'The requested name URL is invalid.',
+      robots: { index: false, follow: false }
+    };
+  }
+
+  const nameData = await fetchNameDetail(religion, sanitizedSlug);
   if (!nameData) {
     return { title: 'Name Not Found', description: 'The requested name could not be found.' };
   }
@@ -101,12 +112,12 @@ export async function generateMetadata({ params }) {
     description: desc,
     keywords,
     authors: [{ name: 'NameVerse' }],
-    alternates: { canonical: `https://nameverse.vercel.app/names/${religion}/${slug}` },
+    alternates: { canonical: `https://nameverse.vercel.app/names/${religion}/${sanitizedSlug}` },
     openGraph: {
       title: `${titleName} - ${religionTitle} Name Meaning & Origin`,
       description: desc,
       type: 'article',
-      url: `https://nameverse.vercel.app/names/${religion}/${slug}`,
+      url: `https://nameverse.vercel.app/names/${religion}/${sanitizedSlug}`,
       siteName: 'NameVerse',
       images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: `${titleName} - ${religionTitle} baby name meaning` }],
     },
@@ -124,7 +135,7 @@ export default async function NameSlugPage({ params }) {
   const { religion, slug } = await params;
 
   // If slug is a single letter, fetch names by letter and show letter page
-  if (slug && slug.length === 1 && /^[a-zA-Z]$/.test(slug)) {
+  if (isSingleLetter(slug)) {
     const letter = slug.toUpperCase();
     const result = await fetchNamesByLetter(letter, { religion, limit: 100 });
 
@@ -142,12 +153,18 @@ export default async function NameSlugPage({ params }) {
     );
   }
 
+  // Validate and sanitize the slug
+  const sanitizedSlug = validateAndSanitizeSlug(slug);
+  if (!sanitizedSlug) {
+    return notFound();
+  }
+
   // Regular name detail page
-  const data = await fetchNameDetail(religion, slug);
+  const data = await fetchNameDetail(religion, sanitizedSlug);
   if (!data) return notFound();
 
   // Generate structured data schemas
-  const productSchema = generateNameProductSchema(data, religion, slug);
+  const productSchema = generateNameProductSchema(data, religion, sanitizedSlug);
   const faqSchema = generateFAQSchema(generateNameFAQ(data));
 
   return (

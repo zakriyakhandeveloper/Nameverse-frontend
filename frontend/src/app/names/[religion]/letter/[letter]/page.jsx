@@ -1,5 +1,6 @@
 import NamesDatabaseClient from './NameClientComponent';
 import React from 'react';
+import { notFound } from 'next/navigation';
 
 export const revalidate = 3600; // 1 hour ISR
 
@@ -47,7 +48,14 @@ export async function generateMetadata({ params, searchParams }) {
   const resolvedParams = await params;
   const resolvedSearchParams = await searchParams;
   const selectedReligion = resolvedParams?.religion || 'islamic';
-  const selectedLetter = resolvedParams?.letter?.toUpperCase() || 'A';
+  const letter = resolvedParams?.letter;
+
+  // Validate letter parameter
+  if (!letter || !/^[a-zA-Z]$/.test(letter)) {
+    return notFound();
+  }
+
+  const selectedLetter = letter.toUpperCase();
   const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com';
   const currentPage = parseInt(resolvedSearchParams?.page || 1);
 
@@ -131,7 +139,14 @@ export default async function NamesDatabaseServer({ params, searchParams }) {
   const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com';
 
   const selectedReligion = resolvedParams?.religion || 'islamic';
-  const selectedLetter = resolvedParams?.letter?.toUpperCase() || 'A';
+  const letter = resolvedParams?.letter;
+
+  // Validate letter parameter
+  if (!letter || !/^[a-zA-Z]$/.test(letter)) {
+    notFound();
+  }
+
+  const selectedLetter = letter.toUpperCase();
   const currentPage = parseInt(resolvedSearchParams?.page || 1);
   const perPage = parseInt(resolvedSearchParams?.perPage || 20);
   const sortBy = resolvedSearchParams?.sort || 'popularity';
