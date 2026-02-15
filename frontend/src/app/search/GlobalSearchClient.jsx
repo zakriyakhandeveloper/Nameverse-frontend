@@ -16,7 +16,7 @@ export default function GlobalSearchClient() {
 
   const [query, setQuery] = useState(initialQuery);
   const [searchType, setSearchType] = useState(initialType);
-  const [results, setResults] = useState({ names: [], articles: [], total: 0 });
+  const [results, setResults] = useState({ names: [], total: 0 });
   const [loading, setLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
@@ -26,7 +26,7 @@ export default function GlobalSearchClient() {
   const debouncedSearch = useCallback(
     debounce(async (searchQuery, type) => {
       if (!searchQuery || searchQuery.length < 2) {
-        setResults({ names: [], articles: [], total: 0 });
+        setResults({ names: [], total: 0 });
         setHasSearched(false);
         return;
       }
@@ -44,12 +44,12 @@ export default function GlobalSearchClient() {
           setResults(result);
         } else {
           toast.error('Search failed. Please try again.');
-          setResults({ names: [], articles: [], total: 0 });
+          setResults({ names: [], total: 0 });
         }
       } catch (error) {
         console.error('Search error:', error);
         toast.error('Search failed. Please try again.');
-        setResults({ names: [], articles: [], total: 0 });
+        setResults({ names: [], total: 0 });
       } finally {
         setLoading(false);
       }
@@ -86,7 +86,7 @@ export default function GlobalSearchClient() {
 
   const clearSearch = () => {
     setQuery('');
-    setResults({ names: [], articles: [], total: 0 });
+    setResults({ names: [], total: 0 });
     setHasSearched(false);
     router.push('/search');
   };
@@ -94,7 +94,6 @@ export default function GlobalSearchClient() {
   const typeOptions = [
     { value: 'all', label: 'All', icon: Search },
     { value: 'names', label: 'Names', icon: User },
-    { value: 'articles', label: 'Articles', icon: FileText },
   ];
 
   return (
@@ -112,7 +111,7 @@ export default function GlobalSearchClient() {
             </h1>
           </div>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Search across names and articles
+            Search across names
           </p>
         </div>
 
@@ -124,7 +123,7 @@ export default function GlobalSearchClient() {
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search for names or articles..."
+                placeholder="Search for names..."
                 className="w-full px-6 py-4 text-lg rounded-2xl border-2 border-gray-200 focus:border-purple-500 focus:outline-none shadow-md pr-24"
               />
               {query && (
@@ -259,31 +258,7 @@ export default function GlobalSearchClient() {
 
                 
 
-                {/* Articles Results */}
-                {results.articles && results.articles.length > 0 && (searchType === 'all' || searchType === 'articles') && (
-                  <SearchSection
-                    title="Articles"
-                    icon={FileText}
-                    items={results.articles}
-                    renderItem={(article) => (
-                      <Link
-                        key={article.id}
-                        href={`/blog/${article.slug}`}
-                        className="block p-4 bg-white rounded-lg border-2 border-gray-100 hover:border-purple-300 hover:shadow-md transition-all"
-                      >
-                        <h3 className="text-lg font-bold text-gray-900 mb-1">{article.title}</h3>
-                        <p className="text-sm text-gray-600 mb-2 line-clamp-2">
-                          {article.excerpt || article.summary}
-                        </p>
-                        {article.category && (
-                          <span className="inline-block px-2 py-1 bg-teal-50 text-teal-700 rounded text-xs">
-                            {article.category}
-                          </span>
-                        )}
-                      </Link>
-                    )}
-                  />
-                )}
+                
               </>
             ) : (
               <div className="text-center py-20">

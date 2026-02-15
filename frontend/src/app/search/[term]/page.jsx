@@ -1,31 +1,23 @@
 import { notFound } from 'next/navigation';
 import SearchResultsClient from './ClientComponent';
 import { searchNames } from '@/lib/api/names';
-import { searchArticles } from '@/lib/api/articles';
 
 const DOMAIN = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
 
 // Fetch search results from API
 const fetchSearchResults = async (term) => {
   try {
-    const [namesResult, articlesResult] = await Promise.all([
-      searchNames(term.trim(), { limit: 50 }),
-      searchArticles(term.trim(), { limit: 50 })
-    ]);
-
+    const namesResult = await searchNames(term.trim(), { limit: 50 });
     const names = namesResult.data || [];
-    const articles = Array.isArray(articlesResult) ? articlesResult : [];
 
     return {
       names,
-      articles,
       totalNames: names.length,
-      totalArticles: articles.length,
-      totalResults: names.length + articles.length,
+      totalResults: names.length,
     };
   } catch (error) {
     console.error('Search fetch error:', error);
-    return { names: [], articles: [], totalNames: 0, totalArticles: 0, totalResults: 0 };
+    return { names: [], totalNames: 0, totalResults: 0 };
   }
 };
 
@@ -34,11 +26,11 @@ export const generateMetadata = async ({ params }) => {
   const resolvedParams = await params;
   const { term } = resolvedParams;
   const decodedTerm = decodeURIComponent(term);
-  const { names, articles, totalResults } = await fetchSearchResults(decodedTerm);
+  const { names, totalResults } = await fetchSearchResults(decodedTerm);
 
   return {
-    title: `${decodedTerm} - Names & Articles | NameVerse`,
-    description: `Discover ${totalResults} results for ${decodedTerm}. Expert meanings, origins, articles, and inspiration for your search.`,
+    title: `${decodedTerm} - Names | NameVerse`,
+    description: `Discover ${totalResults} results for ${decodedTerm}. Expert meanings and origins for your search.`,
     keywords: [
       decodedTerm,
       `${decodedTerm} names`,
@@ -51,7 +43,7 @@ export const generateMetadata = async ({ params }) => {
     ].join(', '),
     authors: [{ name: 'NameVerse' }],
     openGraph: {
-      title: `${decodedTerm} - Names & Articles`,
+      title: `${decodedTerm} - Names`,
       description: `Discover ${totalResults} results for ${decodedTerm}`,
       type: 'website',
       url: `${DOMAIN}/search/${encodeURIComponent(decodedTerm)}`,
@@ -59,7 +51,7 @@ export const generateMetadata = async ({ params }) => {
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${decodedTerm} - Names & Articles`,
+      title: `${decodedTerm} - Names`,
       description: `Discover ${totalResults} results for ${decodedTerm}`,
     },
     robots: { index: true, follow: true },
@@ -80,9 +72,9 @@ export default async function SearchPage({ params }) {
   const resolvedParams = await params;
   const { term } = resolvedParams;
   const decodedTerm = decodeURIComponent(term);
-  const { names, articles, totalNames, totalArticles, totalResults } = await fetchSearchResults(decodedTerm);
+  const { names, totalNames, totalResults } = await fetchSearchResults(decodedTerm);
 
-  if (!names.length && !articles.length) {
+  if (!names.length) {
     return notFound();
   }
 
@@ -107,13 +99,6 @@ export default async function SearchPage({ params }) {
         description: name.short_meaning || '',
         url: `${DOMAIN}/${name.slug || `names/${name._id}`}`,
       })),
-      ...articles.map((article, idx) => ({
-        '@type': 'Article',
-        position: names.length + idx + 1,
-        name: article.title,
-        description: article.excerpt || article.summary || '',
-        url: `${DOMAIN}/blog/${article.slug}`,
-      })),
     ],
   };
 
@@ -135,10 +120,8 @@ export default async function SearchPage({ params }) {
 
       <SearchResultsClient
         initialNames={names}
-        initialArticles={articles}
         searchTerm={decodedTerm}
         totalNames={totalNames}
-        totalArticles={totalArticles}
       />
     </>
   );

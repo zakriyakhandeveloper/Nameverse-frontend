@@ -11,24 +11,20 @@ import { useState, useTransition, useMemo, useCallback } from 'react';
 
 export default function SearchResultsClient({
   initialNames,
-  initialArticles = [],
   searchTerm,
   totalNames,
-  totalArticles = 0
 }) {
   const router = useRouter();
 
-  const totalResults = totalNames + totalArticles;
-  const dynamicTitle = `${searchTerm} - Names & Articles | NameVerse`;
-  const dynamicDescription = `Discover ${totalResults} results for ${searchTerm}. Expert meanings, origins, articles, and inspiration for your search.`;
+  const totalResults = totalNames;
+  const dynamicTitle = `${searchTerm} - Names | NameVerse`;
+  const dynamicDescription = `Discover ${totalResults} name results for ${searchTerm}. Expert meanings, origins, and inspiration for your search.`;
   const canonicalURL = `https://yourdomain.com/search/${encodeURIComponent(searchTerm)}`;
 
   const [viewMode, setViewMode] = useState('grid');
   const [isPending, startTransition] = useTransition();
-  const [activeTab, setActiveTab] = useState('all');
 
   const displayNames = initialNames;
-  const displayArticles = initialArticles;
 
   // SEO Schemas
   const faqSchema = {
@@ -80,11 +76,19 @@ export default function SearchResultsClient({
     return () => document.head.removeChild(link);
   }, [canonicalURL]);
 
+  const seoParagraphs = useMemo(() => [
+    `Discover ${searchTerm} names with clear meanings, cultural origins, and pronunciation guides — perfect for new parents and curious minds.`,
+    `Browse popular, modern, and unique ${searchTerm} name suggestions, curated lists, and gender-specific options to help you find the ideal name quickly.`,
+    `Each entry includes origin, short meaning, usage notes, and related names so you can compare options and choose with confidence.`,
+  ], [searchTerm]);
+
   return (
     <>
       <Head>
         <title>{dynamicTitle}</title>
         <meta name="description" content={dynamicDescription} />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
         <meta name="robots" content="index, follow" />
         <meta property="og:title" content={dynamicTitle} />
         <meta property="og:description" content={dynamicDescription} />
@@ -141,41 +145,7 @@ export default function SearchResultsClient({
           </div>
         </nav>
 
-        {/* Tabs for filtering */}
-        <div className="max-w-4xl mx-auto px-4 mb-6">
-          <div className="flex gap-2 border-b border-gray-200">
-            <button
-              onClick={() => setActiveTab('all')}
-              className={`px-4 py-2 font-semibold border-b-2 transition-colors ${
-                activeTab === 'all'
-                  ? 'border-indigo-700 text-indigo-700'
-                  : 'border-transparent text-gray-600 hover:text-indigo-600'
-              }`}
-            >
-              All ({totalResults})
-            </button>
-            <button
-              onClick={() => setActiveTab('names')}
-              className={`px-4 py-2 font-semibold border-b-2 transition-colors ${
-                activeTab === 'names'
-                  ? 'border-indigo-700 text-indigo-700'
-                  : 'border-transparent text-gray-600 hover:text-indigo-600'
-              }`}
-            >
-              Names ({totalNames})
-            </button>
-            <button
-              onClick={() => setActiveTab('articles')}
-              className={`px-4 py-2 font-semibold border-b-2 transition-colors ${
-                activeTab === 'articles'
-                  ? 'border-indigo-700 text-indigo-700'
-                  : 'border-transparent text-gray-600 hover:text-indigo-600'
-              }`}
-            >
-              Articles ({totalArticles})
-            </button>
-          </div>
-        </div>
+        
 
         <section className="max-w-4xl mx-auto px-4 pt-2 pb-6" role="main">
           {isPending ? (
@@ -203,23 +173,7 @@ export default function SearchResultsClient({
                 </div>
               )}
 
-              {/* Articles Section */}
-              {(activeTab === 'all' || activeTab === 'articles') && displayArticles.length > 0 && (
-                <div>
-                  <h2 className="text-xl font-bold text-indigo-900 mb-5">Articles</h2>
-                  <ResultGrid viewMode={viewMode}>
-                    {displayArticles.map((article, idx) => (
-                      <ArticleCard
-                        key={article.id || article.slug || idx}
-                        article={article}
-                        viewMode={viewMode}
-                        searchTerm={searchTerm}
-                        router={router}
-                      />
-                    ))}
-                  </ResultGrid>
-                </div>
-              )}
+              
             </div>
           )}
         </section>
@@ -232,17 +186,37 @@ export default function SearchResultsClient({
 
             {/* Enhanced SEO Content */}
             <div className="prose prose-indigo max-w-none mb-6">
-              <p className="text-base text-gray-700 leading-relaxed mb-4">
-                Discover the perfect baby name related to <strong className="text-indigo-700">{searchTerm}</strong> from our comprehensive database of 60,000+ names.
-                Whether you're searching for Islamic names, Christian names, or Hindu names, our collection provides detailed meanings,
-                cultural origins, and spiritual significance to help you make the best choice for your baby.
-              </p>
+              {seoParagraphs.map((txt, i) => (
+                <p key={i} className="text-base text-gray-700 leading-relaxed mb-4">{txt}</p>
+              ))}
 
-              <p className="text-base text-gray-700 leading-relaxed mb-4">
-                Each name in our {searchTerm} collection comes with authentic translations in multiple languages including English,
-                Urdu, Arabic, and Hindi. We provide pronunciation guides, numerology insights, lucky numbers, and personality traits
-                associated with each name to give you a complete understanding of your chosen name's significance.
-              </p>
+              {displayNames && displayNames.length > 0 && (
+                <div className="mt-4">
+                  <h4 className="text-lg font-semibold text-indigo-800 mb-3">Quick Picks — Popular {searchTerm} Names</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {displayNames.slice(0, 8).map((n) => {
+                      const religionMap = {
+                        'islam': 'islamic',
+                        'islamic': 'islamic',
+                        'hindu': 'hindu',
+                        'hinduism': 'hindu',
+                        'christian': 'christian',
+                        'christianity': 'christian',
+                      };
+                      const religion = religionMap[n.religion?.toLowerCase()] || 'islamic';
+                      return (
+                        <Link
+                          key={n._id}
+                          href={`/names/${religion}/${n.slug}`}
+                          className="inline-block px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition"
+                        >
+                          {n.name}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
 
             <h3 className="text-xl font-bold text-indigo-900 mb-4">Why Choose a Name from {searchTerm}?</h3>
@@ -354,43 +328,6 @@ function NameCard({ name, viewMode, index, searchTerm, router }) {
   );
 }
 
-function ArticleCard({ article, viewMode, searchTerm, router }) {
-  const url = `/blog/${article.slug}`;
-
-  return (
-    <article
-      onClick={() => router.push(url)}
-      className="group transition-transform duration-300 hover:scale-[1.038] hover:shadow-xl rounded-2xl border border-gray-100 bg-white px-6 py-7 flex flex-col items-start cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-400"
-      tabIndex={0}
-      aria-label={`Read article: ${article.title}`}
-      role="button"
-    >
-      <h3
-        className="text-2xl font-extrabold text-indigo-900 mb-3 tracking-tight group-hover:text-purple-700 transition-colors"
-        itemProp="name"
-      >
-        {article.title}
-      </h3>
-      {(article.excerpt || article.subtitle || article.summary) && (
-        <p className="text-gray-700 text-base mb-2 line-clamp-2">
-          {article.excerpt || article.subtitle || article.summary}
-        </p>
-      )}
-      <div className="flex flex-wrap items-center gap-2 mt-2">
-        {article.category && (
-          <span className="inline-block text-xs px-2 py-0.5 bg-purple-100 text-purple-800 rounded font-bold uppercase tracking-wider">
-            {article.category}
-          </span>
-        )}
-        {article.read_time_minutes && (
-          <span className="inline-block text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded font-medium">
-            {article.read_time_minutes} min read
-          </span>
-        )}
-      </div>
-    </article>
-  );
-}
 
 function SkeletonResults() {
   return (

@@ -186,29 +186,32 @@ export function generateConclusion(name) {
 /**
  * Generate article introduction with SEO keywords
  * @param {Object} article - Article data
- * @returns {string} Article introduction
+ * @returns {string} Content introduction
  */
-export function generateArticleIntroduction(article) {
+export function generateContentIntroduction(content) {
   const parts = [];
 
-  if (article.subtitle) {
-    parts.push(article.subtitle);
-  }
+  if (!content) return '';
 
-  if (article.category) {
-    parts.push(
-      `This comprehensive guide on ${article.category} provides expert insights into baby naming traditions, cultural meanings, and practical advice for parents.`
-    );
-  }
-
-  if (article.excerpt) {
-    parts.push(article.excerpt);
-  }
-
-  if (parts.length === 0) {
-    parts.push(
-      `Discover valuable insights about baby names, cultural traditions, and naming practices in this detailed article from NameVerse.`
-    );
+  // If it's a name object
+  if (content.name) {
+    if (content.subtitle) parts.push(content.subtitle);
+    if (content.short_meaning) parts.push(content.short_meaning);
+    parts.push(`Explore the meaning, origin, and usage of the name ${content.name} across cultures and traditions.`);
+  } else {
+    // Generic content (previously article)
+    if (content.subtitle) parts.push(content.subtitle);
+    if (content.category) {
+      parts.push(
+        `This guide on ${content.category} provides insights into naming traditions, cultural meanings, and practical advice for parents.`
+      );
+    }
+    if (content.excerpt) parts.push(content.excerpt);
+    if (parts.length === 0) {
+      parts.push(
+        `Discover valuable insights about baby names, cultural traditions, and naming practices from NameVerse.`
+      );
+    }
   }
 
   return parts.join(' ');
@@ -243,6 +246,6 @@ export default {
   generateNameFAQ,
   generateCulturalContext,
   generateConclusion,
-  generateArticleIntroduction,
+  generateContentIntroduction,
   generateTableOfContents,
 };
