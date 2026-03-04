@@ -125,6 +125,12 @@ export default function RootLayout({ children }) {
             items: [],
           }}
         />
+        {/* Ahrefs analytics script */}
+        <script
+          src="https://analytics.ahrefs.com/analytics.js"
+          data-key="S9Ns3AvCxFNBopNYRd0/9w"
+          async
+        ></script>
       </head>
 
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-gray-900`}>
