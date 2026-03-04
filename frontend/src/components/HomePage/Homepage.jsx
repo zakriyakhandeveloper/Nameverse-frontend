@@ -5,9 +5,7 @@ import AlphabetNavigation from "./AlphabetNavigation";
 import PopularNamesSection from "./PopularNamesSection";
 import TrendingNames from "./TrendingNames";
 import WhyChooseSection from "./WhyChooseSection";
-import SEOContentBlock from "./SeoContentBlock";
 import ComprehensiveFAQ from "./ComprehensiveFAQ";
-import ArticleExplorer from "./latestStories";
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -186,8 +184,7 @@ export default function HomePageClient() {
         {/* Comprehensive FAQ - Converted from hidden content */}
         <ComprehensiveFAQ />
 
-        {/* Article Explorer - Blog preview */}
-        <ArticleExplorer embedded />
+        {/* Article Explorer removed per SEO focus (stories/articles removed) */}
       </main>
 
       {/* Footer is in layout.js, but can be added here if needed */}

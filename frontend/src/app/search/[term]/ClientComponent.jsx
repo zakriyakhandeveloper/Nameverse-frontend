@@ -23,6 +23,7 @@ export default function SearchResultsClient({
 
   const [viewMode, setViewMode] = useState('grid');
   const [isPending, startTransition] = useTransition();
+  const [activeTab, setActiveTab] = useState('all');
 
   const displayNames = initialNames;
 
