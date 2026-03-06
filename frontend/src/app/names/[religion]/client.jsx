@@ -358,28 +358,13 @@ export default function ReligiousNamesBrowser({
         </div>
       </nav>
 
-      {/* Header */}
+      {/* Header - Search and Filters Only */}
       <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="py-4">
             <div className="flex items-center justify-between gap-4 mb-4">
-              {/* Logo */}
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
-                  <BookOpen className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-lg sm:text-xl md:text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                    {currentReligion.label} Baby Names with Meanings
-                  </h1>
-                  <p className="text-xs sm:text-sm text-gray-600">
-                    {totalCount.toLocaleString()} verified names • {currentReligion.description.split('.')[0]}
-                  </p>
-                </div>
-              </div>
-
               {/* Search & Filter */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 w-full justify-end">
                 <div className="hidden md:block relative w-64">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <input

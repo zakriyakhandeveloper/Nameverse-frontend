@@ -213,13 +213,49 @@ export default async function ReligionNamesPage({ params }) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
-      <ReligiousNamesBrowser
-        initialReligion={religion}
-        initialNames={initialNames}
-        initialFilters={initialFilters}
-        initialTotalPages={initialTotalPages}
-        initialTotalCount={initialTotalCount}
-      />
+      <div className="min-h-screen bg-gray-50">
+        {/* Server-side rendered header for SEO */}
+        <div className="bg-white border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="text-center">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                {religionTitle} Baby Names with Meanings
+              </h1>
+              <div className="max-w-3xl mx-auto">
+                {religion === 'islamic' && (
+                  <p className="text-lg text-gray-700 leading-relaxed">
+                    Discover authentic Islamic baby names with Quranic references and verified meanings in English, Urdu & Arabic. 
+                    Our comprehensive database features {initialTotalCount.toLocaleString()}+ Muslim baby names for boys and girls, 
+                    each with spiritual significance, pronunciation guides, lucky traits, and connections to Islamic heritage.
+                  </p>
+                )}
+                {religion === 'christian' && (
+                  <p className="text-lg text-gray-700 leading-relaxed">
+                    Explore authentic Christian baby names with Biblical references and saint connections. 
+                    Browse our collection of {initialTotalCount.toLocaleString()}+ Christian names for boys and girls, 
+                    featuring scripture verses, Hebrew/Greek origins, and timeless spiritual significance from sacred traditions.
+                  </p>
+                )}
+                {religion === 'hindu' && (
+                  <p className="text-lg text-gray-700 leading-relaxed">
+                    Find beautiful Hindu baby names from Sanskrit with Vedic meanings and deity connections. 
+                    Explore {initialTotalCount.toLocaleString()}+ Hindu names for boys and girls inspired by gods, goddesses, 
+                    and ancient Indian wisdom, each with cultural significance and spiritual depth.
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <ReligiousNamesBrowser
+          initialReligion={religion}
+          initialNames={initialNames}
+          initialFilters={initialFilters}
+          initialTotalPages={initialTotalPages}
+          initialTotalCount={initialTotalCount}
+        />
+      </div>
     </>
   );
 }

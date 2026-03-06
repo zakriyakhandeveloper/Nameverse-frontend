@@ -108,7 +108,7 @@ export async function generateMetadata({ params }) {
   ].filter(Boolean).join(', ');
 
   return {
-    title: `${titleName} Name Meaning & Origin | ${religionTitle} ${nameData.gender || ''} Baby Name`,
+    title: `${titleName} - ${religionTitle} ${nameData.gender || ''} Name Meaning '${nameData.short_meaning || nameData.meaning}' | ${nameData.origin || 'Cultural'} Origins`,
     description: desc,
     keywords,
     authors: [{ name: 'NameVerse' }],

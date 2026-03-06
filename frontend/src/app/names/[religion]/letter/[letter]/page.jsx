@@ -231,16 +231,36 @@ export default async function NamesDatabaseServer({ params, searchParams }) {
       <script type="application/ld+json" suppressHydrationWarning dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListLD) }} />
       <script type="application/ld+json" suppressHydrationWarning dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLD) }} />
 
-      <NamesDatabaseClient
-        initialNames={names}
-        initialTotal={totalResults}
-        initialReligion={selectedReligion}
-        initialLetter={selectedLetter}
-        initialPage={currentPage}
-        perPageDefault={perPage}
-        initialSort={sortBy}
-        isFallback={isFallback} // Pass fallback status to client
-      />
+      <div className="min-h-screen bg-gray-50">
+        {/* Server-side rendered header for SEO */}
+        <div className="bg-white border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="text-center">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                {selectedReligion.charAt(0).toUpperCase() + selectedReligion.slice(1)} Names Starting with "{selectedLetter}"
+              </h1>
+              <div className="max-w-3xl mx-auto">
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  Explore our comprehensive collection of {selectedReligion} baby names that start with the letter "{selectedLetter}".
+                  Discover meanings, origins, pronunciations, and cultural significance for {totalResults.toLocaleString()}+ names
+                  perfect for your baby, including popular choices and unique finds from {selectedReligion} traditions.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <NamesDatabaseClient
+          initialNames={names}
+          initialTotal={totalResults}
+          initialReligion={selectedReligion}
+          initialLetter={selectedLetter}
+          initialPage={currentPage}
+          perPageDefault={perPage}
+          initialSort={sortBy}
+          isFallback={isFallback} // Pass fallback status to client
+        />
+      </div>
     </>
   );
 }

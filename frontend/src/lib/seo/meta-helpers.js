@@ -100,22 +100,20 @@ export function generateNameMetaDescription(name) {
   const parts = [];
 
   // Start with the name and meaning
-  parts.push(`${name.name} means "${name.short_meaning || name.meaning}".`);
+  parts.push(`${name.name} (${name.origin || 'Cultural'} origin) - ${name.religion} ${name.gender || ''} name meaning '${name.short_meaning || name.meaning}'.`);
 
-  // Add origin and religion
-  if (name.origin && name.religion) {
-    parts.push(`A ${name.origin} name from ${name.religion} tradition.`);
-  } else if (name.religion) {
-    parts.push(`A beautiful ${name.religion} baby name.`);
+  // Add numerology if available
+  if (name.lucky_number) {
+    parts.push(`Numerology: ${name.lucky_number}.`);
   }
 
-  // Add gender
-  if (name.gender) {
-    parts.push(`Perfect ${name.gender} name choice.`);
+  // Add lucky stone if available
+  if (name.lucky_stone) {
+    parts.push(`Lucky stone: ${name.lucky_stone}.`);
   }
 
   // Add call-to-action
-  parts.push('Discover meaning, origin & cultural significance.');
+  parts.push('Complete name analysis with cultural significance.');
 
   const description = parts.join(' ');
   return validateMetaDescription(description);
