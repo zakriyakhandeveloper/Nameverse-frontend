@@ -7,7 +7,7 @@ const SITE_URL = env.site.url;
 export const metadata = {
   title: "About Zakriya Khan - Name Meanings Expert & Cultural Consultant",
   description: "Meet Zakriya Khan - Expert in name meanings, cultural heritage, and spiritual significance. Discover the stories behind names with personalized insights and professional consultation.",
-  keywords: ["Zakriya Khan", "name meanings", "cultural heritage", "spiritual names", "Islamic names", "baby names expert", "name consultant"],
+  keywords: ["Zakriya Khan", "name meanings", "cultural heritage", "spiritual names", "Islamic names", "baby names expert", "name consultant", "baby name consultant", "religious baby names", "Muslim name specialist", "Hindu name expert", "Christian name advisor", "meaningful baby names", "name origin research"],
   openGraph: {
     title: "About Zakriya Khan - Name Meanings Expert & Cultural Consultant",
     description: "Meet Zakriya Khan - Expert in name meanings, cultural heritage, and spiritual significance.",
@@ -185,6 +185,33 @@ export default function AboutPage() {
                   <p className="text-gray-600">{service.desc}</p>
                 </div>
               ))}
+            </div>
+          </section>
+
+          {/* SEO Content Section */}
+          <section className="mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6 text-center">
+              Expert Insights on Baby Names
+            </h2>
+            <div className="prose prose-lg max-w-none text-gray-700 space-y-6">
+              <p>
+                As a dedicated name meanings expert, I specialize in helping families discover the perfect baby names with deep cultural and spiritual significance. Whether you're looking for Islamic baby names, Hindu baby names, or Christian baby names, my extensive research covers meanings in Urdu, Arabic, Hindi, and English.
+              </p>
+              <p>
+                Baby names are more than just labels – they carry powerful meanings that can influence a child's life. From Quranic names for boys and girls to Sanskrit names with Vedic origins, I provide detailed analysis of name meanings, lucky numbers, and cultural contexts. My expertise includes Muslim baby names from the Quran, ensuring authenticity and spiritual depth.
+              </p>
+              <p>
+                For parents seeking unique baby names, I offer personalized consultations that consider family heritage, religious beliefs, and personal preferences. Whether you need baby name suggestions for a newborn boy or girl, or want to understand the meaning of names in different languages, my services cover everything from Arabic baby names to modern baby names with traditional roots.
+              </p>
+              <p>
+                Understanding name meanings is crucial for choosing the right baby name. I help families explore Islamic names for boys, Islamic names for girls, and names from other religious traditions. My knowledge extends to name numerology, where I analyze lucky numbers and elements associated with specific names.
+              </p>
+              <p>
+                As a name consultant, I work with families worldwide to find meaningful baby names that honor their cultural heritage. From trending baby names to classic religious names, I provide comprehensive guidance on baby name meanings, origins, and significance. My expertise in Muslim baby names, Hindu baby names, and Christian baby names ensures that every recommendation is culturally appropriate and spiritually meaningful.
+              </p>
+              <p>
+                Baby name research is my passion, and I continuously update my knowledge base with the latest trends and traditional wisdom. Whether you're looking for baby names A to Z, specific letter-based names, or names with particular meanings, I offer expert advice to help you make an informed decision.
+              </p>
             </div>
           </section>
 

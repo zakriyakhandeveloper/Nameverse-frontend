@@ -27,6 +27,7 @@ export default function Navbar() {
   const [isElevated, setIsElevated] = useState(false);
   const pathname = usePathname();
 
+  // add scroll elevation effect
   useEffect(() => {
     const handleScroll = () => {
       setIsElevated(window.scrollY > 10);
@@ -46,44 +47,36 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-[100] transition-colors duration-300 ${
           isElevated
-            ? "bg-white/90 backdrop-blur-lg shadow-lg border-b border-blue-100"
-            : "bg-white border-transparent"
+            ? "bg-white/95 backdrop-blur-sm shadow-md"
+            : "bg-transparent"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 gap-4">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo and branding */}
             <Link
               href="/"
-              className="flex items-center gap-3 group"
+              className="flex items-center gap-2"
               onClick={closeAll}
               aria-label="NameVerse Home"
             >
-              <div className="relative flex-shrink-0">
-                <span className="absolute inset-0 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full blur-md group-hover:blur-lg transition-all" />
-                <div className="relative w-11 h-11 rounded-full border border-blue-200 bg-white shadow-sm overflow-hidden flex items-center justify-center">
-                  <Image
-                    src="/logo.png"
-                    alt="NameVerse Logo"
-                    fill
-                    sizes="44px"
-                    className="object-cover rounded-full"
-                    priority
-                  />
-                </div>
-              </div>
-              <div className="hidden sm:flex flex-col leading-tight">
-                <span className="text-xl font-semibold text-gray-900">
-                  NameVerse
-                </span>
-                <span className="text-xs text-gray-500">
-                  Baby Names & Meanings
-                </span>
-              </div>
+              <Image
+                src="/logo.png"
+                alt="NameVerse Logo"
+                width={44}
+                height={44}
+                className="rounded-full"
+                priority
+              />
+              <span className="hidden sm:inline-block text-lg font-semibold text-gray-900">
+                NameVerse
+              </span>
             </Link>
 
-            <div className="hidden lg:flex items-center gap-1 rounded-full bg-gray-50 border border-gray-100 px-2 py-1">
+            {/* Desktop navigation links */}
+            <nav className="hidden lg:flex lg:space-x-6">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.href);
@@ -91,93 +84,90 @@ export default function Navbar() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                    className={`flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                       active
-                        ? "bg-white shadow text-blue-700"
-                        : "text-gray-600 hover:text-gray-900"
+                        ? "text-blue-700 bg-blue-50"
+                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                     }`}
                     aria-current={active ? "page" : undefined}
                     onClick={closeAll}
-                    prefetch
                   >
                     <Icon className="w-4 h-4" />
                     <span>{item.label}</span>
                   </Link>
                 );
               })}
-            </div>
+            </nav>
 
-            <div className="hidden md:flex items-center gap-3">
-              <div className="hidden xl:block min-w-[240px]">
+            {/* Search + CTA on desktop */}
+            <div className="hidden md:flex items-center space-x-4">
+              <div className="w-full max-w-xs">
                 <SearchBar placeholder="Search names..." />
               </div>
               <Link
                 href="/names"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-semibold shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all"
+                className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-semibold shadow hover:shadow-lg transition-shadow"
                 onClick={closeAll}
               >
                 <Star className="w-4 h-4" />
-                Explore Names
+                <span className="hidden sm:inline">Explore</span>
               </Link>
             </div>
 
-            <div className="flex items-center lg:hidden">
-              <button
-                onClick={toggleMenu}
-                className="p-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-150"
-                aria-label="Menu"
-              >
-                {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-              </button>
-            </div>
+            {/* Mobile hamburger */}
+            <button
+              onClick={toggleMenu}
+              className="lg:hidden p-2 rounded-md text-gray-700 hover:bg-gray-100 transition-colors"
+              aria-label="Toggle menu"
+            >
+              {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
           </div>
-
-          {menuOpen && (
-            <div className="lg:hidden border-t border-gray-200 pb-6 animate-slideDown">
-              <div className="px-2 py-4">
-                <SearchBar mobile placeholder="Search names..." />
-              </div>
-              <nav className="space-y-2 px-2">
-                {navItems.map((item) => {
-                  const Icon = item.icon;
-                  const active = isActive(item.href);
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-2xl font-medium ${
-                        active
-                          ? "bg-blue-50 text-blue-700"
-                          : "text-gray-700 hover:bg-gray-50"
-                      }`}
-                      onClick={closeAll}
-                    >
-                      <Icon className="w-5 h-5" />
-                      <span>{item.label}</span>
-                    </Link>
-                  );
-                })}
-                <Link
-                  href="/names"
-                  className="flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-md"
-                  onClick={closeAll}
-                >
-                  <Star className="w-4 h-4" />
-                  Explore Names
-                </Link>
-              </nav>
-            </div>
-          )}
         </div>
+
+        {/* Mobile overlay menu */}
+        {menuOpen && (
+          <div className="lg:hidden fixed inset-0 bg-black/30 z-[90]" onClick={closeAll} />
+        )}
+        {menuOpen && (
+          <div className="lg:hidden fixed top-16 left-0 right-0 bg-white z-[100] shadow-md animate-slideDown">
+            <div className="px-4 py-4">
+              <SearchBar mobile placeholder="Search names..." />
+            </div>
+            <nav className="px-4 py-2 space-y-1">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`flex items-center gap-2 px-4 py-3 rounded-lg text-base font-medium transition-colors ${
+                      active
+                        ? "bg-blue-50 text-blue-700"
+                        : "text-gray-700 hover:bg-gray-100"
+                    }`}
+                    onClick={closeAll}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
+              <Link
+                href="/names"
+                className="flex items-center justify-center gap-2 px-4 py-3 mt-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-md"
+                onClick={closeAll}
+              >
+                <Star className="w-4 h-4" />
+                <span>Explore Names</span>
+              </Link>
+            </nav>
+          </div>
+        )}
       </header>
 
-      {menuOpen && (
-        <div
-          className="fixed inset-0 bg-black/20 z-[90] lg:hidden"
-          onClick={closeAll}
-        />
-      )}
-
+      {/* spacer to avoid content under header */}
       <div className="h-16" />
 
       <style jsx>{`
@@ -193,7 +183,7 @@ export default function Navbar() {
         }
 
         .animate-slideDown {
-          animation: slideDown 0.2s ease-out;
+          animation: slideDown 0.25s ease-out;
         }
       `}</style>
     </>
