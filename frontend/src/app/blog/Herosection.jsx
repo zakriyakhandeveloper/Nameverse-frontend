@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Search, ArrowRight, X, ChevronDown, Filter } from "lucide-react";
 
 const CIRCLE_STYLES = [
@@ -15,6 +16,7 @@ export default function HeroSection({
   onSelect,
   onSearch,
 }) {
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -33,7 +35,12 @@ export default function HeroSection({
 
   // Handle search
   const handleSearch = () => {
-    if (query.trim()) onSearch(query.trim());
+    if (!query.trim()) return;
+    if (typeof onSearch === "function") {
+      onSearch(query.trim());
+      return;
+    }
+    router.push(`/blog?query=${encodeURIComponent(query.trim())}`);
   };
 
   // Handle key press
@@ -43,7 +50,14 @@ export default function HeroSection({
 
   // Handle category select
   const handleCategorySelect = (cat) => {
-    onSelect(cat);
+    if (typeof onSelect === "function") {
+      onSelect(cat);
+    } else {
+      const target = cat === "All Categories"
+        ? "/blog"
+        : `/blog?category=${encodeURIComponent(cat)}`;
+      router.push(target);
+    }
     setShowDropdown(false);
   };
 

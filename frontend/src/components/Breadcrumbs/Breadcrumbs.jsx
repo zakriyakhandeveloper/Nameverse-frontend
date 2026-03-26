@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { ChevronRight, Home } from 'lucide-react';
+import { getSiteUrl, absoluteUrl } from '@/lib/seo/site';
 
 /**
  * Breadcrumbs Component - SEO Optimized
@@ -12,6 +13,8 @@ import { ChevronRight, Home } from 'lucide-react';
 export default function Breadcrumbs({ items = [], className = '' }) {
   if (!items || items.length === 0) return null;
 
+  const site = getSiteUrl();
+
   // Generate JSON-LD schema for breadcrumbs
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -21,15 +24,15 @@ export default function Breadcrumbs({ items = [], className = '' }) {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: 'https://nameverse.vercel.app'
+        item: site,
       },
       ...items.map((item, index) => ({
         '@type': 'ListItem',
         position: index + 2,
         name: item.label,
-        ...(item.href && { item: `https://nameverse.vercel.app${item.href}` })
-      }))
-    ]
+        ...(item.href && { item: absoluteUrl(item.href) }),
+      })),
+    ],
   };
 
   return (

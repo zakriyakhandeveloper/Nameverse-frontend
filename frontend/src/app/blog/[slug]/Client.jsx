@@ -23,7 +23,8 @@ const getGradientBg = (articleId) => {
     'from-violet-600 via-purple-600 to-indigo-600',
     'from-slate-600 via-gray-600 to-stone-600',
   ];
-  const hash = articleId ? articleId.charCodeAt(0) + articleId.length : 0;
+  const idValue = articleId == null ? '' : String(articleId);
+  const hash = idValue ? idValue.charCodeAt(0) + idValue.length : 0;
   return gradients[hash % gradients.length];
 };
 
@@ -340,7 +341,7 @@ function ArticleClientInner({ article, latestArticles = [] }) {
   // Hydration and initialization
   useEffect(() => {
     setIsClient(true);
-    setViewCount(article?.views || 0);
+    setViewCount(article?.views || article?.stats?.views || 0);
     setGradientBg(getGradientBg(article?.id));
     
     if (article?.created_at) {
@@ -359,17 +360,94 @@ function ArticleClientInner({ article, latestArticles = [] }) {
         sessionStorage.setItem(viewKey, 'true');
       }
     }
-  }, [article?.id, article?.views, article?.created_at]);
+  }, [article?.id, article?.views, article?.stats?.views, article?.created_at]);
 
   const tableOfContents = useMemo(() => {
+    const toc = article?.tableOfContents;
+    if (Array.isArray(toc) && toc.length > 0) {
+      return toc
+        .filter((item) => item && (item.anchor || item.id) && item.title)
+        .map((item, idx) => ({
+          id: item.anchor || item.id || `section-${idx}`,
+          title: item.title,
+          level: item.level || 2,
+        }));
+    }
+
+    // Fallback: if tableOfContents isn't present, try markdown headings.
     if (!article?.content) return [];
     const headings = article.content.match(/^## .+$/gm) || [];
     return headings.map((heading, idx) => ({
       id: `section-${idx}`,
       title: heading.replace('## ', '').trim(),
-      level: 2
+      level: 2,
     }));
-  }, [article?.content]);
+  }, [article?.tableOfContents, article?.content]);
+
+  const articleHtmlWithIds = useMemo(() => {
+    const looksHtml =
+      typeof article?.content === 'string' && /<[^>]+>/.test(article.content);
+    if (!looksHtml) return article?.content;
+    if (!article?.content || typeof article.content !== 'string') return article?.content;
+    if (!Array.isArray(article?.tableOfContents) || article.tableOfContents.length === 0) return article.content;
+
+    const normalize = (s = '') =>
+      String(s)
+        .toLowerCase()
+        .trim()
+        .replace(/[’']/g, '')
+        .replace(/[^a-z0-9]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+    try {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(article.content, 'text/html');
+
+      const tocItems = article.tableOfContents || [];
+      const tocMap = new Map(
+        tocItems
+          .filter((i) => i && i.anchor && i.title)
+          .map((i) => [normalize(i.title), i.anchor])
+      );
+
+      const faqAnchors = new Set(
+        tocItems
+          .filter((i) => i && i.anchor && /faq/i.test(i.title || ''))
+          .map((i) => i.anchor)
+      );
+
+      // Assign ids to headings based on `tableOfContents` titles.
+      const headings = Array.from(doc.querySelectorAll('h2, h3'));
+      headings.forEach((h) => {
+        const key = normalize(h.textContent || '');
+        const anchor = tocMap.get(key);
+        if (anchor) h.setAttribute('id', anchor);
+      });
+
+      // If some headings didn't get ids, assign remaining toc anchors in order.
+      let anchorIdx = 0;
+      const allAnchors = tocItems.map((i) => i && i.anchor).filter(Boolean);
+      headings.forEach((h) => {
+        if (h.getAttribute('id')) return;
+        if (anchorIdx < allAnchors.length) {
+          h.setAttribute('id', allAnchors[anchorIdx]);
+          anchorIdx += 1;
+        }
+      });
+
+      // Remove FAQ content embedded in HTML; we render FAQs from `article.faqs`.
+      doc.querySelectorAll('div.faq-section').forEach((el) => el.remove());
+      Array.from(doc.querySelectorAll('h2, h3')).forEach((h) => {
+        const id = h.getAttribute('id');
+        if (id && faqAnchors.has(id)) h.remove();
+      });
+
+      return doc.body.innerHTML;
+    } catch {
+      return article.content;
+    }
+  }, [article?.content, article?.tableOfContents]);
 
   const estimatedReadTime = useMemo(() => 
     article?.read_time_minutes || Math.ceil((article?.content?.split(/\s+/).length || 0) / 200),
@@ -414,17 +492,19 @@ function ArticleClientInner({ article, latestArticles = [] }) {
   }, []);
 
   const getCoverImage = useCallback(() => {
-    if (article?.cover_image_url && !imageError) {
-      return `/article/${article.cover_image_url.split('/').pop()}`;
+    if (!imageError) {
+      const raw = article?.coverImageUrl || article?.cover_image_url;
+      if (raw) return raw;
     }
     return null;
-  }, [article?.cover_image_url, imageError]);
+  }, [article?.coverImageUrl, article?.cover_image_url, imageError]);
 
   if (!isClient || !article) {
     return <ArticleSkeleton />;
   }
 
   const coverImage = getCoverImage();
+  const isHtmlContent = typeof article?.content === "string" && /<[^>]+>/.test(article.content);
 
   return (
     <article className="min-h-screen bg-white">
@@ -447,7 +527,7 @@ function ArticleClientInner({ article, latestArticles = [] }) {
       </div>
 
       {/* Hero Section */}
-      <div className="relative w-full h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] bg-gray-900 overflow-hidden">
+      <div className="relative w-full h-[260px] sm:h-[380px] md:h-[500px] lg:h-[620px] bg-gray-900 overflow-hidden">
         {coverImage && !imageError ? (
           <Image
             src={coverImage}
@@ -491,12 +571,12 @@ function ArticleClientInner({ article, latestArticles = [] }) {
                 )}
               </div>
 
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 mb-6 leading-[1.1] tracking-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-gray-900 mb-5 sm:mb-6 leading-[1.1] tracking-tight break-words">
                 {renderTextWithNameLinks(article.title, article.name_links, categoryFilter)}
               </h1>
 
               {article.subtitle && (
-                <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 mb-10 leading-relaxed font-light max-w-4xl">
+                <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-600 mb-8 sm:mb-10 leading-relaxed font-light max-w-4xl">
                   {renderTextWithNameLinks(article.subtitle, article.name_links, categoryFilter)}
                 </p>
               )}
@@ -518,15 +598,17 @@ function ArticleClientInner({ article, latestArticles = [] }) {
             />
 
             {/* Article Content */}
-            <div className="prose prose-xl max-w-none mb-16">
-              {article.content ? (
+            <div className="prose prose-base sm:prose-lg lg:prose-xl max-w-none mb-16">
+              {article.content && isHtmlContent ? (
+                <div dangerouslySetInnerHTML={{ __html: articleHtmlWithIds }} />
+              ) : article.content ? (
                 article.content.split('\n\n').map((paragraph, idx) => {
                   if (paragraph.startsWith('## ')) {
                     return (
                       <h2
                         key={idx}
                         id={`section-${idx}`}
-                        className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-gray-900 mt-20 mb-8 scroll-mt-28 tracking-tight leading-[1.1]"
+                        className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mt-14 sm:mt-16 lg:mt-20 mb-6 sm:mb-8 scroll-mt-28 tracking-tight leading-[1.1]"
                         style={{ fontFamily: 'Georgia, serif' }}
                       >
                         {renderTextWithNameLinks(paragraph.replace('## ', ''), article.name_links, categoryFilter)}
@@ -537,7 +619,7 @@ function ArticleClientInner({ article, latestArticles = [] }) {
                     return (
                       <h3
                         key={idx}
-                        className="text-3xl sm:text-4xl font-bold text-gray-800 mt-16 mb-6 tracking-tight leading-tight"
+                        className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mt-12 sm:mt-14 md:mt-16 mb-5 sm:mb-6 tracking-tight leading-tight"
                       >
                         {renderTextWithNameLinks(paragraph.replace('### ', ''), article.name_links, categoryFilter)}
                       </h3>
@@ -547,7 +629,7 @@ function ArticleClientInner({ article, latestArticles = [] }) {
                     return (
                       <blockquote
                         key={idx}
-                        className="border-l-4 border-blue-500 pl-8 py-6 my-10 text-2xl italic text-gray-700 bg-blue-50/50 rounded-r-xl leading-relaxed"
+                        className="border-l-4 border-blue-500 pl-5 sm:pl-8 py-4 sm:py-6 my-8 sm:my-10 text-lg sm:text-xl md:text-2xl italic text-gray-700 bg-blue-50/50 rounded-r-xl leading-relaxed"
                         style={{ fontFamily: 'Georgia, serif' }}
                       >
                         {renderTextWithNameLinks(paragraph.replace(/^> /gm, ''), article.name_links, categoryFilter)}
@@ -558,7 +640,7 @@ function ArticleClientInner({ article, latestArticles = [] }) {
                     return (
                       <ul key={idx} className="space-y-5 my-10 ml-0">
                         {paragraph.split('\n').map((item, i) => (
-                          <li key={i} className="text-gray-800 text-xl leading-relaxed flex items-start gap-4">
+                          <li key={i} className="text-gray-800 text-base sm:text-lg md:text-xl leading-relaxed flex items-start gap-3 sm:gap-4">
                             <span className="text-blue-600 font-bold text-2xl mt-1 flex-shrink-0">→</span>
                             <span className="flex-1">{renderTextWithNameLinks(item.replace('- ', ''), article.name_links, categoryFilter)}</span>
                           </li>
@@ -567,7 +649,7 @@ function ArticleClientInner({ article, latestArticles = [] }) {
                     );
                   }
                   return (
-                    <p key={idx} className="text-gray-800 text-xl leading-[1.9] mb-8 font-light">
+                    <p key={idx} className="text-gray-800 text-base sm:text-lg md:text-xl leading-[1.9] mb-6 sm:mb-8 font-light">
                       {renderTextWithNameLinks(paragraph, article.name_links, categoryFilter)}
                     </p>
                   );
@@ -584,6 +666,36 @@ function ArticleClientInner({ article, latestArticles = [] }) {
                 </>
               )}
             </div>
+
+            {/* FAQ Section (from `articles.json`) */}
+            {Array.isArray(article?.faqs) && article.faqs.length > 0 && (
+              <section
+                id={
+                  tableOfContents.find((i) => i && /faq/i.test(i.title || ''))?.id ||
+                  'faqs'
+                }
+                className="mt-20 pt-10 border-t-2 border-gray-200"
+              >
+                <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-6 leading-[1.1]">
+                  {tableOfContents.find((i) => i && /faq/i.test(i.title || ''))?.title || 'FAQs'}
+                </h2>
+                <div className="space-y-4">
+                  {article.faqs.map((faq, idx) => (
+                    <details
+                      key={idx}
+                      className="bg-gray-50 border-2 border-gray-100 rounded-xl p-4 shadow-sm"
+                    >
+                      <summary className="cursor-pointer font-semibold text-gray-900 text-base sm:text-lg">
+                        {faq.question || faq.q}
+                      </summary>
+                      <p className="mt-3 text-gray-700 leading-relaxed">
+                        {faq.answer || faq.a}
+                      </p>
+                    </details>
+                  ))}
+                </div>
+              </section>
+            )}
 
             {/* Tags Section */}
             {article.tags && article.tags.length > 0 && (
@@ -616,6 +728,35 @@ function ArticleClientInner({ article, latestArticles = [] }) {
             <div className={`lg:block ${isMobileMenuOpen ? 'block' : 'hidden'} space-y-6`}>
               {tableOfContents.length > 0 && <TableOfContents items={tableOfContents} />}
               
+            {/* Related Names Section (from `articles.json`) */}
+            {Array.isArray(article?.relatedNames) && article.relatedNames.length > 0 && (
+              <div className="p-6 bg-white border-2 border-gray-200 rounded-xl shadow-md">
+                <h4 className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-5">
+                  Related Names
+                </h4>
+                <div className="space-y-4">
+                  {article.relatedNames.slice(0, 5).map((n, idx) => {
+                    const rel = n.religion || getCategoryFilter(article?.category);
+                    if (!n.slug) return null;
+                    return (
+                      <Link
+                        key={idx}
+                        href={`/names/${rel}/${n.slug}`}
+                        className="block hover:bg-blue-50 rounded-lg p-3 transition-colors border-2 border-transparent hover:border-blue-200"
+                      >
+                        <div className="font-semibold text-gray-900">{n.name}</div>
+                        {n.meaning && (
+                          <div className="text-sm text-gray-600 mt-1 leading-snug">
+                            {n.meaning}
+                          </div>
+                        )}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
               <ArticleStats 
                 wordCount={wordCount}
                 readTime={estimatedReadTime}

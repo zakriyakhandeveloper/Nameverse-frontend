@@ -1,11 +1,20 @@
-// app/[slug]/page.jsx
 import { notFound } from 'next/navigation';
 import ArticleClient from './Client';
 import { getArticleBySlug, getLatestArticles } from '@/lib/api/articles';
+import { getSiteUrl, absoluteUrl, DEFAULT_OG_PATH } from '@/lib/seo/site';
 
-export const revalidate = 60; // ISR every 60 seconds
+export const revalidate = 60;
 
-// ---------------- METADATA ----------------
+function articleOgImage(article) {
+  const raw =
+    article.coverImageUrl ||
+    article.cover_image_url ||
+    article.seo?.openGraph?.image ||
+    article.seo?.twitter?.image ||
+    article.image;
+  return raw ? absoluteUrl(raw) : absoluteUrl(DEFAULT_OG_PATH);
+}
+
 export async function generateMetadata({ params }) {
   const { slug } = await params;
 
@@ -14,53 +23,47 @@ export async function generateMetadata({ params }) {
 
     if (!article) {
       return {
-        title: 'Article Not Found | Nameverse',
+        title: 'Article Not Found | NameVerse',
         description: 'The requested article does not exist.',
-        robots: 'noindex, nofollow',
+        robots: { index: false, follow: false },
       };
     }
 
-    const DOMAIN = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
-
     const title = article.seo?.title || article.title;
     const description =
-      article.seo?.meta_description || article.summary || article.title;
+      article.seo?.description ||
+      article.seo?.meta_description ||
+      article.summary ||
+      article.subtitle ||
+      article.title;
 
-    // Enhanced keywords combining article-specific and general blog keywords
+    const canonicalPath =
+      article.seo?.canonicalUrl?.startsWith('/')
+        ? article.seo.canonicalUrl
+        : `/blog/${slug}`;
+    const canonical = absoluteUrl(canonicalPath);
+
     const baseKeywords = [
-      // Article-specific keywords from database
       ...(article.seo?.keywords || []),
-
-      // General article keywords
+      ...(article.tags || []),
       'baby name articles',
       'baby naming tips',
-      'name meaning blog',
-      'baby naming guide',
-
-      // Category-specific
+      'name meaning guide',
       article.category ? `${article.category} baby names` : '',
-      article.category ? `${article.category} articles` : '',
-
-      // Topic-related
-      'how to choose baby name',
-      'baby name inspiration',
-      'baby name ideas',
-      'baby naming advice',
-
-      // SEO optimization
-      'baby name trends',
+      article.category ? `${article.category} naming` : '',
+      'Islamic baby names guide',
+      'Hindu baby names guide',
+      'Christian baby names guide',
+      'baby names with meanings',
       'popular baby names',
-      'baby name meanings',
-      'cultural baby names',
-      'religious baby names'
     ].filter(Boolean);
 
-    const canonical = `${DOMAIN}/articles/${slug}`;
+    const ogImage = articleOgImage(article);
 
     return {
-      title,
+      title: `${title} | NameVerse`,
       description,
-      keywords: baseKeywords.join(', '),
+      keywords: [...new Set(baseKeywords)].join(', '),
       alternates: {
         canonical,
         languages: { 'x-default': canonical, en: canonical },
@@ -69,12 +72,14 @@ export async function generateMetadata({ params }) {
         title,
         description,
         url: canonical,
-        siteName: 'Nameverse',
+        siteName: 'NameVerse',
         type: 'article',
         locale: 'en_US',
+        publishedTime: article.publishedAt || article.created_at,
+        modifiedTime: article.updatedAt || article.updated_at,
         images: [
           {
-            url: article.image || '/default-og.jpg',
+            url: ogImage,
             width: 1200,
             height: 630,
             alt: article.title,
@@ -85,47 +90,50 @@ export async function generateMetadata({ params }) {
         card: 'summary_large_image',
         title,
         description,
-        images: [article.image || '/default-og.jpg'],
+        images: [ogImage],
       },
-      robots: { index: true, follow: true },
+      robots: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 },
     };
-  } catch (error) {
-    
+  } catch {
     return {
-      title: 'Article | Nameverse',
-      description: 'Read insightful articles on Nameverse.',
+      title: 'Article | NameVerse',
+      description: 'Read insightful articles on NameVerse.',
     };
   }
 }
 
-// ---------------- PAGE ----------------
 export default async function ArticlePage({ params }) {
   const { slug } = await params;
+  const site = getSiteUrl();
 
   try {
-    // Fetch article
     const article = await getArticleBySlug(slug);
-    if (!article) {
-      
-      return notFound();
-    }
+    if (!article) return notFound();
 
-    // Fetch latest articles (sidebar)
     const latestArticles = await getLatestArticles(4);
 
-    // Structured Data (Schema.org Article)
+    const imageUrl = articleOgImage(article);
     const structuredData = {
       '@context': 'https://schema.org',
       '@type': 'Article',
       headline: article.title,
-      description: article.summary || article.title,
+      description: article.summary || article.subtitle || article.title,
       author: {
-        '@type': 'Organization',
-        name: 'Nameverse',
+        '@type': article.author ? 'Person' : 'Organization',
+        name: article.author || 'NameVerse',
       },
-      datePublished: article.created_at || new Date().toISOString(),
-      dateModified: article.updated_at || new Date().toISOString(),
-      image: article.image || '/default-og.jpg',
+      datePublished: article.publishedAt || article.created_at || new Date().toISOString(),
+      dateModified: article.updatedAt || article.updated_at || article.publishedAt || new Date().toISOString(),
+      image: imageUrl,
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': `${site}/blog/${slug}`,
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'NameVerse',
+        url: site,
+      },
     };
 
     return (
@@ -134,16 +142,10 @@ export default async function ArticlePage({ params }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
-        <ArticleClient
-          slug={slug}
-          article={article}
-          latestArticles={latestArticles}
-        />
+        <ArticleClient slug={slug} article={article} latestArticles={latestArticles} />
       </>
     );
-  } catch (error) {
-    
-
+  } catch {
     return (
       <div className="p-8 text-center text-red-600">
         <h1 className="text-2xl font-bold mb-2">Server Error</h1>

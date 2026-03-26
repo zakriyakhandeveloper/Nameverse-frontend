@@ -10,9 +10,9 @@ import StructuredData from "@/components/SEO/StructuredData";
 import GoogleBotMeta from "@/components/SEO/GoogleBotMeta";
 import { AppProvider } from "@/contexts/AppContext";
 import LoadingWrapper from "@/components/LoadingAnimation/LoadingWrapper";
+import { getSiteUrl } from "@/lib/seo/site";
 
-// Use environment variable or default - will be overridden client-side if needed
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://nameverse.vercel.app";
+const siteUrl = getSiteUrl();
 
 // ✅ Font optimization
 const geistSans = Geist({
@@ -94,7 +94,7 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" dir="ltr">
+    <html lang="en" dir="ltr" className="scroll-smooth">
       <head>
         <meta name="color-scheme" content="light dark" />
         <meta name="application-name" content="NameVerse" />

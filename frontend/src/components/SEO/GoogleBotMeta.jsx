@@ -2,7 +2,12 @@
  * GoogleBotMeta
  * Adds crawl directives and helpful hints for search engine bots.
  */
-export default function GoogleBotMeta({ siteUrl = "https://nameverse.vercel.app" }) {
+export default function GoogleBotMeta({
+  siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://nameverse.com").replace(
+    /\/$/,
+    ""
+  ),
+}) {
   const crawlDirectives =
     "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1";
 

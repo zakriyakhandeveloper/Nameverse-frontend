@@ -8,19 +8,16 @@ import WhyChooseSection from "./WhyChooseSection";
 import SEOContentBlock from "./SeoContentBlock";
 import ComprehensiveFAQ from "./ComprehensiveFAQ";
 import ArticleExplorer from "./latestStories";
+import HomePageSection from "./HomePageSection";
 
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+const SITE =
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://nameverse.com";
 
-export default function HomePageClient() {
-  const currentYear = new Date().getFullYear();
-
+export default function HomePageClient({ initialArticles = [], initialCategories = [] }) {
   return (
     <>
-      {/* Preload main hero image for faster LCP */}
       <link rel="preload" as="image" href="/images/hero.jpg" />
 
-      {/* JSON-LD structured data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -29,136 +26,148 @@ export default function HomePageClient() {
             "@graph": [
               {
                 "@type": "WebSite",
-                "@id": `${process.env.NEXT_PUBLIC_SITE_URL || 'https://nameverse.com'}/#website`,
-                "url": process.env.NEXT_PUBLIC_SITE_URL || 'https://nameverse.com',
-                "name": "NameVerse - Baby Names with Meanings",
-                "description": "60,000+ verified baby names from Islamic, Hindu & Christian traditions with meanings in English, Urdu, Arabic & Hindi",
-                "publisher": {
-                  "@id": `${process.env.NEXT_PUBLIC_SITE_URL || 'https://nameverse.com'}/#organization`
-                },
-                "potentialAction": {
+                "@id": `${SITE}/#website`,
+                url: `${SITE}/`,
+                name: "NameVerse — Baby Names with Meanings | Islamic, Hindu, Christian",
+                description:
+                  "60,000+ verified baby names from Islamic, Hindu & Christian traditions with meanings in English, Urdu, Arabic & Hindi. Baby naming guides, Quranic names, Sanskrit names, Biblical names.",
+                inLanguage: "en-US",
+                publisher: { "@id": `${SITE}/#organization` },
+                potentialAction: {
                   "@type": "SearchAction",
-                  "target": {
+                  target: {
                     "@type": "EntryPoint",
-                    "urlTemplate": `${process.env.NEXT_PUBLIC_SITE_URL || 'https://nameverse.com'}/search?q={search_term_string}`
+                    urlTemplate: `${SITE}/search/{search_term_string}`,
                   },
-                  "query-input": "required name=search_term_string"
-                }
+                  "query-input": "required name=search_term_string",
+                },
               },
               {
                 "@type": "Organization",
-                "@id": `${process.env.NEXT_PUBLIC_SITE_URL || 'https://nameverse.com'}/#organization`,
-                "name": "NameVerse",
-                "url": process.env.NEXT_PUBLIC_SITE_URL || 'https://nameverse.com',
-                "logo": {
+                "@id": `${SITE}/#organization`,
+                name: "NameVerse",
+                url: SITE,
+                logo: {
                   "@type": "ImageObject",
-                  "url": `${process.env.NEXT_PUBLIC_SITE_URL || 'https://nameverse.com'}/logo.png`,
-                  "width": 200,
-                  "height": 60
+                  url: `${SITE}/logo.png`,
+                  width: 200,
+                  height: 60,
                 },
-                "sameAs": [
+                sameAs: [
                   "https://www.facebook.com/nameverse",
                   "https://twitter.com/nameverse",
-                  "https://www.instagram.com/nameverse"
-                ]
+                  "https://www.instagram.com/nameverse",
+                ],
               },
               {
                 "@type": "WebPage",
-                "@id": `${process.env.NEXT_PUBLIC_SITE_URL || 'https://nameverse.com'}/#webpage`,
-                "url": process.env.NEXT_PUBLIC_SITE_URL || 'https://nameverse.com',
-                "name": "60,000+ Baby Names with Meanings | Islamic, Hindu, Christian Names 2025",
-                "isPartOf": {
-                  "@id": `${process.env.NEXT_PUBLIC_SITE_URL || 'https://nameverse.com'}/#website`
+                "@id": `${SITE}/#webpage`,
+                url: `${SITE}/`,
+                name: "Baby Names with Meanings | Islamic, Hindu & Christian | NameVerse",
+                isPartOf: { "@id": `${SITE}/#website` },
+                about: { "@id": `${SITE}/#organization` },
+                description:
+                  "Find Islamic baby names, Hindu baby names, Christian baby names, baby boy names, baby girl names, names by letter A–Z, meanings in Urdu and Arabic, and expert baby naming articles.",
+                primaryImageOfPage: {
+                  "@type": "ImageObject",
+                  url: `${SITE}/og-image.jpg`,
                 },
-                "about": {
-                  "@id": `${process.env.NEXT_PUBLIC_SITE_URL || 'https://nameverse.com'}/#organization`
-                },
-                "description": "Find 60,000+ baby names with meanings in English, Urdu, Arabic & Hindi. Explore Islamic, Hindu & Christian names with origins and pronunciation guides."
               },
               {
                 "@type": "ItemList",
-                "name": "Popular Baby Names Categories",
-                "itemListElement": [
+                name: "Popular baby name categories",
+                itemListElement: [
                   {
                     "@type": "ListItem",
-                    "position": 1,
-                    "item": {
+                    position: 1,
+                    item: {
                       "@type": "Thing",
-                      "@id": `${process.env.NEXT_PUBLIC_SITE_URL || 'https://nameverse.com'}/names/islamic`,
-                      "name": "Islamic Baby Names",
-                      "description": "25,000+ Islamic baby names with Quranic references and meanings in Urdu & Arabic"
-                    }
+                      "@id": `${SITE}/names/islamic`,
+                      name: "Islamic baby names",
+                      description:
+                        "Muslim and Quranic baby names with meanings in Urdu and Arabic",
+                    },
                   },
                   {
                     "@type": "ListItem",
-                    "position": 2,
-                    "item": {
+                    position: 2,
+                    item: {
                       "@type": "Thing",
-                      "@id": `${process.env.NEXT_PUBLIC_SITE_URL || 'https://nameverse.com'}/names/hindu`,
-                      "name": "Hindu Baby Names",
-                      "description": "20,000+ Hindu baby names from Sanskrit with meanings in Hindi & English"
-                    }
+                      "@id": `${SITE}/names/hindu`,
+                      name: "Hindu baby names",
+                      description: "Sanskrit and Hindi baby names with Vedic meanings",
+                    },
                   },
                   {
                     "@type": "ListItem",
-                    "position": 3,
-                    "item": {
+                    position: 3,
+                    item: {
                       "@type": "Thing",
-                      "@id": `${process.env.NEXT_PUBLIC_SITE_URL || 'https://nameverse.com'}/names/christian`,
-                      "name": "Christian Baby Names",
-                      "description": "15,000+ Christian baby names with Biblical references and meanings"
-                    }
-                  }
-                ]
+                      "@id": `${SITE}/names/christian`,
+                      name: "Christian baby names",
+                      description: "Biblical and saint names with verse references",
+                    },
+                  },
+                  {
+                    "@type": "ListItem",
+                    position: 4,
+                    item: {
+                      "@type": "Thing",
+                      "@id": `${SITE}/blog`,
+                      name: "Baby naming articles & guides",
+                      description: "Expert guides on Islamic, Hindu, and Christian naming",
+                    },
+                  },
+                ],
               },
               {
                 "@type": "FAQPage",
-                "mainEntity": [
+                mainEntity: [
                   {
                     "@type": "Question",
-                    "name": "What are some Muslim names?",
-                    "acceptedAnswer": {
+                    name: "What are popular Muslim baby names?",
+                    acceptedAnswer: {
                       "@type": "Answer",
-                      "text": "Popular Muslim names include Muhammad (praised one), Ali (exalted), Omar (long-lived), Aisha (living), Fatima (captivating), and Zara (princess). NameVerse features 25,000+ authentic Islamic baby names with Quranic references and meanings in Urdu and Arabic."
-                    }
+                      text: "Popular Muslim baby names include Muhammad, Ali, Omar, Aisha, Fatima, and Zara. NameVerse lists thousands of Islamic names with Quranic context and Urdu and Arabic meanings.",
+                    },
                   },
                   {
                     "@type": "Question",
-                    "name": "What do Muslim names mean?",
-                    "acceptedAnswer": {
+                    name: "Where can I find Hindu baby names with Sanskrit meanings?",
+                    acceptedAnswer: {
                       "@type": "Answer",
-                      "text": "Muslim names carry deep spiritual meanings rooted in Arabic language and Islamic tradition. They often reflect virtues like faith, wisdom, beauty, and strength. Each name on NameVerse is verified by Islamic scholars with complete meanings in English, Urdu, and Arabic, plus Quranic verse references where applicable."
-                    }
+                      text: "NameVerse offers Hindu baby names from Sanskrit and regional traditions with meanings in Hindi and English, plus pronunciation and deity associations.",
+                    },
                   },
                   {
                     "@type": "Question",
-                    "name": "How do Muslim names work?",
-                    "acceptedAnswer": {
+                    name: "How do I choose a meaningful baby name?",
+                    acceptedAnswer: {
                       "@type": "Answer",
-                      "text": "Muslim naming traditionally includes a given name (ism), followed by father's name (nasab using 'ibn' or 'bint'), family name (nisba), and sometimes a descriptive name (kunyah like 'Abu' or 'Umm'). Modern Muslim parents often choose Quranic names or names with beautiful Arabic meanings for their children."
-                    }
+                      text: "Consider meaning, pronunciation, family tradition, and spiritual significance. NameVerse provides verified meanings, origins, and naming guides by religion and culture.",
+                    },
                   },
                   {
                     "@type": "Question",
-                    "name": "How many baby names does NameVerse have?",
-                    "acceptedAnswer": {
+                    name: "How many baby names does NameVerse include?",
+                    acceptedAnswer: {
                       "@type": "Answer",
-                      "text": "NameVerse features over 60,000 verified baby names including 25,000+ Islamic names, 20,000+ Hindu names, and 15,000+ Christian names with complete meanings in multiple languages."
-                    }
-                  }
-                ]
+                      text: "NameVerse features over 60,000 verified names across Islamic, Hindu, and Christian traditions with multilingual meanings and expert-reviewed content.",
+                    },
+                  },
+                ],
               },
               {
                 "@type": "BreadcrumbList",
-                "itemListElement": [
+                itemListElement: [
                   {
                     "@type": "ListItem",
-                    "position": 1,
-                    "name": "Home",
-                    "item": process.env.NEXT_PUBLIC_SITE_URL || 'https://nameverse.com'
-                  }
-                ]
-              }
+                    position: 1,
+                    name: "Home",
+                    item: SITE,
+                  },
+                ],
+              },
             ],
           }),
         }}
@@ -166,31 +175,52 @@ export default function HomePageClient() {
 
       <main
         role="main"
-        className="min-h-screen flex flex-col items-center justify-start bg-white"
+        className="min-h-screen w-full flex flex-col bg-white [&>section:last-child]:border-b-0"
       >
-        {/* HeroSection - Above the fold */}
-        <HeroSection />
+        {/* 1 — Hero + search */}
+        <HomePageSection id="hero" variant="default" aria-label="Hero">
+          <HeroSection />
+        </HomePageSection>
 
-        {/* A-Z Alphabetical Navigation - Critical for SEO */}
-        <AlphabetNavigation />
+        {/* 2 — A–Z navigation */}
+        <HomePageSection id="browse-by-letter" variant="muted">
+          <AlphabetNavigation />
+        </HomePageSection>
 
-        {/* Popular Names Section - Trending content */}
-        <PopularNamesSection />
+        {/* 3 — Popular picks */}
+        <HomePageSection id="popular-names" variant="default">
+          <PopularNamesSection />
+        </HomePageSection>
 
-        {/* Trending Names - Existing component */}
-        <TrendingNames />
+        {/* 4 — Trending (API) */}
+        <HomePageSection id="trending-names" variant="brand">
+          <TrendingNames />
+        </HomePageSection>
 
-        {/* Why Choose NameVerse - Trust building */}
-        <WhyChooseSection />
+        {/* 5 — Latest articles (server-hydrated for instant paint) */}
+        <HomePageSection id="latest-articles" variant="subtle" aria-labelledby="latest-articles-heading">
+          <ArticleExplorer
+            embedded
+            initialArticles={initialArticles}
+            initialCategories={initialCategories}
+          />
+        </HomePageSection>
 
-        {/* Comprehensive FAQ - Converted from hidden content */}
-        <ComprehensiveFAQ />
+        {/* 6 — Trust / why us */}
+        <HomePageSection id="why-nameverse" variant="muted">
+          <WhyChooseSection />
+        </HomePageSection>
 
-        {/* Article Explorer - Blog preview */}
-        <ArticleExplorer embedded />
+        {/* 7 — SEO editorial block */}
+        <HomePageSection id="baby-name-meanings-seo" variant="default">
+          <SEOContentBlock />
+        </HomePageSection>
+
+        {/* 8 — FAQ (bottom: standard SEO pattern) */}
+        <HomePageSection id="faq" variant="muted" className="!border-b-0">
+          <ComprehensiveFAQ />
+        </HomePageSection>
       </main>
-
-      {/* Footer is in layout.js, but can be added here if needed */}
     </>
   );
 }

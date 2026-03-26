@@ -176,7 +176,7 @@ export default async function Image({ params }) {
             color: 'rgba(255, 255, 255, 0.8)',
           }}
         >
-          Discover the meaning and origin • nameverse.vercel.app
+          Discover the meaning and origin • NameVerse
         </div>
       </div>
     ),

@@ -109,8 +109,8 @@ const ComprehensiveFAQ = () => {
   };
 
   return (
-    <section className="py-10 sm:py-14 lg:py-16 bg-gradient-to-br from-gray-50 via-white to-indigo-50/20">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+    <section className="py-12 md:py-16 bg-transparent">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-8 sm:mb-12">
           <motion.div

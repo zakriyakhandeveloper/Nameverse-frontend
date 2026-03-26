@@ -6,13 +6,14 @@ import { validateMetaDescription, generateNameMetaDescription } from '@/lib/seo/
 import { generateNameProductSchema, generateFAQSchema } from '@/lib/seo/structured-data';
 import { generateNameFAQ } from '@/lib/seo/content-helpers';
 import { validateAndSanitizeSlug, isSingleLetter } from '@/lib/utils/slugValidation';
+import { getSiteUrl } from '@/lib/seo/site';
 
 // Dynamically import the letter page component
 const NamesDatabaseClient = dynamic(() => import('../letter/[letter]/NameClientComponent'), {
   ssr: true,
 });
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://nameverse.vercel.app';
+const SITE_URL = getSiteUrl();
 export const revalidate = 3600;
 export const dynamicParams = true;
 
@@ -23,14 +24,18 @@ export async function generateMetadata({ params }) {
   if (isSingleLetter(slug)) {
     const religionTitle = religion.charAt(0).toUpperCase() + religion.slice(1);
     const letter = slug.toUpperCase();
+    const letterPath = `/names/${religion}/${slug.toLowerCase()}`;
+    const letterUrl = `${SITE_URL}${letterPath}`;
+
     return {
       title: `${religionTitle} Names Starting with ${letter} | NameVerse`,
       description: `Browse all ${religionTitle} names that start with the letter ${letter}. Discover meanings, origins, and more.`,
-      alternates: { canonical: `/names/${religion}/${slug.toLowerCase()}` },
+      alternates: { canonical: letterUrl },
       openGraph: {
         title: `${religionTitle} Names - Letter ${letter}`,
         description: `Explore ${religionTitle} names starting with ${letter}`,
         type: 'website',
+        url: letterUrl,
         siteName: 'NameVerse',
         images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630 }],
       },
@@ -107,17 +112,19 @@ export async function generateMetadata({ params }) {
     nameData.themes && nameData.themes.length > 0 ? nameData.themes.join(', ') : ''
   ].filter(Boolean).join(', ');
 
+  const pageUrl = `${SITE_URL}/names/${religion}/${sanitizedSlug}`;
+
   return {
     title: `${titleName} Name Meaning & Origin | ${religionTitle} ${nameData.gender || ''} Baby Name`,
     description: desc,
     keywords,
     authors: [{ name: 'NameVerse' }],
-    alternates: { canonical: `https://nameverse.vercel.app/names/${religion}/${sanitizedSlug}` },
+    alternates: { canonical: pageUrl },
     openGraph: {
       title: `${titleName} - ${religionTitle} Name Meaning & Origin`,
       description: desc,
       type: 'article',
-      url: `https://nameverse.vercel.app/names/${religion}/${sanitizedSlug}`,
+      url: pageUrl,
       siteName: 'NameVerse',
       images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: `${titleName} - ${religionTitle} baby name meaning` }],
     },

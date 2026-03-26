@@ -1,10 +1,12 @@
 import NamesDatabaseClient from './NameClientComponent';
 import React from 'react';
 import { notFound } from 'next/navigation';
+import { getSiteUrl } from '@/lib/seo/site';
 
 export const revalidate = 3600; // 1 hour ISR
 
-const DEFAULT_OG_IMAGE = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com'}/default-og.png`;
+const SITE_URL = getSiteUrl();
+const DEFAULT_OG_IMAGE = `${SITE_URL}/default-og.png`;
 
 // Fallback data for static generation when API is unreachable
 const FALLBACK_NAMES = [
@@ -56,7 +58,6 @@ export async function generateMetadata({ params, searchParams }) {
   }
 
   const selectedLetter = letter.toUpperCase();
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com';
   const currentPage = parseInt(resolvedSearchParams?.page || 1);
 
   const canonicalUrl = `${SITE_URL}/names/${selectedReligion}/letter/${selectedLetter.toLowerCase()}`;
@@ -136,7 +137,7 @@ export default async function NamesDatabaseServer({ params, searchParams }) {
   const resolvedParams = await params;
   const resolvedSearchParams = await searchParams;
   const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:5000/api';
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com';
+  // SITE_URL is shared from module scope
 
   const selectedReligion = resolvedParams?.religion || 'islamic';
   const letter = resolvedParams?.letter;

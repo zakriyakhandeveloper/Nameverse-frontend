@@ -2,8 +2,7 @@ import { notFound } from 'next/navigation';
 import SearchResultsClient from './ClientComponent';
 import { searchNames } from '@/lib/api/names';
 import { searchArticles } from '@/lib/api/articles';
-
-const DOMAIN = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
+import { getSiteUrl, absoluteUrl } from '@/lib/seo/site';
 
 // Fetch search results from API
 const fetchSearchResults = async (term) => {
@@ -36,34 +35,65 @@ export const generateMetadata = async ({ params }) => {
   const decodedTerm = decodeURIComponent(term);
   const { names, articles, totalResults } = await fetchSearchResults(decodedTerm);
 
+  // Build compelling CTR-focused description
+  let description = `Discover ${totalResults} results for "${decodedTerm}"`;
+  
+  if (names.length > 0 && articles.length > 0) {
+    description = `Find ${names.length}+ names and ${articles.length}+ articles about "${decodedTerm}". Get complete meanings, origins, numerology & cultural significance for ${decodedTerm}.`;
+  } else if (names.length > 0) {
+    const topName = names[0];
+    description = `${decodedTerm} means "${topName.short_meaning || topName.meaning}". Find ${totalResults}+ related names with meanings, origins, and lucky attributes.`;
+  }
+
+  const base = getSiteUrl();
+  const pageUrl = `${base}/search/${encodeURIComponent(decodedTerm)}`;
+  const ogImage = absoluteUrl('/og-image.png');
+
   return {
-    title: `${decodedTerm} - Names & Articles | NameVerse`,
-    description: `Discover ${totalResults} results for ${decodedTerm}. Expert meanings, origins, articles, and inspiration for your search.`,
+    title: `${decodedTerm} - Baby Names & Articles | NameVerse`,
+    description: description,
     keywords: [
       decodedTerm,
+      `${decodedTerm} baby name`,
+      `${decodedTerm} meaning`,
       `${decodedTerm} names`,
-      `${decodedTerm} meanings`,
+      `what does ${decodedTerm} mean`,
+      `${decodedTerm} origin`,
+      `${decodedTerm} name meaning`,
+      'quranic names',
+      'biblical names',
+      'sanskrit baby names',
+      'urdu name meanings',
       'name meanings',
       'name origins',
       'baby names',
       'name inspiration',
-      `${decodedTerm} etymology`,
     ].join(', '),
     authors: [{ name: 'NameVerse' }],
     openGraph: {
-      title: `${decodedTerm} - Names & Articles`,
-      description: `Discover ${totalResults} results for ${decodedTerm}`,
+      title: `${decodedTerm} - Baby Names & Meanings`,
+      description: description,
       type: 'website',
-      url: `${DOMAIN}/search/${encodeURIComponent(decodedTerm)}`,
+      url: pageUrl,
       siteName: 'NameVerse',
+      locale: 'en_US',
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: `Results for ${decodedTerm} on NameVerse`,
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${decodedTerm} - Names & Articles`,
-      description: `Discover ${totalResults} results for ${decodedTerm}`,
+      title: `${decodedTerm} - Baby Names`,
+      description: description,
+      images: [ogImage],
     },
     robots: { index: true, follow: true },
-    alternates: { canonical: `${DOMAIN}/search/${encodeURIComponent(decodedTerm)}` },
+    alternates: { canonical: pageUrl },
   };
 };
 
@@ -86,12 +116,21 @@ export default async function SearchPage({ params }) {
     return notFound();
   }
 
+  const base = getSiteUrl();
+  const resultPageUrl = `${base}/search/${encodeURIComponent(decodedTerm)}`;
+
+  const nameDetailUrl = (name) => {
+    const rel = name.religion || 'islamic';
+    const slug = name.slug || String(name._id || '');
+    return slug ? `${base}/names/${rel}/${slug}` : base;
+  };
+
   // Structured Data
   const searchSchema = {
     '@context': 'https://schema.org',
     '@type': 'SearchResultsPage',
     name: `Results for ${decodedTerm}`,
-    url: `${DOMAIN}/search/${encodeURIComponent(decodedTerm)}`,
+    url: resultPageUrl,
     description: `${totalResults} results for "${decodedTerm}"`,
   };
 
@@ -105,14 +144,14 @@ export default async function SearchPage({ params }) {
         position: idx + 1,
         name: name.name || name.title,
         description: name.short_meaning || '',
-        url: `${DOMAIN}/${name.slug || `names/${name._id}`}`,
+        url: nameDetailUrl(name),
       })),
       ...articles.map((article, idx) => ({
         '@type': 'Article',
         position: names.length + idx + 1,
         name: article.title,
         description: article.excerpt || article.summary || '',
-        url: `${DOMAIN}/blog/${article.slug}`,
+        url: `${base}/blog/${article.slug}`,
       })),
     ],
   };
@@ -121,9 +160,9 @@ export default async function SearchPage({ params }) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: DOMAIN },
-      { '@type': 'ListItem', position: 2, name: 'Search', item: `${DOMAIN}/search` },
-      { '@type': 'ListItem', position: 3, name: decodedTerm, item: `${DOMAIN}/search/${encodeURIComponent(decodedTerm)}` },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: base },
+      { '@type': 'ListItem', position: 2, name: 'Search', item: `${base}/search` },
+      { '@type': 'ListItem', position: 3, name: decodedTerm, item: resultPageUrl },
     ],
   };
 

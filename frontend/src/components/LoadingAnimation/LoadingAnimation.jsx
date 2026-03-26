@@ -20,11 +20,11 @@ export default function LoadingAnimation({ onComplete }) {
       setCurrentNameIndex((prev) => (prev + 1) % featuredNames.length);
     }, 800);
 
-    // Complete animation after 3.2 seconds
+    // Complete sooner so first paint feels faster (session still gates repeat visits in LoadingWrapper)
     const timer = setTimeout(() => {
       setShowAnimation(false);
       if (onComplete) onComplete();
-    }, 3200);
+    }, 1650);
 
     return () => {
       clearInterval(nameInterval);

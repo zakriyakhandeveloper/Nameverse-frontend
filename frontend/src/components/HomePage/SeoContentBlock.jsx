@@ -123,7 +123,7 @@ const CulturalImportance = () => {
     <>
       
       <section
-        className="py-10 sm:py-14 lg:py-16 bg-gradient-to-b from-white via-indigo-50/30 to-white"
+        className="py-12 md:py-16 bg-transparent"
         aria-labelledby="cultural-heading"
         itemScope
         itemType="https://schema.org/Article"
@@ -140,9 +140,8 @@ const CulturalImportance = () => {
             {/* LEFT COLUMN: CONCISE CONTENT */}
             <motion.div
               variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.3 }}
+              initial="visible"
+              animate="visible"
             >
               <motion.div variants={itemVariants}>
                 <h2
@@ -209,10 +208,7 @@ const CulturalImportance = () => {
             {/* RIGHT COLUMN: CLEAN VISUAL */}
             <motion.div 
               className="relative h-96 sm:h-[450px] lg:h-[550px] w-full flex items-center justify-center"
-              initial={{ opacity: 0, scale: prefersReducedMotion ? 1 : 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: prefersReducedMotion ? 0.01 : 0.8, ease: [0.22, 1, 0.36, 1] }}
+              initial={{ opacity: 1, scale: 1 }}
               aria-hidden="true"
             >
               <div className="absolute inset-0 bg-gradient-to-br from-indigo-100/60 via-purple-100/50 to-blue-100/60 rounded-3xl blur-2xl" />

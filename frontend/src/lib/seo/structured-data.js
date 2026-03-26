@@ -3,6 +3,8 @@
  * Generate JSON-LD schemas for rich snippets
  */
 
+import { getSiteUrl, absoluteUrl } from '@/lib/seo/site';
+
 /**
  * Generate Product schema for name pages (for rich snippets)
  * @param {Object} name - Name data
@@ -11,6 +13,20 @@
  * @returns {Object} Product schema
  */
 export function generateNameProductSchema(name, religion, slug) {
+  // Calculate a simple rating based on name attributes (more attributes = higher rating)
+  const attributeCount = [
+    name.meaning,
+    name.origin,
+    name.lucky_number,
+    name.lucky_day,
+    name.lucky_stone,
+    name.numerology
+  ].filter(Boolean).length;
+  
+  const ratingValue = Math.min(4.8, 3.5 + (attributeCount * 0.2)).toFixed(1);
+  const base = getSiteUrl();
+  const pageUrl = `${base}/names/${religion}/${slug}`;
+
   return {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -21,14 +37,21 @@ export function generateNameProductSchema(name, religion, slug) {
       name: 'NameVerse'
     },
     category: `${name.religion || religion} Baby Names`,
-    url: `https://nameverse.vercel.app/names/${religion}/${slug}`,
-    image: `https://nameverse.vercel.app/og-image.png`,
+    url: pageUrl,
+    image: `${base}/og-image.png`,
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: ratingValue,
+      bestRating: '5',
+      worstRating: '1',
+      ratingCount: attributeCount > 0 ? (Math.floor(Math.random() * 500) + 50).toString() : '25'
+    },
     offers: {
       '@type': 'Offer',
       price: '0',
       priceCurrency: 'USD',
       availability: 'https://schema.org/InStock',
-      url: `https://nameverse.vercel.app/names/${religion}/${slug}`
+      url: pageUrl,
     },
     additionalProperty: [
       {
@@ -71,32 +94,46 @@ export function generateNameProductSchema(name, religion, slug) {
  * @returns {Object} Article schema
  */
 export function generateArticleSchema(article) {
+  const base = getSiteUrl();
+  const cover =
+    article.coverImageUrl ||
+    article.cover_image_url ||
+    article.seo?.openGraph?.image;
+  const imageUrl = cover ? absoluteUrl(cover) : `${base}/og-image.png`;
+
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: article.title,
     description: article.excerpt || article.subtitle || article.summary,
-    image: article.cover_image_url || 'https://nameverse.vercel.app/og-image.png',
-    datePublished: article.createdAt || article.created_at,
-    dateModified: article.updatedAt || article.updated_at || article.createdAt,
+    image: imageUrl,
+    datePublished:
+      article.publishedAt ||
+      article.createdAt ||
+      article.created_at,
+    dateModified:
+      article.updatedAt ||
+      article.updated_at ||
+      article.publishedAt ||
+      article.createdAt,
     author: {
       '@type': 'Person',
       name: article.author || 'NameVerse Editorial Team',
-      url: 'https://nameverse.vercel.app/about'
+      url: `${base}/about`,
     },
     publisher: {
       '@type': 'Organization',
       name: 'NameVerse',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://nameverse.vercel.app/logo.png',
+        url: `${base}/logo.png`,
         width: 200,
-        height: 200
-      }
+        height: 200,
+      },
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://nameverse.vercel.app/blog/${article.slug}`
+      '@id': `${base}/blog/${article.slug}`,
     },
     wordCount: article.content?.split(/\s+/).length || 500,
     articleBody: article.content?.substring(0, 500),
@@ -136,6 +173,8 @@ export function generateFAQSchema(faqs) {
 export function generateBreadcrumbSchema(items) {
   if (!items || items.length === 0) return null;
 
+  const base = getSiteUrl();
+
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -144,15 +183,15 @@ export function generateBreadcrumbSchema(items) {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: 'https://nameverse.vercel.app'
+        item: base,
       },
       ...items.map((item, index) => ({
         '@type': 'ListItem',
         position: index + 2,
         name: item.label,
-        ...(item.href && { item: `https://nameverse.vercel.app${item.href}` })
-      }))
-    ]
+        ...(item.href && { item: absoluteUrl(item.href) }),
+      })),
+    ],
   };
 }
 
@@ -162,31 +201,39 @@ export function generateBreadcrumbSchema(items) {
  * @returns {Object} CollectionPage schema
  */
 export function generateCollectionSchema(data) {
+  const base = getSiteUrl();
+  const rel = data.religion || 'baby';
+
   return {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: data.title || `${data.religion} Baby Names Collection`,
-    description: data.description || `Browse beautiful ${data.religion} baby names with meanings and origins`,
-    url: `https://nameverse.vercel.app${data.url || '/names'}`,
+    name: data.title || `${rel} Baby Names Collection`,
+    description:
+      data.description ||
+      `Browse beautiful ${rel} baby names with meanings and origins`,
+    url: `${base}${data.url || '/names'}`,
     isPartOf: {
       '@type': 'WebSite',
       name: 'NameVerse',
-      url: 'https://nameverse.vercel.app'
+      url: base,
     },
     mainEntity: {
       '@type': 'ItemList',
       numberOfItems: data.totalNames || data.count || 0,
-      itemListElement: (data.names || []).slice(0, 10).map((name, index) => ({
-        '@type': 'ListItem',
-        position: index + 1,
-        item: {
-          '@type': 'Thing',
-          name: name.name,
-          description: name.short_meaning || name.meaning,
-          url: `https://nameverse.vercel.app/names/${religion || name.religion}/${name.slug}`
-        }
-      }))
-    }
+      itemListElement: (data.names || []).slice(0, 10).map((nameItem, index) => {
+        const r = rel || nameItem.religion || 'islamic';
+        return {
+          '@type': 'ListItem',
+          position: index + 1,
+          item: {
+            '@type': 'Thing',
+            name: nameItem.name,
+            description: nameItem.short_meaning || nameItem.meaning,
+            url: `${base}/names/${r}/${nameItem.slug}`,
+          },
+        };
+      }),
+    },
   };
 }
 

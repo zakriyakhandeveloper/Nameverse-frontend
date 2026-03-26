@@ -1,7 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import { Calendar, Clock, ArrowRight, Bookmark, Share2 } from "lucide-react";
+import { Calendar, Clock, ArrowRight, Bookmark, Share2, Heart, Eye } from "lucide-react";
+import { useArticleInteractions, useArticleStats } from "@/hooks/useArticleInteractions";
 
 const bgGradients = [
   "from-emerald-500 to-teal-600",
@@ -30,28 +31,38 @@ const formatDate = (dateString) => {
 // Article Card Component
 const ArticleCard = ({ article, index }) => {
   const [imageError, setImageError] = useState(false);
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [shareMenuOpen, setShareMenuOpen] = useState(false);
+  
+  const interactions = useArticleInteractions(article.slug);
+  const stats = useArticleStats(article, interactions);
 
   const handleBookmark = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsBookmarked(!isBookmarked);
+    interactions.handleBookmark();
   };
 
-  const handleShare = async (e) => {
+  const handleLike = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: article.title,
-          text: article.excerpt || article.subtitle,
-          url: `/blog/${article.slug}`,
-        });
-      } catch {
-        console.log('Share cancelled');
-      }
+    interactions.handleLike();
+  };
+
+  const handleShare = async (e, platform = 'generic') => {
+    e.preventDefault();
+    e.stopPropagation();
+    const success = await interactions.handleShare(platform);
+    if (platform === 'copy' && success) {
+      // Show toast or notification
+      setShareMenuOpen(false);
     }
+    setShareMenuOpen(false);
+  };
+
+  const toggleShareMenu = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShareMenuOpen(!shareMenuOpen);
   };
 
   return (
@@ -89,7 +100,7 @@ const ArticleCard = ({ article, index }) => {
             aria-label="Bookmark"
           >
             <Bookmark 
-              className={`w-4 h-4 ${isBookmarked ? 'fill-gray-900 text-gray-900' : 'text-gray-600'}`} 
+              className={`w-4 h-4 ${interactions.isBookmarked ? 'fill-gray-900 text-gray-900' : 'text-gray-600'}`} 
             />
           </button>
           <button
@@ -131,10 +142,10 @@ const ArticleCard = ({ article, index }) => {
                 </div>
                 <span className="font-medium">{article.author}</span>
               </div>
-            ) : article.created_at ? (
+            ) : (article.publishedAt || article.created_at) ? (
               <div className="flex items-center gap-1">
                 <Calendar className="w-3.5 h-3.5" />
-                {formatDate(article.created_at)}
+                {formatDate(article.publishedAt || article.created_at)}
               </div>
             ) : null}
           </div>
@@ -183,16 +194,21 @@ const SkeletonCard = () => (
 );
 
 // Main Component
-export default function ArticleGrid({ articles, isLoading = false }) {
+export default function ArticleGrid({
+  articles,
+  isLoading = false,
+  showHeading = true,
+}) {
   return (
     <div className="w-full">
-      {/* Section Heading */}
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">
-        Featured Articles
-      </h2>
+      {showHeading ? (
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-5 sm:mb-6">
+          Latest 8 Articles
+        </h2>
+      ) : null}
 
       {isLoading ? (
-        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-4 sm:gap-5 lg:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
             <SkeletonCard key={i} />
           ))}
@@ -200,7 +216,7 @@ export default function ArticleGrid({ articles, isLoading = false }) {
       ) : !articles?.length ? (
         <EmptyState />
       ) : (
-        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-4 sm:gap-5 lg:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {articles.map((article, idx) => (
             <ArticleCard key={article.id || idx} article={article} index={idx} />
           ))}

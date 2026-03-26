@@ -92,7 +92,7 @@ export default function TrendingNames() {
   const selectedFilter = religionFilters.find(f => f.value === selectedReligion) || religionFilters[0];
 
   return (
-    <section className="w-full bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 py-10 sm:py-14 lg:py-16">
+    <section className="w-full bg-transparent py-12 md:py-16 min-h-[320px]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header - Centered */}

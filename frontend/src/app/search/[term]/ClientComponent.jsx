@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { Search, List, Grid, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useTransition, useMemo, useCallback } from 'react';
+import { getSiteUrl } from '@/lib/seo/site';
 
 export default function SearchResultsClient({
   initialNames,
@@ -19,9 +20,10 @@ export default function SearchResultsClient({
   const router = useRouter();
 
   const totalResults = totalNames + totalArticles;
+  const site = getSiteUrl();
   const dynamicTitle = `${searchTerm} - Names & Articles | NameVerse`;
   const dynamicDescription = `Discover ${totalResults} results for ${searchTerm}. Expert meanings, origins, articles, and inspiration for your search.`;
-  const canonicalURL = `https://yourdomain.com/search/${encodeURIComponent(searchTerm)}`;
+  const canonicalURL = `${site}/search/${encodeURIComponent(searchTerm)}`;
 
   const [viewMode, setViewMode] = useState('grid');
   const [isPending, startTransition] = useTransition();
@@ -66,8 +68,8 @@ export default function SearchResultsClient({
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     "itemListElement": [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://yourdomain.com" },
-      { "@type": "ListItem", position: 2, name: "Search", item: "https://yourdomain.com/search" },
+      { "@type": "ListItem", position: 1, name: "Home", item: site },
+      { "@type": "ListItem", position: 2, name: "Search", item: `${site}/search` },
       { "@type": "ListItem", position: 3, name: searchTerm, item: canonicalURL }
     ]
   };

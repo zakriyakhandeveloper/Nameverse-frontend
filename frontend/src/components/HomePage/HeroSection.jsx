@@ -51,13 +51,13 @@ const Hero = () => {
   ];
 
   return (
-    <section className="relative w-full bg-white py-16 sm:py-20 lg:py-28">
+    <section className="relative w-full bg-white py-12 sm:py-16 lg:py-20">
       {/* Subtle background accent */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-indigo-50/40 rounded-full blur-3xl" />
       </div>
 
-      <div className="relative z-10 w-full px-4 sm:px-6 max-w-6xl mx-auto">
+      <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="space-y-12 sm:space-y-16">
 
           {/* Main heading - Cleaner, less overwhelming */}

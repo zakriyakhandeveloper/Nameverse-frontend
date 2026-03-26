@@ -7,7 +7,20 @@ const SITE_URL = env.site.url;
 export const metadata = {
   title: "About Zakriya Khan - Name Meanings Expert & Cultural Consultant",
   description: "Meet Zakriya Khan - Expert in name meanings, cultural heritage, and spiritual significance. Discover the stories behind names with personalized insights and professional consultation.",
-  keywords: ["Zakriya Khan", "name meanings", "cultural heritage", "spiritual names", "Islamic names", "baby names expert", "name consultant"],
+  keywords: [
+    "Zakriya Khan",
+    "name meanings expert",
+    "baby names consultant",
+    "cultural heritage names",
+    "spiritual baby names",
+    "Islamic names guidance",
+    "Quranic naming",
+    "Hindu Sanskrit names",
+    "Christian biblical names",
+    "Urdu name meanings",
+    "multicultural naming",
+    "NameVerse about",
+  ],
   openGraph: {
     title: "About Zakriya Khan - Name Meanings Expert & Cultural Consultant",
     description: "Meet Zakriya Khan - Expert in name meanings, cultural heritage, and spiritual significance.",
@@ -24,6 +37,7 @@ export const metadata = {
     card: 'summary_large_image',
     title: "About Zakriya Khan - Name Meanings Expert",
     description: "Expert in name meanings, cultural heritage, and spiritual significance.",
+    images: [`${SITE_URL}/og-image.png`],
   },
   alternates: {
     canonical: `${SITE_URL}/about`,

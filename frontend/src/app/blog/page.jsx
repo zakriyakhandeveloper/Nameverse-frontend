@@ -28,67 +28,78 @@ export async function generateMetadata({ searchParams }) {
   const { category = "All Categories", query = "" } = resolvedParams || {};
   const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://nameverse.com";
   
-  const title = query
-    ? `Search results for "${query}" | NameVerse Blog`
-    : category !== "All Categories"
-    ? `${category} Articles | NameVerse Blog`
-    : "Latest Articles | NameVerse Blog";
+  let title, description;
 
-  const description = query
-    ? `Articles matching "${query}" from NameVerse Blog`
-    : category !== "All Categories"
-    ? `Latest articles in ${category} category`
-    : "Explore latest articles and insights from NameVerse Blog.";
+  if (query) {
+    title = `"${query}" Baby Naming Articles & Guides | NameVerse Blog`;
+    description = `Read expert articles and guides about "${query}". Learn naming tips, meanings, cultural significance, and parenting advice related to baby names.`;
+  } else if (category !== "All Categories") {
+    title = `${category} Baby Naming Articles & Guides | NameVerse Blog`;
+    description = `Explore comprehensive articles on ${category} baby names. Get cultural insights, naming tips, meanings, and expert parenting guidance for ${category} names.`;
+  } else {
+    title = "Baby Naming Guides & Articles | NameVerse Blog";
+    description = "Read expert articles on baby naming, cultural traditions, parenting tips, and comprehensive guides to help you choose the perfect baby name with meaning.";
+  }
 
   // Comprehensive keywords for blog pages
   const keywords = [
     // Core blog keywords
     'baby name articles',
     'baby naming tips',
-    'name meaning blog',
-    'baby naming guide',
+    'name meaning guide',
+    'baby naming advice',
     'baby name blog',
     'naming tips for parents',
+    'baby name guide',
 
     // How-to keywords
-    'how to choose perfect baby name',
-    'how to pick a baby name',
+    'how to choose baby name',
+    'how to pick baby name',
     'how to name your baby',
-    'baby naming advice',
-    'choosing baby name tips',
+    'baby naming ideas',
+    'choosing perfect baby name',
 
     // Trend keywords
     'baby name trends 2025',
     'popular baby names 2025',
     'trending baby names',
-    'modern baby name trends',
-    'baby name statistics',
+    'modern baby names',
+    'best baby names 2025',
 
     // Cultural keywords
     'cultural baby names',
     'religious baby names',
     'traditional baby names',
-    'ethnic baby names',
-    'baby names by culture',
+    'islamic baby naming',
+    'quranic baby names articles',
+    'hindu baby names guide',
+    'sanskrit naming guide',
+    'christian naming traditions',
+    'biblical baby names articles',
+    'names in urdu articles',
 
-    // Informational keywords
+    // Educational keywords
     'baby name meanings explained',
-    'baby name origins',
+    'baby name origins guide',
     'baby name history',
-    'baby name research',
+    'numerology baby names',
+    'name significance',
     'baby name inspiration',
-    'baby name ideas',
 
     // Parenting-related
-    'parenting tips',
-    'new parent guide',
-    'pregnancy tips',
-    'expecting parents',
-    'baby planning',
+    'parenting guides',
+    'new parent tips',
+    'pregnancy preparation',
+    'expecting parents guide',
+    'baby naming ceremony',
 
-    // Category-specific (if applicable)
-    category && category !== "All Categories" ? `${category} baby names` : '',
-    category && category !== "All Categories" ? `${category} naming guide` : ''
+    // Category-specific
+    ...(category && category !== "All Categories" ? [
+      `${category} baby names`,
+      `${category} naming guide`,
+      `${category} names meaning`,
+      `${category} naming traditions`
+    ] : [])
   ].filter(Boolean).join(', ');
 
   const canonicalUrl = `${SITE_URL}/blog`;

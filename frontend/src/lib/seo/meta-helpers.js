@@ -3,6 +3,8 @@
  * Utilities for optimizing meta tags and descriptions
  */
 
+import { getSiteUrl } from '@/lib/seo/site';
+
 /**
  * Validate and truncate meta description to optimal length
  * Google displays 150-160 characters in search results
@@ -84,9 +86,9 @@ export function generateKeywords(data) {
  * @param {string} baseUrl - Base URL (default: from env)
  * @returns {string} Canonical URL
  */
-export function generateCanonicalUrl(path, baseUrl = process.env.NEXT_PUBLIC_SITE_URL) {
+export function generateCanonicalUrl(path, baseUrl) {
   const cleanPath = path.replace(/\/+$/, ''); // Remove trailing slashes
-  const cleanBase = baseUrl?.replace(/\/+$/, '') || 'https://nameverse.vercel.app';
+  const cleanBase = (baseUrl || getSiteUrl()).replace(/\/+$/, '');
 
   return `${cleanBase}${cleanPath}`;
 }
@@ -98,24 +100,37 @@ export function generateCanonicalUrl(path, baseUrl = process.env.NEXT_PUBLIC_SIT
  */
 export function generateNameMetaDescription(name) {
   const parts = [];
+  const religionText = name.religion ? name.religion.charAt(0).toUpperCase() + name.religion.slice(1) : 'Baby';
 
-  // Start with the name and meaning
-  parts.push(`${name.name} means "${name.short_meaning || name.meaning}".`);
-
-  // Add origin and religion
-  if (name.origin && name.religion) {
-    parts.push(`A ${name.origin} name from ${name.religion} tradition.`);
-  } else if (name.religion) {
-    parts.push(`A beautiful ${name.religion} baby name.`);
+  // Start with compelling hook: name + meaning + appeal
+  if (name.short_meaning || name.meaning) {
+    parts.push(`${name.name} means "${name.short_meaning || name.meaning}".`);
+  } else {
+    parts.push(`${name.name} - ${religionText} baby name.`);
   }
 
-  // Add gender
-  if (name.gender) {
-    parts.push(`Perfect ${name.gender} name choice.`);
+  // Add context: origin, tradition, and gender for high intent
+  const contextParts = [];
+  if (name.origin) contextParts.push(name.origin);
+  if (name.religion) contextParts.push(name.religion);
+  if (name.gender) contextParts.push(`for ${name.gender}s`);
+  
+  if (contextParts.length > 0) {
+    parts.push(`${contextParts.join(' ')} baby name with cultural significance.`);
   }
 
-  // Add call-to-action
-  parts.push('Discover meaning, origin & cultural significance.');
+  // Add lucky attributes if available
+  if (name.lucky_number || name.lucky_stone || name.lucky_day) {
+    const luckyAttrs = [];
+    if (name.lucky_number) luckyAttrs.push(`lucky number ${name.lucky_number}`);
+    if (name.lucky_stone) luckyAttrs.push(`lucky stone ${name.lucky_stone}`);
+    if (luckyAttrs.length > 0) {
+      parts.push(`Has ${luckyAttrs.join(' & ')}.`);
+    }
+  }
+
+  // Add call-to-action with benefit
+  parts.push('Get complete meaning, origin, numerology & pronunciation guide.');
 
   const description = parts.join(' ');
   return validateMetaDescription(description);
