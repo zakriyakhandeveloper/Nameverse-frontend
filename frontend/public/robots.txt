@@ -8,7 +8,14 @@ Disallow: /_next/
 Disallow: /admin/
 
 # Sitemaps
-Sitemap: https://nameverse.vercel.app/sitemap-index.xml
+Sitemap: https://nameverse.vercel.app/sitemap.xml
+Sitemap: https://nameverse.vercel.app/articles_sitemap.xml
+Sitemap: https://nameverse.vercel.app/christian_sitemap_index.xml
+Sitemap: https://nameverse.vercel.app/hindu_sitemap_index.xml
+Sitemap: https://nameverse.vercel.app/islamic_sitemap_index.xml
+Sitemap: https://nameverse.vercel.app/top_christian_sitemap.xml
+Sitemap: https://nameverse.vercel.app/top_hindu_sitemap.xml
+Sitemap: https://nameverse.vercel.app/top_islamic_sitemap.xml
 
 # Specific bot rules (removed duplicate Sitemap declarations)
 User-agent: Googlebot

@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
+    <loc>https://nameverse.vercel.app/articles_sitemap.xml</loc>
+    <lastmod>2026-03-27</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://nameverse.vercel.app/top_christian_sitemap.xml</loc>
+    <lastmod>2026-03-23</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://nameverse.vercel.app/top_hindu_sitemap.xml</loc>
+    <lastmod>2026-03-23</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://nameverse.vercel.app/top_islamic_sitemap.xml</loc>
+    <lastmod>2026-03-23</lastmod>
+  </sitemap>
+  <sitemap>
     <loc>https://nameverse.vercel.app/islamic_sitemap_index.xml</loc>
     <lastmod>2026-03-23</lastmod>
   </sitemap>

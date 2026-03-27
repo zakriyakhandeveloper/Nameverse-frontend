@@ -57,7 +57,59 @@ const personData = {
   },
 };
 
+const seoThemes = [
+  "islamic baby names with meanings",
+  "hindu baby names with spiritual significance",
+  "christian and biblical baby names",
+  "urdu names and arabic name origins",
+  "modern baby names and timeless classics",
+  "name pronunciation and spelling guidance",
+  "multicultural family naming decisions",
+  "name compatibility with surname",
+  "baby naming consultation online",
+  "authentic name meaning research",
+];
+
+const seoAngleSentences = [
+  "Families searching for the best baby names often want more than a list; they want context, pronunciation clarity, emotional resonance, and cultural confidence before making a lifelong decision.",
+  "A meaningful baby name can connect a child to language, faith, ancestry, and family values, which is why deep research matters when selecting names for boys and girls.",
+  "When parents compare modern and traditional names, they usually balance uniqueness with familiarity, and this practical balance helps children feel both distinctive and understood.",
+  "NameVerse focuses on credible, practical, and parent-friendly guidance so families can confidently choose names that feel beautiful today and remain strong for decades.",
+  "A complete naming guide includes origin, meaning, correct pronunciation, possible nicknames, and how the full name sounds with siblings and family surname.",
+  "Strong SEO writing about baby names should still be useful, and that means every paragraph should answer a real question families ask during pregnancy and early parenting.",
+  "Our about page is designed for parents who want faith-based, culture-aware, and globally readable naming advice without confusion, hype, or shallow recommendations.",
+  "From Islamic names to Hindu names to Christian names and global options, careful explanation helps families avoid regrets and choose names with purpose and joy.",
+  "Parents also care about practical concerns such as initials, spelling in official documents, bilingual pronunciation, and social confidence across school and professional settings.",
+  "High-quality naming consultation combines language knowledge, historical sources, and real family conversations so recommendations reflect values rather than short-term trends.",
+];
+
+const seoLongFormParagraphs = Array.from({ length: 42 }, (_, idx) => {
+  const theme = seoThemes[idx % seoThemes.length];
+  const a = seoAngleSentences[idx % seoAngleSentences.length];
+  const b = seoAngleSentences[(idx + 2) % seoAngleSentences.length];
+  const c = seoAngleSentences[(idx + 5) % seoAngleSentences.length];
+  const d = seoAngleSentences[(idx + 7) % seoAngleSentences.length];
+  const e = seoAngleSentences[(idx + 9) % seoAngleSentences.length];
+  return `${a} In this section, we explain how to evaluate ${theme} using a practical framework that includes meaning, pronunciation, spelling flexibility, religious and cultural relevance, and long-term identity impact. ${b} We also discuss common parent concerns like whether a name sounds too trendy, too complex, too rare, or too common in your city and social circle. ${c} Beyond search popularity, we recommend checking historical usage, cultural respect, and family acceptance so your final choice feels stable and intentional. ${d} For multilingual households, phonetic ease across Urdu, Arabic, English, Hindi, and regional languages can reduce future friction and improve confidence in classrooms, travel, and professional life. ${e} This long-form guidance supports parents who want thoughtful decisions, strong emotional alignment, and meaningful names that carry blessings, dignity, and clarity through every stage of life.`;
+});
+
+const seoSectionHeadings = [
+  "Meaning and Origin Essentials",
+  "Faith, Culture, and Family Values",
+  "Pronunciation, Spelling, and Usability",
+  "Modern Trends vs Timeless Choices",
+  "Name Harmony with Surname and Siblings",
+  "Practical Checklist for Final Selection",
+  "Long-Term Identity and Confidence",
+];
+
 export default function AboutPage() {
+  const introParagraphs = [
+    "This extended About section is intentionally detailed for parents who are searching for high-quality, trustworthy, and practical baby naming guidance. Many families arrive here while comparing Islamic baby names, Hindu baby names, Christian baby names, Urdu names, Arabic names, and modern global names with deep meaning. Instead of giving short and generic suggestions, we provide complete context that helps you decide with confidence. A baby name is not only a trend choice; it is an identity choice that can shape confidence, belonging, and emotional connection for a lifetime.",
+    "Our work combines faith-sensitive research, language expertise, cultural context, and real-life parent consultations. We study pronunciation, etymology, spiritual symbolism, historical references, and modern usability. We also help families evaluate how a name sounds with the surname, how initials look in documents, and how well the name travels across schools, workplaces, and international environments. This approach supports families who want a name that feels meaningful today and remains elegant and relevant in the future.",
+  ];
+  const aboutSectionTitle = "Complete Baby Naming Knowledge Hub (Extended About Section)";
+
   return (
     <>
       <StructuredData
@@ -219,6 +271,36 @@ export default function AboutPage() {
               >
                 Start Your Consultation
               </a>
+            </div>
+          </section>
+
+          {/* Long-Form SEO Content */}
+          <section className="bg-white rounded-xl p-8 sm:p-12 shadow-sm mt-12" data-about-seo-section="true">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
+              {aboutSectionTitle}
+            </h2>
+            <div className="prose prose-lg max-w-none text-gray-700">
+              <h3>Introduction</h3>
+              <p>
+                {introParagraphs[0]}
+              </p>
+              <p>
+                {introParagraphs[1]}
+              </p>
+              {seoSectionHeadings.map((heading, sectionIdx) => {
+                const start = sectionIdx * 6;
+                const items = seoLongFormParagraphs.slice(start, start + 6);
+                return (
+                  <section key={`seo-section-${heading}`} className="not-prose mt-10">
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4">{heading}</h3>
+                    <div className="prose prose-lg max-w-none text-gray-700">
+                      {items.map((paragraph, idx) => (
+                        <p key={`seo-paragraph-${sectionIdx}-${idx}`}>{paragraph}</p>
+                      ))}
+                    </div>
+                  </section>
+                );
+              })}
             </div>
           </section>
         </div>

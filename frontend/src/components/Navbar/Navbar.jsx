@@ -12,10 +12,13 @@ import {
   FileText,
   Info,
   Star,
+  House,
+  ChevronRight,
 } from "lucide-react";
 import SearchBar from "./searchBar";
 
 const navItems = [
+  { icon: House, label: "Home", href: "/" },
   { icon: List, label: "Names", href: "/names" },
   { icon: ListOrdered, label: "By Letter", href: "/names/islamic/letter/a" },
   { icon: FileText, label: "Blog", href: "/blog" },
@@ -43,6 +46,10 @@ export default function Navbar() {
     return pathname === href || pathname.startsWith(`${href}/`);
   };
 
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
   return (
     <>
       <header
@@ -53,7 +60,7 @@ export default function Navbar() {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 gap-4">
+          <div className="flex items-center justify-between h-16 sm:h-[70px] gap-3">
             <Link
               href="/"
               className="flex items-center gap-3 group"
@@ -124,58 +131,82 @@ export default function Navbar() {
             <div className="flex items-center lg:hidden">
               <button
                 onClick={toggleMenu}
-                className="p-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-150"
+                className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 transition-colors duration-150 shadow-sm"
                 aria-label="Menu"
               >
+                <span className="text-sm font-semibold">{menuOpen ? "Close" : "Menu"}</span>
                 {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
             </div>
           </div>
-
-          {menuOpen && (
-            <div className="lg:hidden border-t border-gray-200 pb-6 animate-slideDown">
-              <div className="px-2 py-4">
-                <SearchBar mobile placeholder="Search names..." />
-              </div>
-              <nav className="space-y-2 px-2">
-                {navItems.map((item) => {
-                  const Icon = item.icon;
-                  const active = isActive(item.href);
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-2xl font-medium ${
-                        active
-                          ? "bg-blue-50 text-blue-700"
-                          : "text-gray-700 hover:bg-gray-50"
-                      }`}
-                      onClick={closeAll}
-                    >
-                      <Icon className="w-5 h-5" />
-                      <span>{item.label}</span>
-                    </Link>
-                  );
-                })}
-                <Link
-                  href="/names"
-                  className="flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-md"
-                  onClick={closeAll}
-                >
-                  <Star className="w-4 h-4" />
-                  Explore Names
-                </Link>
-              </nav>
-            </div>
-          )}
         </div>
       </header>
 
       {menuOpen && (
         <div
-          className="fixed inset-0 bg-black/20 z-[90] lg:hidden"
+          className="fixed inset-0 bg-black/35 z-[90] lg:hidden"
           onClick={closeAll}
         />
+      )}
+
+      {menuOpen && (
+        <aside className="fixed right-0 top-0 h-full w-[88%] max-w-sm bg-white z-[110] lg:hidden shadow-2xl border-l border-gray-100 animate-slideIn">
+          <div className="px-5 pt-5 pb-4 border-b border-gray-100">
+            <div className="flex items-center justify-between">
+              <span className="text-lg font-bold text-gray-900">Navigate</span>
+              <button
+                onClick={closeAll}
+                className="p-2 rounded-lg hover:bg-gray-100 text-gray-700"
+                aria-label="Close menu"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <p className="text-sm text-gray-500 mt-1">
+              Quick access to names, blog, and tools
+            </p>
+          </div>
+
+          <div className="p-4 border-b border-gray-100">
+            <SearchBar mobile placeholder="Search names..." />
+          </div>
+
+          <nav className="p-4 space-y-2">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`flex items-center justify-between gap-3 px-4 py-3 rounded-xl border transition-all ${
+                    active
+                      ? "border-blue-200 bg-blue-50 text-blue-700"
+                      : "border-gray-100 text-gray-700 hover:bg-gray-50"
+                  }`}
+                  onClick={closeAll}
+                >
+                  <span className="flex items-center gap-3 font-medium">
+                    <Icon className="w-5 h-5" />
+                    {item.label}
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-gray-400" />
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div className="p-4 mt-auto">
+            <Link
+              href="/names"
+              className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-md"
+              onClick={closeAll}
+            >
+              <Star className="w-4 h-4" />
+              Explore Names
+            </Link>
+          </div>
+        </aside>
       )}
 
       <div className="h-16" />
@@ -194,6 +225,21 @@ export default function Navbar() {
 
         .animate-slideDown {
           animation: slideDown 0.2s ease-out;
+        }
+
+        @keyframes slideIn {
+          from {
+            opacity: 0;
+            transform: translateX(24px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        .animate-slideIn {
+          animation: slideIn 0.2s ease-out;
         }
       `}</style>
     </>
