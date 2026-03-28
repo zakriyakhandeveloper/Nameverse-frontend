@@ -303,7 +303,7 @@ const RelatedArticleCard = memo(({ article }) => (
   >
     <div className="h-48 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 overflow-hidden relative flex items-center justify-center">
       <div className="text-center">
-        <span className="text-white font-black text-4xl tracking-tight">NameVerse</span>
+        <span className="text-white font-black text-4xl tracking-tight">NV</span>
         <p className="text-white/80 text-sm mt-1">{article.category || 'Article'}</p>
       </div>
     </div>
@@ -542,7 +542,7 @@ function ArticleClientInner({ article, latestArticles = [] }) {
           <div className={`w-full h-full bg-gradient-to-br ${gradientBg} flex items-center justify-center`}>
             <div className="text-center text-white z-10">
               <div className="text-7xl sm:text-8xl md:text-9xl font-extrabold mb-6 opacity-90">
-                {article.title.charAt(0).toUpperCase()}
+                NV
               </div>
               <p className="text-2xl sm:text-3xl font-light opacity-80">NameVerse</p>
             </div>

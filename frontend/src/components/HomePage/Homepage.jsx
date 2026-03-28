@@ -1,14 +1,30 @@
 "use client";
 
+import { lazy, Suspense } from "react";
 import HeroSection from "./HeroSection";
 import AlphabetNavigation from "./AlphabetNavigation";
-import PopularNamesSection from "./PopularNamesSection";
-import TrendingNames from "./TrendingNames";
-import WhyChooseSection from "./WhyChooseSection";
-import SEOContentBlock from "./SeoContentBlock";
-import ComprehensiveFAQ from "./ComprehensiveFAQ";
-import ArticleExplorer from "./latestStories";
 import HomePageSection from "./HomePageSection";
+
+// Lazy load below-fold sections
+const PopularNamesSection = lazy(() => import("./PopularNamesSection"));
+const TrendingNames = lazy(() => import("./TrendingNames"));
+const WhyChooseSection = lazy(() => import("./WhyChooseSection"));
+const SEOContentBlock = lazy(() => import("./SeoContentBlock"));
+const ComprehensiveFAQ = lazy(() => import("./ComprehensiveFAQ"));
+const ArticleExplorer = lazy(() => import("./latestStories"));
+
+// Loading skeleton for lazy sections
+const SectionSkeleton = () => (
+  <div className="animate-pulse space-y-4 p-8">
+    <div className="h-8 bg-gray-200 rounded w-1/3 mx-auto" />
+    <div className="h-4 bg-gray-200 rounded w-2/3 mx-auto" />
+    <div className="grid grid-cols-3 gap-4 mt-8">
+      {[1, 2, 3, 4, 5, 6].map((i) => (
+        <div key={i} className="h-24 bg-gray-200 rounded-xl" />
+      ))}
+    </div>
+  </div>
+);
 
 const SITE =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://nameverse.com";
@@ -189,36 +205,48 @@ export default function HomePageClient({ initialArticles = [], initialCategories
 
         {/* 3 — Popular picks */}
         <HomePageSection id="popular-names" variant="default">
-          <PopularNamesSection />
+          <Suspense fallback={<SectionSkeleton />}>
+            <PopularNamesSection />
+          </Suspense>
         </HomePageSection>
 
         {/* 4 — Trending (API) */}
         <HomePageSection id="trending-names" variant="brand">
-          <TrendingNames />
+          <Suspense fallback={<SectionSkeleton />}>
+            <TrendingNames />
+          </Suspense>
         </HomePageSection>
 
         {/* 5 — Latest articles (server-hydrated for instant paint) */}
         <HomePageSection id="latest-articles" variant="subtle" aria-labelledby="latest-articles-heading">
-          <ArticleExplorer
-            embedded
-            initialArticles={initialArticles}
-            initialCategories={initialCategories}
-          />
+          <Suspense fallback={<SectionSkeleton />}>
+            <ArticleExplorer
+              embedded
+              initialArticles={initialArticles}
+              initialCategories={initialCategories}
+            />
+          </Suspense>
         </HomePageSection>
 
         {/* 6 — Trust / why us */}
         <HomePageSection id="why-nameverse" variant="muted">
-          <WhyChooseSection />
+          <Suspense fallback={<SectionSkeleton />}>
+            <WhyChooseSection />
+          </Suspense>
         </HomePageSection>
 
         {/* 7 — SEO editorial block */}
         <HomePageSection id="baby-name-meanings-seo" variant="default">
-          <SEOContentBlock />
+          <Suspense fallback={<SectionSkeleton />}>
+            <SEOContentBlock />
+          </Suspense>
         </HomePageSection>
 
         {/* 8 — FAQ (bottom: standard SEO pattern) */}
         <HomePageSection id="faq" variant="muted" className="!border-b-0">
-          <ComprehensiveFAQ />
+          <Suspense fallback={<SectionSkeleton />}>
+            <ComprehensiveFAQ />
+          </Suspense>
         </HomePageSection>
       </main>
     </>

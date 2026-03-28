@@ -1,4 +1,4 @@
-import { Globe, Heart, Award, BookOpen, Languages, CheckCircle, Star, Lock, TrendingUp, ArrowRight } from 'lucide-react';
+import { Globe, Heart, Award, BookOpen, Languages, CheckCircle, Star, ArrowRight, Lock } from 'lucide-react';
 import SearchBar from './SearchSection';
 
 const Hero = () => {

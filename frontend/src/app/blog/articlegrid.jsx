@@ -91,7 +91,7 @@ const ArticleCard = ({ article, index }) => {
             {/* Logo text */}
             <div className="relative z-10 text-center px-4">
               <h3 className="text-5xl font-black text-white drop-shadow-2xl tracking-tight mb-2">
-                Nameverse
+                NV
               </h3>
               <div className="h-1 w-20 bg-white/80 rounded-full mx-auto" />
             </div>

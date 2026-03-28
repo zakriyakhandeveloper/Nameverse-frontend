@@ -39,9 +39,10 @@ images: {
 formats: ['image/avif', 'image/webp'],
 deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
 imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-minimumCacheTTL: 60,
+minimumCacheTTL: 31536000,
 dangerouslyAllowSVG: true,
 contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+unoptimized: false,
 },
 
 // Headers for Security and Performance
@@ -90,10 +91,43 @@ optimizePackageImports: [
 'lucide-react',
 '@radix-ui/react-dropdown-menu'
 ],
+optimizeCss: true,
+turbo: {
+rules: {
+'*.svg': {
+loaders: ['@svgr/webpack'],
+as: '*.js',
+},
+},
+},
 },
 
 // Webpack config
-webpack: (config) => {
+webpack: (config, { dev, isServer }) => {
+// Production optimizations
+if (!dev && !isServer) {
+config.optimization = {
+...config.optimization,
+splitChunks: {
+...config.optimization.splitChunks,
+cacheGroups: {
+...config.optimization.splitChunks?.cacheGroups,
+lucide: {
+test: /[\\/]node_modules[\\/]lucide-react[\\/]/,
+name: 'lucide',
+chunks: 'all',
+priority: 10,
+},
+framerMotion: {
+test: /[\\/]node_modules[\\/]framer-motion[\\/]/,
+name: 'framer-motion',
+chunks: 'all',
+priority: 10,
+},
+},
+},
+};
+}
 return config;
 },
 };
