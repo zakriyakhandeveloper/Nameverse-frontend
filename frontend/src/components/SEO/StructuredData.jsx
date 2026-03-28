@@ -9,7 +9,10 @@ export default function StructuredData({
   organization = false, 
   website = false, 
   breadcrumbs = [], 
-  collectionPage = null 
+  collectionPage = null,
+  person = null,
+  aboutPage = null,
+  faqPage = null,
 }) {
   const siteUrl = getSiteUrl();
   
@@ -50,6 +53,92 @@ export default function StructuredData({
     }))
   } : null;
 
+  const personId = person?.url ? `${person.url}#person` : null;
+
+  // Person (e.g. About page expert); @id links with AboutPage.mainEntity
+  const personSchema = person
+    ? {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        ...(personId ? { "@id": personId } : {}),
+        name: person.name,
+        jobTitle: person.jobTitle,
+        description: person.description,
+        url: person.url,
+        sameAs: person.sameAs || [],
+        knowsAbout: person.knowsAbout || [
+          "Baby names",
+          "Name meanings",
+          "Islamic names",
+          "Hindu names",
+          "Christian names",
+          "Multicultural naming",
+        ],
+        ...(person.contactPoint?.telephone
+          ? {
+              contactPoint: {
+                "@type": "ContactPoint",
+                telephone: person.contactPoint.telephone,
+                contactType: person.contactPoint.contactType || "Professional Services",
+                availableLanguage: person.contactPoint.availableLanguage || ["English"],
+              },
+            }
+          : {}),
+      }
+    : null;
+
+  const aboutPageSchema =
+    aboutPage && personId
+      ? {
+          "@context": "https://schema.org",
+          "@type": "AboutPage",
+          name: aboutPage.name,
+          description: aboutPage.description,
+          url: aboutPage.url,
+          isPartOf: {
+            "@type": "WebSite",
+            name: "NameVerse",
+            url: siteUrl,
+          },
+          ...(aboutPage.primaryImage
+            ? { primaryImageOfPage: { "@type": "ImageObject", url: aboutPage.primaryImage } }
+            : {}),
+          mainEntity: { "@id": personId },
+        }
+      : aboutPage && !person
+        ? {
+            "@context": "https://schema.org",
+            "@type": "AboutPage",
+            name: aboutPage.name,
+            description: aboutPage.description,
+            url: aboutPage.url,
+            isPartOf: {
+              "@type": "WebSite",
+              name: "NameVerse",
+              url: siteUrl,
+            },
+            ...(aboutPage.primaryImage
+              ? { primaryImageOfPage: { "@type": "ImageObject", url: aboutPage.primaryImage } }
+              : {}),
+          }
+        : null;
+
+  const faqSchema =
+    faqPage?.items?.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faqPage.items.map((item) => ({
+            "@type": "Question",
+            name: item.question,
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: item.answer,
+            },
+          })),
+        }
+      : null;
+
   // Collection Page Schema
   const collectionPageSchema = collectionPage ? {
     "@context": "https://schema.org",
@@ -74,7 +163,15 @@ export default function StructuredData({
   } : null;
 
   // Filter out null schemas
-  const schemas = [organizationSchema, websiteSchema, breadcrumbSchema, collectionPageSchema].filter(Boolean);
+  const schemas = [
+    organizationSchema,
+    websiteSchema,
+    breadcrumbSchema,
+    collectionPageSchema,
+    personSchema,
+    aboutPageSchema,
+    faqSchema,
+  ].filter(Boolean);
 
   if (schemas.length === 0) {
     return null;
