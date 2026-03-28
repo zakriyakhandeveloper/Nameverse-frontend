@@ -1,33 +1,11 @@
 "use client"
 
-import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import {
   Sparkles, BookOpen, Heart, Brain, Gem, Calendar, Palette, Hash,
   Languages, Volume2, Users, Link2, Tag, Book, Share2, Bookmark,
-  TrendingUp, Globe, Star, MessageCircle, ChevronDown, ChevronUp, Home
+  TrendingUp, Globe, Star, MessageCircle, ChevronDown, ChevronUp, Home, Search
 } from 'lucide-react'
-
-// Lazy load below-fold sections for better FCP/LCP
-const MeaningsSection = lazy(() => import('./name-detail/MeaningsSection'))
-const TranslationsSection = lazy(() => import('./name-detail/TranslationsSection'))
-const PronunciationSection = lazy(() => import('./name-detail/PronunciationSection'))
-const PersonalitySection = lazy(() => import('./name-detail/PersonalitySection'))
-const ReferencesSection = lazy(() => import('./name-detail/ReferencesSection'))
-const RelatedNamesSection = lazy(() => import('./name-detail/RelatedNamesSection'))
-const FAQSection = lazy(() => import('./name-detail/FAQSection'))
-
-// Loading skeleton for lazy sections
-const SectionSkeleton = () => (
-  <div className="animate-pulse space-y-4 p-8">
-    <div className="h-8 bg-gray-200 rounded w-1/3 mx-auto" />
-    <div className="h-4 bg-gray-200 rounded w-2/3 mx-auto" />
-    <div className="grid grid-cols-3 gap-4 mt-8">
-      {[1, 2, 3].map((i) => (
-        <div key={i} className="h-24 bg-gray-200 rounded-xl" />
-      ))}
-    </div>
-  </div>
-)
 
 // Religion-based theme configuration
 const religionThemes = {
@@ -766,6 +744,51 @@ export default function NameClient({ data, initialLanguage }) {
                   </div>
                 </div>
               )}
+            </div>
+            
+            {/* Enhanced Internal Links */}
+            <div className="mt-8 pt-8 border-t border-gray-200">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Explore More {religion.charAt(0).toUpperCase() + religion.slice(1)} Names</h3>
+              <div className="grid md:grid-cols-3 gap-4">
+                <a
+                  href={`/names/${religion}`}
+                  className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200 hover:border-indigo-300 hover:shadow-md transition-all"
+                >
+                  <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${theme.gradient} flex items-center justify-center`}>
+                    <BookOpen className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">All {religion.charAt(0).toUpperCase() + religion.slice(1)} Names</h4>
+                    <p className="text-sm text-gray-600">Browse complete collection</p>
+                  </div>
+                </a>
+                
+                <a
+                  href={`/names/${religion}/letter/${data.name.charAt(0).toLowerCase()}`}
+                  className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200 hover:border-indigo-300 hover:shadow-md transition-all"
+                >
+                  <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${theme.gradient} flex items-center justify-center`}>
+                    <Hash className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Names Starting with {data.name.charAt(0)}</h4>
+                    <p className="text-sm text-gray-600">Browse by letter</p>
+                  </div>
+                </a>
+                
+                <a
+                  href={`/search`}
+                  className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200 hover:border-indigo-300 hover:shadow-md transition-all"
+                >
+                  <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${theme.gradient} flex items-center justify-center`}>
+                    <Search className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Search All Names</h4>
+                    <p className="text-sm text-gray-600">Find by meaning or origin</p>
+                  </div>
+                </a>
+              </div>
             </div>
           </div>
         </section>

@@ -80,13 +80,36 @@ value: 'public, max-age=31536000, immutable',
 ];
 },
 
-// Experimental Features
-experimental: {
-optimizePackageImports: [
-'lucide-react',
-'@radix-ui/react-dropdown-menu'
-],
-},
+  // Server Configuration
+  serverExternalPackages: ['sharp'],
+
+  // Experimental Features
+  experimental: {
+    optimizePackageImports: [
+      'lucide-react',
+      '@radix-ui/react-dropdown-menu',
+      '@radix-ui/react-scroll-area',
+      '@radix-ui/react-slot',
+      'framer-motion',
+      '@tanstack/react-query',
+      'zustand',
+      'swr',
+      'sonner',
+      'react-hot-toast',
+      'react-spinners',
+      'lottie-react'
+    ],
+  },
+
+  // Turbopack configuration (faster than Webpack)
+  turbopack: {
+    rules: {
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
+      },
+    },
+  },
 
 // Webpack config
 webpack: (config, { dev, isServer }) => {

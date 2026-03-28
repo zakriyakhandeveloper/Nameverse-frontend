@@ -82,19 +82,13 @@ export default function Footer() {
             <Link href="/terms" className="hover:text-indigo-700">Terms of Service</Link>
             <Link href="/sitemap.xml" className="hover:text-indigo-700">Sitemap</Link>
           </div>
-          {/* Social links - Only show if you have actual social media accounts
-          <div className="flex space-x-4">
-            <Link href="https://facebook.com/nameverse" aria-label="Facebook" className="hover:text-indigo-700" target="_blank" rel="noopener">
-              <Facebook size={18} />
-            </Link>
-            <Link href="https://twitter.com/nameverse" aria-label="Twitter" className="hover:text-indigo-700" target="_blank" rel="noopener">
-              <Twitter size={18} />
-            </Link>
-            <Link href="https://instagram.com/nameverse" aria-label="Instagram" className="hover:text-indigo-700" target="_blank" rel="noopener">
-              <Instagram size={18} />
-            </Link>
+          {/* Internal Links for Better SEO */}
+          <div className="flex flex-wrap gap-4 text-sm">
+            <Link href="/names/islamic" className="hover:text-indigo-700 transition-colors">Islamic Names</Link>
+            <Link href="/names/christian" className="hover:text-indigo-700 transition-colors">Christian Names</Link>
+            <Link href="/names/hindu" className="hover:text-indigo-700 transition-colors">Hindu Names</Link>
+            <Link href="/blog" className="hover:text-indigo-700 transition-colors">Naming Guides</Link>
           </div>
-          */}
         </div>
       </div>
     </footer>

@@ -4,6 +4,26 @@ import Link from "next/link";
 import { Calendar, Clock, ArrowRight, Bookmark, Share2, Heart, Eye } from "lucide-react";
 import { useArticleInteractions, useArticleStats } from "@/hooks/useArticleInteractions";
 
+// NameVerse themed gradient palettes
+const bgGradients = [
+  'bg-gradient-to-br from-emerald-500 to-teal-600',
+  'bg-gradient-to-br from-blue-500 to-indigo-600',
+  'bg-gradient-to-br from-purple-500 to-violet-600',
+  'bg-gradient-to-br from-amber-500 to-orange-600',
+  'bg-gradient-to-br from-red-500 to-rose-600',
+  'bg-gradient-to-br from-cyan-500 to-blue-600',
+  'bg-gradient-to-br from-lime-500 to-green-600',
+  'bg-gradient-to-br from-orange-500 to-red-600',
+  'bg-gradient-to-br from-pink-500 to-fuchsia-600',
+  'bg-gradient-to-br from-teal-500 to-cyan-600',
+  'bg-gradient-to-br from-indigo-500 to-purple-600',
+  'bg-gradient-to-br from-violet-500 to-fuchsia-600',
+];
+
+const getStableGradient = (index) => {
+  return bgGradients[index % bgGradients.length];
+};
+
 // NameVerse themed color palettes
 const nvThemes = [
   { bg: "#10B981", text: "#ffffff", accent: "#059669" }, // Emerald
