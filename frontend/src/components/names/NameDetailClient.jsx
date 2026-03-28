@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import {
   Sparkles, BookOpen, Heart, Brain, Gem, Calendar, Palette, Hash,
   Languages, Volume2, Users, Link2, Tag, Book, Share2, Bookmark,
-  TrendingUp, Globe, Star, MessageCircle, ChevronDown, ChevronUp, Home, Search
+  TrendingUp, Globe, Star, MessageCircle, ChevronDown, ChevronUp, Home, Search, MapPin, Award, Clock, Zap
 } from 'lucide-react'
 
 // Religion-based theme configuration
