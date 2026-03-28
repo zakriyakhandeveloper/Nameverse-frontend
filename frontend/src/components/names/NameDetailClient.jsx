@@ -1,11 +1,33 @@
 "use client"
 
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react'
 import {
   Sparkles, BookOpen, Heart, Brain, Gem, Calendar, Palette, Hash,
   Languages, Volume2, Users, Link2, Tag, Book, Share2, Bookmark,
   TrendingUp, Globe, Star, MessageCircle, ChevronDown, ChevronUp, Home
 } from 'lucide-react'
+
+// Lazy load below-fold sections for better FCP/LCP
+const MeaningsSection = lazy(() => import('./name-detail/MeaningsSection'))
+const TranslationsSection = lazy(() => import('./name-detail/TranslationsSection'))
+const PronunciationSection = lazy(() => import('./name-detail/PronunciationSection'))
+const PersonalitySection = lazy(() => import('./name-detail/PersonalitySection'))
+const ReferencesSection = lazy(() => import('./name-detail/ReferencesSection'))
+const RelatedNamesSection = lazy(() => import('./name-detail/RelatedNamesSection'))
+const FAQSection = lazy(() => import('./name-detail/FAQSection'))
+
+// Loading skeleton for lazy sections
+const SectionSkeleton = () => (
+  <div className="animate-pulse space-y-4 p-8">
+    <div className="h-8 bg-gray-200 rounded w-1/3 mx-auto" />
+    <div className="h-4 bg-gray-200 rounded w-2/3 mx-auto" />
+    <div className="grid grid-cols-3 gap-4 mt-8">
+      {[1, 2, 3].map((i) => (
+        <div key={i} className="h-24 bg-gray-200 rounded-xl" />
+      ))}
+    </div>
+  </div>
+)
 
 // Religion-based theme configuration
 const religionThemes = {

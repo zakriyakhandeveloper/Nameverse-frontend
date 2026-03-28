@@ -4,19 +4,24 @@ import Link from "next/link";
 import { Calendar, Clock, ArrowRight, Bookmark, Share2, Heart, Eye } from "lucide-react";
 import { useArticleInteractions, useArticleStats } from "@/hooks/useArticleInteractions";
 
-const bgGradients = [
-  "from-emerald-500 to-teal-600",
-  "from-orange-500 to-red-600",
-  "from-blue-500 to-indigo-600",
-  "from-indigo-600 to-purple-600",
-  "from-violet-600 to-purple-600",
-  "from-cyan-500 to-blue-600",
-  "from-amber-500 to-orange-600",
-  "from-rose-600 to-pink-600",
+// NameVerse themed color palettes
+const nvThemes = [
+  { bg: "#10B981", text: "#ffffff", accent: "#059669" }, // Emerald
+  { bg: "#3B82F6", text: "#ffffff", accent: "#1D4ED8" }, // Blue
+  { bg: "#8B5CF6", text: "#ffffff", accent: "#7C3AED" }, // Purple
+  { bg: "#F59E0B", text: "#1f2937", accent: "#D97706" }, // Amber
+  { bg: "#EF4444", text: "#ffffff", accent: "#DC2626" }, // Red
+  { bg: "#06B6D4", text: "#ffffff", accent: "#0891B2" }, // Cyan
+  { bg: "#84CC16", text: "#1f2937", accent: "#65A30D" }, // Lime
+  { bg: "#F97316", text: "#ffffff", accent: "#EA580C" }, // Orange
+  { bg: "#EC4899", text: "#ffffff", accent: "#DB2777" }, // Pink
+  { bg: "#14B8A6", text: "#ffffff", accent: "#0D9488" }, // Teal
+  { bg: "#6366F1", text: "#ffffff", accent: "#4F46E5" }, // Indigo
+  { bg: "#A855F7", text: "#ffffff", accent: "#9333EA" }, // Violet
 ];
 
-const getStableGradient = (index) => {
-  return bgGradients[index % bgGradients.length];
+const getStableTheme = (index) => {
+  return nvThemes[index % nvThemes.length];
 };
 
 const formatDate = (dateString) => {

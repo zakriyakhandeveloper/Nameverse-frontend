@@ -12,11 +12,6 @@ process.env.NODE_ENV === 'production'
 // Remove X-Powered-By header
 poweredByHeader: false,
 
-// Turbopack configuration
-turbopack: {
-root: process.cwd(),
-},
-
 // Disable TypeScript checking during build
 typescript: {
 ignoreBuildErrors: true,
@@ -91,15 +86,6 @@ optimizePackageImports: [
 'lucide-react',
 '@radix-ui/react-dropdown-menu'
 ],
-optimizeCss: true,
-turbo: {
-rules: {
-'*.svg': {
-loaders: ['@svgr/webpack'],
-as: '*.js',
-},
-},
-},
 },
 
 // Webpack config
