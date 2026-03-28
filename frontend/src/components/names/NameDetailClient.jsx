@@ -809,6 +809,287 @@ export default function NameClient({ data, initialLanguage }) {
         </section>
       )}
 
+      {/* Popularity Score & Regional Data */}
+      {(data.popularity_score || data.popularity_by_region) && (
+        <section className="py-12 px-4 bg-white">
+          <div className="max-w-6xl mx-auto">
+            <SectionHeader icon={TrendingUp} title="Popularity" theme={theme} />
+            
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Overall Popularity Score */}
+              {data.popularity_score && (
+                <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-8">
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">Overall Popularity</h3>
+                  <div className="flex items-center gap-6">
+                    <div className="relative">
+                      <svg className="w-32 h-32 transform -rotate-90">
+                        <circle cx="64" cy="64" r="56" fill="none" stroke="#E5E7EB" strokeWidth="12" />
+                        <circle 
+                          cx="64" cy="64" r="56" fill="none" 
+                          stroke="url(#gradient)" strokeWidth="12"
+                          strokeDasharray={`${data.popularity_score * 3.52} 352`}
+                          strokeLinecap="round"
+                        />
+                        <defs>
+                          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stopColor="#6366F1" />
+                            <stop offset="100%" stopColor="#A855F7" />
+                          </linearGradient>
+                        </defs>
+                      </svg>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-3xl font-bold text-gray-900">{data.popularity_score}</span>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-gray-600 mb-2">Based on global naming trends</p>
+                      <div className="flex items-center gap-2">
+                        <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
+                        <span className="font-semibold text-gray-900">
+                          {data.popularity_score >= 80 ? 'Very Popular' : 
+                           data.popularity_score >= 60 ? 'Popular' : 
+                           data.popularity_score >= 40 ? 'Moderate' : 'Unique'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Regional Popularity */}
+              {data.popularity_by_region && data.popularity_by_region.length > 0 && (
+                <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">Popularity by Region</h3>
+                  <div className="space-y-4">
+                    {data.popularity_by_region.map((region, idx) => (
+                      <div key={idx} className="flex items-center gap-4">
+                        <div className="flex items-center gap-2 flex-1">
+                          <MapPin className="w-4 h-4 text-gray-400" />
+                          <span className="font-medium text-gray-900">{region.region}</span>
+                        </div>
+                        <div className="flex-1">
+                          <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+                            <div 
+                              className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-500"
+                              style={{ width: `${region.score}%` }}
+                            />
+                          </div>
+                        </div>
+                        <span className="text-sm font-semibold text-gray-700 w-12 text-right">{region.score}%</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Historical References */}
+      {data.historical_references && data.historical_references.length > 0 && (
+        <section className="py-12 px-4 bg-gray-50">
+          <div className="max-w-6xl mx-auto">
+            <SectionHeader icon={BookOpen} title="Historical References" theme={theme} />
+            
+            <div className="space-y-6">
+              {data.historical_references.map((ref, idx) => (
+                <div key={idx} className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
+                  <div className="flex items-start gap-4">
+                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${theme.gradient} flex items-center justify-center flex-shrink-0`}>
+                      <Clock className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold">
+                          {ref.time_period}
+                        </span>
+                        {ref.context && (
+                          <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium">
+                            {ref.context}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-gray-700 leading-relaxed">{ref.reference}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Modern Usage & Trends */}
+      {data.modern_usage && (
+        <section className="py-12 px-4 bg-white">
+          <div className="max-w-6xl mx-auto">
+            <SectionHeader icon={Zap} title="Modern Usage & Trends" theme={theme} />
+            
+            <div className="grid md:grid-cols-3 gap-6">
+              {/* Trends */}
+              {data.modern_usage.trends && data.modern_usage.trends.length > 0 && (
+                <div className="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-2xl p-6">
+                  <h3 className="text-lg font-bold text-gray-900 mb-4">Current Trends</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {data.modern_usage.trends.map((trend, idx) => (
+                      <span key={idx} className="px-3 py-1.5 bg-white rounded-full text-sm font-medium text-cyan-700 shadow-sm">
+                        {trend}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Platforms */}
+              {data.modern_usage.platforms && data.modern_usage.platforms.length > 0 && (
+                <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-6">
+                  <h3 className="text-lg font-bold text-gray-900 mb-4">Popular Platforms</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {data.modern_usage.platforms.map((platform, idx) => (
+                      <span key={idx} className="px-3 py-1.5 bg-white rounded-full text-sm font-medium text-pink-700 shadow-sm">
+                        {platform}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Modern Context */}
+              {data.modern_usage.modern_context && (
+                <div className="bg-gradient-to-br from-violet-50 to-purple-50 rounded-2xl p-6">
+                  <h3 className="text-lg font-bold text-gray-900 mb-4">Modern Context</h3>
+                  <p className="text-gray-700 text-sm leading-relaxed">{data.modern_usage.modern_context}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* User Stories & Testimonials */}
+      {data.user_stories && data.user_stories.length > 0 && (
+        <section className="py-12 px-4 bg-gradient-to-br from-amber-50 to-orange-50">
+          <div className="max-w-6xl mx-auto">
+            <SectionHeader icon={Heart} title="Real Stories from Real People" theme={theme} />
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {data.user_stories.map((story, idx) => (
+                <div key={idx} className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${theme.gradient} flex items-center justify-center text-white font-bold`}>
+                      {story.person_name?.charAt(0) || 'U'}
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900">{story.person_name}</h4>
+                      <div className="flex items-center gap-1 text-sm text-gray-500">
+                        <MapPin className="w-3 h-3" />
+                        <span>{story.location}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-gray-700 text-sm leading-relaxed mb-4 italic">"{story.story}"</p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star 
+                          key={i} 
+                          className={`w-4 h-4 ${i < (story.rating || 5) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} 
+                        />
+                      ))}
+                    </div>
+                    {story.likes && (
+                      <span className="text-xs text-gray-500">{story.likes} people found this helpful</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Name in Real Life */}
+      {data.name_in_real_life && (
+        <section className="py-12 px-4 bg-white">
+          <div className="max-w-4xl mx-auto">
+            <SectionHeader icon={Award} title="Name in Real Life" theme={theme} />
+            
+            <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-8">
+              <div className="flex items-start gap-6">
+                <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${theme.gradient} flex items-center justify-center text-white text-3xl font-bold flex-shrink-0`}>
+                  {data.name_in_real_life.person_name?.charAt(0) || data.name.charAt(0)}
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">{data.name_in_real_life.person_name}</h3>
+                  <div className="flex items-center gap-2 text-gray-600 mb-4">
+                    <MapPin className="w-4 h-4" />
+                    <span>{data.name_in_real_life.location}</span>
+                  </div>
+                  <p className="text-gray-700 leading-relaxed italic">"{data.name_in_real_life.story}"</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Spiritual Symbolism */}
+      {data.spiritual_symbolism && (
+        <section className="py-12 px-4 bg-gradient-to-br from-violet-50 to-purple-50">
+          <div className="max-w-4xl mx-auto">
+            <SectionHeader icon={Sparkles} title="Spiritual Symbolism" theme={theme} />
+            
+            <div className="bg-white rounded-2xl p-8 shadow-lg">
+              <div className="flex items-center gap-4 mb-6">
+                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${theme.gradient} flex items-center justify-center`}>
+                  <Sparkles className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900">Deeper Meaning</h3>
+                  <p className="text-gray-600">Beyond the surface definition</p>
+                </div>
+              </div>
+              <p className="text-gray-700 leading-relaxed text-lg">{data.spiritual_symbolism}</p>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Cultural Impact */}
+      {data.cultural_impact && (
+        <section className="py-12 px-4 bg-white">
+          <div className="max-w-4xl mx-auto">
+            <SectionHeader icon={Globe} title="Cultural Impact" theme={theme} />
+            
+            <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-8">
+              <p className="text-gray-700 leading-relaxed text-lg">{data.cultural_impact}</p>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Name Variations */}
+      {data.name_variations && data.name_variations.length > 0 && (
+        <section className="py-12 px-4 bg-gray-50">
+          <div className="max-w-6xl mx-auto">
+            <SectionHeader icon={Tag} title="Name Variations" theme={theme} />
+            
+            <div className="flex flex-wrap gap-4 justify-center">
+              {data.name_variations.map((variation, idx) => (
+                <a
+                  key={idx}
+                  href={`/names/${religion}/${variation.toLowerCase()}`}
+                  className="px-6 py-3 bg-white rounded-xl border-2 border-gray-200 hover:border-indigo-400 hover:shadow-lg transition-all font-semibold text-gray-700 hover:text-indigo-700"
+                >
+                  {variation}
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Social Sharing Section */}
       {data.social_tags && data.social_tags.length > 0 && (
         <section className="py-12 px-4 bg-gradient-to-r from-pink-50 to-purple-50">
