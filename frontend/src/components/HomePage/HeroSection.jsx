@@ -1,4 +1,3 @@
-import { Globe, Heart, Award, BookOpen, Languages, CheckCircle, Star, ArrowRight, Lock } from 'lucide-react';
 import SearchBar from './SearchSection';
 
 const Hero = () => {
@@ -6,7 +5,6 @@ const Hero = () => {
     {
       id: 'islamic',
       name: 'Islamic',
-      icon: Globe,
       gradient: 'from-emerald-500 to-teal-600',
       url: '/names/islamic',
       count: '25,000+',
@@ -17,7 +15,6 @@ const Hero = () => {
     {
       id: 'hindu',
       name: 'Hindu',
-      icon: Heart,
       gradient: 'from-orange-500 to-red-600',
       url: '/names/hindu',
       count: '20,000+',
@@ -28,7 +25,6 @@ const Hero = () => {
     {
       id: 'christian',
       name: 'Christian',
-      icon: Award,
       gradient: 'from-blue-500 to-indigo-600',
       url: '/names/christian',
       count: '15,000+',
@@ -39,15 +35,15 @@ const Hero = () => {
   ];
 
   const stats = [
-    { number: '60K+', label: 'Names', icon: BookOpen, color: 'text-indigo-600', bg: 'bg-indigo-50' },
-    { number: '15+', label: 'Languages', icon: Languages, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-    { number: '99%', label: 'Verified', icon: CheckCircle, color: 'text-blue-600', bg: 'bg-blue-50' }
+    { number: '60K+', label: 'Names', color: 'text-indigo-600', bg: 'bg-indigo-50' },
+    { number: '15+', label: 'Languages', color: 'text-emerald-600', bg: 'bg-emerald-50' },
+    { number: '99%', label: 'Verified', color: 'text-blue-600', bg: 'bg-blue-50' }
   ];
 
   const trustIndicators = [
-    { icon: Star, text: 'Trusted by 5M+ Parents', color: 'text-amber-600', bg: 'bg-amber-50' },
-    { icon: Lock, text: 'Expert Verified', color: 'text-blue-600', bg: 'bg-blue-50' },
-    { icon: BookOpen, text: 'Multilingual Support', color: 'text-purple-600', bg: 'bg-purple-50' }
+    { text: 'Trusted by 5M+ Parents', color: 'text-amber-600', bg: 'bg-amber-50' },
+    { text: 'Expert Verified', color: 'text-blue-600', bg: 'bg-blue-50' },
+    { text: 'Multilingual Support', color: 'text-purple-600', bg: 'bg-purple-50' }
   ];
 
   return (
@@ -63,7 +59,9 @@ const Hero = () => {
           {/* Main heading - Cleaner, less overwhelming */}
           <div className="space-y-6 text-center max-w-4xl mx-auto">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 rounded-full">
-              <Star className="w-4 h-4 text-amber-600 fill-amber-600" />
+              <svg className="w-4 h-4 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.471 1.907l-2.915 2.008a1 1 0 00.227 1.87l3.666 2.441c.955.637 1.333 1.707.627 2.679l-2.253 3.13a1 1 0 00-.465 1.113l.385 3.729c.181.814-.489 1.607-1.351 1.607a.865.865 0 01-.711-.424l-3.381-2.425a1 1 0 00-1.718 0l-3.381 2.425c-.668.482-.931.804-1.083 1.223l-.385 3.729a1 1 0 00-.465-1.113l2.253-3.13c-.706-.971-.327-2.041.627-2.679l3.666-2.441a1 1 0 00.227-1.87l-2.915-2.008a1 1 0 00-.471-1.907h3.462a1 1 0 00.95-.69l1.07-3.292c.3-.921.814-1.505 1.492-1.505z"/>
+              </svg>
               <span className="text-sm font-semibold text-amber-900">
                 Trusted by 5M+ Parents
               </span>
@@ -88,7 +86,6 @@ const Hero = () => {
           <div className="max-w-4xl mx-auto">
             <div className="grid sm:grid-cols-3 gap-4 sm:gap-6">
               {categories.map((category) => {
-                const Icon = category.icon;
                 return (
                   <a
                     key={category.id}
@@ -97,7 +94,9 @@ const Hero = () => {
                   >
                     <div className="flex flex-col items-center text-center gap-3">
                       <div className={`bg-gradient-to-br ${category.gradient} p-4 rounded-xl`}>
-                        <Icon className="w-7 h-7 text-white" />
+                        <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1h2a1 1 0 011 1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                        </svg>
                       </div>
                       <div>
                         <h3 className="font-bold text-lg text-gray-900 mb-1">
@@ -110,7 +109,9 @@ const Hero = () => {
                           {category.description}
                         </p>
                       </div>
-                      <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all mt-auto" />
+                      <svg className="w-5 h-5 text-gray-400 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all mt-auto" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 010-1.414l4 4a1 1 0 011.414 0l4 4a1 1 0 112.828-2.828l-4.586-4.586a1 1 0 00-1.414 0l-4.586 4.586a1 1 0 01-1.414-1.414z" clipRule="evenodd"/>
+                      </svg>
                     </div>
                   </a>
                 );
@@ -121,11 +122,12 @@ const Hero = () => {
           {/* Stats - Cleaner presentation */}
           <div className="flex justify-center items-center gap-8 sm:gap-12 flex-wrap max-w-3xl mx-auto pt-8">
             {stats.map((stat, index) => {
-              const Icon = stat.icon;
               return (
                 <div key={index} className="text-center">
                   <div className="flex items-center justify-center mb-2">
-                    <Icon className={`w-5 h-5 ${stat.color} mr-2`} />
+                    <svg className={`w-5 h-5 ${stat.color} mr-2`} fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14.414V20h12v-6.586a1 1 0 00-.293-.707l-.707-.707V8a6 6 0 00-6-6z"/>
+                    </svg>
                     <div className="text-3xl sm:text-4xl font-bold text-gray-900">{stat.number}</div>
                   </div>
                   <div className="text-sm text-gray-600">{stat.label}</div>
