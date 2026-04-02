@@ -18,8 +18,10 @@ const nextConfig = {
   
   // Performance Optimizations
   compress: true,
+
+
   
-  // Image Optimization
+  // Image Optimization this will happen in thesis
   images: {
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
@@ -83,6 +85,9 @@ const nextConfig = {
     // optimizeCss: true, // Disabled - requires critters package
     optimizePackageImports: ['lucide-react', '@radix-ui/react-dropdown-menu'],
   },
+
+  // Turbopack configuration
+  turbopack: {},
 
   // Webpack Optimizations (simplified to avoid build issues)
   webpack: (config) => {

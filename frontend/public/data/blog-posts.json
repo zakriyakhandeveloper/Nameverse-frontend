@@ -1,0 +1,98 @@
+[
+  {
+    "id": "ultimate-guide-islamic-names",
+    "title": "The Ultimate Guide to Islamic Baby Names",
+    "excerpt": "A comprehensive guide to choosing meaningful Islamic baby names with deep spiritual significance and cultural heritage.",
+    "author": "Dr. Fatima Al-Zahra",
+    "authorCredentials": "PhD in Islamic Studies",
+    "publishDate": "2025-01-15",
+    "readTime": "15 min read",
+    "category": "Islamic Names",
+    "tags": ["Islamic Names", "Baby Names", "Muslim Names", "Quranic Names"],
+    "featured": true,
+    "content": {
+      "introduction": "Choosing a name for your child is one of the most significant decisions you'll make as a parent. In Islam, a name is not just a label—it carries deep spiritual meaning, cultural heritage, and can influence a child's character and destiny.",
+      "sections": [
+        {
+          "title": "The Importance of Names in Islam",
+          "content": "In Islam, names hold immense significance. The Prophet Muhammad (PBUH) emphasized the importance of giving children good names."
+        }
+      ]
+    }
+  },
+  {
+    "id": "christian-biblical-names-guide",
+    "title": "A Complete Guide to Christian Biblical Names",
+    "excerpt": "Discover the rich heritage and spiritual significance of Christian biblical names with this expert guide.",
+    "author": "Pastor Michael Thompson",
+    "authorCredentials": "Master of Divinity",
+    "publishDate": "2025-01-10",
+    "readTime": "12 min read",
+    "category": "Christian Names",
+    "tags": ["Christian Names", "Biblical Names", "Saint Names"],
+    "featured": true,
+    "content": {
+      "introduction": "Christian names carry profound spiritual significance, connecting children to the rich tapestry of biblical history and the communion of saints."
+    }
+  },
+  {
+    "id": "hindu-vedic-naming-guide",
+    "title": "The Sacred Art of Hindu Baby Naming",
+    "excerpt": "Explore the ancient traditions and spiritual wisdom behind Hindu baby names with this comprehensive Vedic guide.",
+    "author": "Dr. Priya Sharma",
+    "authorCredentials": "PhD in Sanskrit Literature",
+    "publishDate": "2025-01-08",
+    "readTime": "14 min read",
+    "category": "Hindu Names",
+    "tags": ["Hindu Names", "Sanskrit Names", "Vedic Names"],
+    "featured": true,
+    "content": {
+      "introduction": "In Hindu tradition, naming a child is a sacred ceremony (Namakaran) filled with spiritual significance."
+    }
+  },
+  {
+    "id": "baby-name-trends-2025",
+    "title": "Baby Naming Trends for 2025",
+    "excerpt": "Discover the hottest baby naming trends of 2025, from vintage revivals to modern innovations across all cultures.",
+    "author": "Sarah Mitchell",
+    "authorCredentials": "Senior Editor, Baby Names International",
+    "publishDate": "2025-01-05",
+    "readTime": "10 min read",
+    "category": "Trends",
+    "tags": ["Baby Names 2025", "Naming Trends", "Popular Names"],
+    "featured": false,
+    "content": {
+      "introduction": "As we enter 2025, baby naming trends continue to evolve, reflecting changing cultural values and technological influences."
+    }
+  },
+  {
+    "id": "how-to-choose-baby-name",
+    "title": "How to Choose the Perfect Baby Name",
+    "excerpt": "Expert tips and strategies for selecting a meaningful name that your child will cherish for a lifetime.",
+    "author": "Emily Johnson",
+    "authorCredentials": "Child Development Specialist",
+    "publishDate": "2025-01-01",
+    "readTime": "8 min read",
+    "category": "Tips & Advice",
+    "tags": ["Baby Naming Tips", "How to Choose", "Expert Advice"],
+    "featured": false,
+    "content": {
+      "introduction": "Choosing a baby name is one of the first and most important decisions you'll make as a parent."
+    }
+  },
+  {
+    "id": "names-across-cultures",
+    "title": "Beautiful Names Across Cultures",
+    "excerpt": "Explore stunning baby names from different cultures and traditions around the world.",
+    "author": "Dr. Amina Hassan",
+    "authorCredentials": "Cultural Anthropologist",
+    "publishDate": "2024-12-28",
+    "readTime": "11 min read",
+    "category": "Cultural",
+    "tags": ["Cultural Names", "International Names", "Diverse Names"],
+    "featured": false,
+    "content": {
+      "introduction": "The world is rich with beautiful names from diverse cultures, each carrying unique meanings and traditions."
+    }
+  }
+]
