@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Shield, Globe, BookCheck, Users, Award, Sparkles, Heart, CheckCircle2 } from 'lucide-react';
+import { Shield, Globe, BookCheck, Users, Award, Sparkles, Heart, CheckCircle2, ArrowRight, Star, Zap } from 'lucide-react';
 
 const WhyChooseSection = () => {
   const features = [
@@ -108,65 +109,147 @@ const WhyChooseSection = () => {
   ];
 
   return (
-    <section className="py-20 sm:py-24 bg-gray-50">
+    <section className="py-20 sm:py-24 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-indigo-100/30 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-emerald-100/30 rounded-full blur-3xl" />
+      </div>
+
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        {/* Section Header */}
+        {/* Section Header - SEO Optimized */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-            Why Choose NameVerse
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 border border-indigo-100 rounded-full mb-6">
+            <Star className="w-4 h-4 text-indigo-600 fill-indigo-600" />
+            <span className="text-sm font-semibold text-indigo-700">#1 Trusted Baby Name Website</span>
+          </div>
+
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+            Why Parents Choose
+            <span className="block text-indigo-600 mt-1">NameVerse for Baby Names</span>
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Trusted by millions of parents for authentic, verified baby names
+          <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
+            Join <strong>5 million+ parents</strong> worldwide who trust NameVerse for 
+            <strong> authentic Islamic, Hindu & Christian baby names</strong> with verified meanings and cultural origins.
           </p>
         </div>
 
-        {/* Features Grid - Reduced to 4 key features */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        {/* Features Grid - Enhanced with 4 key features */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {features.slice(0, 4).map((feature, index) => {
             const Icon = feature.icon;
             return (
-              <div
+              <motion.div
                 key={index}
-                className="bg-white rounded-xl p-6 border border-gray-200 hover:border-indigo-300 hover:shadow-md transition-all"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="group bg-white rounded-2xl p-6 border border-gray-100 hover:border-indigo-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
               >
-                <div className={`w-12 h-12 bg-gradient-to-br ${feature.gradient} rounded-lg flex items-center justify-center mb-4`}>
-                  <Icon className="w-6 h-6 text-white" />
+                <div className={`w-14 h-14 bg-gradient-to-br ${feature.gradient} rounded-xl flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform`}>
+                  <Icon className="w-7 h-7 text-white" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <h3 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-indigo-600 transition-colors">
                   {feature.title}
                 </h3>
                 <p className="text-sm text-gray-600 leading-relaxed">
                   {feature.description}
                 </p>
-              </div>
+              </motion.div>
             );
           })}
         </div>
 
-        {/* Stats - Simple and clean */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
+        {/* Stats - Enhanced Design */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto mb-16">
           {[
-            { number: '60K+', label: 'Verified Names', icon: BookCheck },
-            { number: '5M+', label: 'Happy Parents', icon: Users },
-            { number: '15+', label: 'Languages', icon: Globe },
-            { number: '99%', label: 'Accuracy', icon: Shield }
+            { number: '60,000+', label: 'Verified Baby Names', icon: BookCheck, color: 'from-blue-500 to-indigo-600' },
+            { number: '5M+', label: 'Happy Parents Worldwide', icon: Users, color: 'from-emerald-500 to-teal-600' },
+            { number: '15+', label: 'Languages Supported', icon: Globe, color: 'from-purple-500 to-pink-600' },
+            { number: '99%', label: 'Meaning Accuracy', icon: Shield, color: 'from-amber-500 to-orange-600' }
           ].map((stat, index) => {
             const Icon = stat.icon;
             return (
-              <div
+              <motion.div
                 key={index}
-                className="bg-white rounded-xl p-6 text-center border border-gray-200"
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="bg-white rounded-2xl p-6 text-center border border-gray-100 shadow-lg hover:shadow-xl transition-all"
               >
-                <Icon className="w-8 h-8 mx-auto mb-2 text-indigo-600" />
-                <div className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
+                <div className={`w-12 h-12 mx-auto mb-4 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-lg`}>
+                  <Icon className="w-6 h-6 text-white" />
+                </div>
+                <div className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
                   {stat.number}
                 </div>
-                <div className="text-sm text-gray-600">
+                <div className="text-sm text-gray-600 font-medium">
                   {stat.label}
                 </div>
-              </div>
+              </motion.div>
             );
           })}
+        </div>
+
+        {/* Comparison Table - SEO Enhanced */}
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 sm:p-10 mb-12">
+          <div className="text-center mb-8">
+            <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
+              NameVerse vs Other Baby Name Sites
+            </h3>
+            <p className="text-gray-600">See why parents prefer NameVerse for authentic baby names</p>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b-2 border-gray-100">
+                  <th className="text-left py-4 px-4 font-semibold text-gray-700">Feature</th>
+                  <th className="text-center py-4 px-4">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full font-bold">
+                      <Zap className="w-4 h-4" />
+                      NameVerse
+                    </div>
+                  </th>
+                  <th className="text-center py-4 px-4 text-gray-500 font-medium">Other Sites</th>
+                </tr>
+              </thead>
+              <tbody>
+                {comparisonPoints.map((point, index) => (
+                  <tr key={index} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                    <td className="py-4 px-4 text-gray-700 font-medium">{point.feature}</td>
+                    <td className="text-center py-4 px-4">
+                      {point.nameverse ? (
+                        <CheckCircle2 className="w-6 h-6 text-emerald-500 mx-auto" />
+                      ) : (
+                        <span className="text-gray-300">—</span>
+                      )}
+                    </td>
+                    <td className="text-center py-4 px-4">
+                      {point.others ? (
+                        <CheckCircle2 className="w-6 h-6 text-gray-400 mx-auto" />
+                      ) : (
+                        <span className="text-gray-300">✗</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div className="text-center">
+          <Link
+            href="/names/islamic"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl"
+          >
+            Start Exploring 60,000+ Baby Names
+            <ArrowRight className="w-5 h-5" />
+          </Link>
         </div>
       </div>
     </section>

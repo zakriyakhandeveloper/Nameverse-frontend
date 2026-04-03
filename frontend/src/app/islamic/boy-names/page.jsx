@@ -134,7 +134,7 @@ export default function IslamicBoyNamesPage() {
       <main className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-emerald-50">
         {/* Hero Section */}
         <section className="relative py-20 px-4 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 text-white overflow-hidden">
-          <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10"></div>
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.3)_1px,transparent_0)] bg-[size:20px_20px]"></div>
           <div className="max-w-7xl mx-auto text-center relative z-10">
             <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-5 py-2.5 rounded-full text-sm font-medium mb-8 border border-white/30">
               <Sparkles className="w-4 h-4" />

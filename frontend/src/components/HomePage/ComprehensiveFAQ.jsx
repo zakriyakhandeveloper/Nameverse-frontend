@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, HelpCircle, BookOpen, CheckCircle } from 'lucide-react';
+import { ChevronDown, HelpCircle, BookOpen, CheckCircle, MessageCircle, Search, ArrowRight, Sparkles } from 'lucide-react';
 
 const ComprehensiveFAQ = () => {
   const [openIndex, setOpenIndex] = useState(null);
@@ -109,38 +110,67 @@ const ComprehensiveFAQ = () => {
   };
 
   return (
-    <section className="py-10 sm:py-14 lg:py-16 bg-gradient-to-br from-gray-50 via-white to-indigo-50/20">
+    <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-br from-gray-50 via-white to-indigo-50/30 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute top-20 left-0 w-80 h-80 bg-indigo-100/30 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-0 w-80 h-80 bg-purple-100/30 rounded-full blur-3xl" />
+      </div>
+
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        {/* Section Header */}
-        <div className="text-center mb-8 sm:mb-12">
+        {/* Section Header - SEO Optimized */}
+        <div className="text-center mb-10 sm:mb-14">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-100 border border-indigo-200 rounded-full mb-4"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 border border-indigo-100 rounded-full mb-6"
           >
-            <HelpCircle className="w-5 h-5 text-indigo-600" />
-            <span className="text-sm font-bold text-indigo-800">Frequently Asked Questions</span>
+            <MessageCircle className="w-4 h-4 text-indigo-600" />
+            <span className="text-sm font-semibold text-indigo-700">Baby Name FAQ</span>
           </motion.div>
 
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 mb-4"
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4"
           >
-            Everything You Need to Know About Baby Names
+            Baby Names FAQ:
+            <span className="block text-indigo-600 mt-1">Everything Parents Need to Know</span>
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed"
+            className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
           >
-            Complete guide to finding the perfect <span className="font-semibold text-indigo-600">baby name</span> with answers to common questions about <span className="font-semibold text-indigo-600">Islamic baby names</span>, <span className="font-semibold text-indigo-600">Hindu baby names</span>, <span className="font-semibold text-indigo-600">Christian baby names</span>, meanings, origins, and choosing names for your baby boy or baby girl.
+            Get answers to common questions about <strong>Islamic baby names</strong>, <strong>Hindu baby names</strong>, 
+            <strong> Christian baby names</strong>, meanings, origins, and how to choose the perfect name for your baby.
           </motion.p>
         </div>
+
+        {/* Quick Stats */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="flex items-center justify-center gap-6 mb-10 flex-wrap"
+        >
+          <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 rounded-full">
+            <Search className="w-4 h-4 text-emerald-600" />
+            <span className="text-sm font-medium text-emerald-700">60,000+ Names</span>
+          </div>
+          <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-full">
+            <Sparkles className="w-4 h-4 text-blue-600" />
+            <span className="text-sm font-medium text-blue-700">Expert Verified</span>
+          </div>
+          <div className="flex items-center gap-2 px-4 py-2 bg-purple-50 rounded-full">
+            <BookOpen className="w-4 h-4 text-purple-600" />
+            <span className="text-sm font-medium text-purple-700">15+ Languages</span>
+          </div>
+        </motion.div>
 
         {/* FAQ Categories */}
         <div className="space-y-6">
@@ -217,34 +247,46 @@ const ComprehensiveFAQ = () => {
           })}
         </div>
 
-        {/* Bottom CTA */}
+        {/* Bottom CTA - SEO Enhanced */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.5 }}
-          className="mt-12 text-center bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl p-8 text-white"
+          transition={{ delay: 0.3 }}
+          className="mt-14 text-center bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-700 rounded-3xl p-8 sm:p-10 text-white shadow-2xl"
         >
-          <h3 className="text-2xl sm:text-3xl font-bold mb-3">
-            Still Have Questions About Baby Names?
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full mb-6 border border-white/30">
+            <Sparkles className="w-4 h-4" />
+            <span className="text-sm font-semibold">Find Your Baby's Perfect Name</span>
+          </div>
+
+          <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">
+            Ready to Find the Perfect Baby Name?
           </h3>
-          <p className="text-base sm:text-lg mb-6 opacity-90 max-w-2xl mx-auto">
-            Explore our comprehensive database of 60,000+ verified baby names with meanings in English, Urdu, Arabic, and Hindi. Find the perfect name for your baby today!
+          <p className="text-base sm:text-lg mb-8 opacity-95 max-w-2xl mx-auto leading-relaxed">
+            Explore our comprehensive database of <strong>60,000+ verified baby names</strong> with meanings in 
+            English, Urdu, Arabic, and Hindi. Find the perfect Islamic, Hindu, or Christian name for your baby today!
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <a
-              href="/names"
-              className="px-8 py-3 bg-white text-indigo-600 font-bold rounded-xl hover:bg-gray-100 hover:shadow-lg transition-all"
-            >
-              Browse All Names
-            </a>
-            <a
+            <Link
               href="/names/islamic"
-              className="px-8 py-3 bg-indigo-500 text-white font-bold rounded-xl hover:bg-indigo-400 border-2 border-white/20 hover:shadow-lg transition-all"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-white text-indigo-700 font-bold rounded-xl hover:bg-gray-50 hover:shadow-xl transition-all"
             >
-              Explore Islamic Names
-            </a>
+              <BookOpen className="w-5 h-5" />
+              Browse 25,000+ Islamic Names
+            </Link>
+            <Link
+              href="/names/hindu"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-indigo-500 text-white font-bold rounded-xl hover:bg-indigo-400 border-2 border-white/20 hover:shadow-xl transition-all"
+            >
+              <ArrowRight className="w-5 h-5" />
+              Explore Hindu & Christian Names
+            </Link>
           </div>
+
+          <p className="mt-6 text-sm opacity-80">
+            Trusted by 5M+ parents worldwide • Expert verified meanings • 15+ languages
+          </p>
         </motion.div>
       </div>
     </section>
