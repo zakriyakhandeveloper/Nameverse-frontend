@@ -107,7 +107,7 @@ export default function Navbar() {
       </div>
 
       {/* Main Navbar */}
-      <header className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-white'}`}>
+      <header className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/95 backdrop-blur-md shadow-md' : 'bg-white'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-[68px]">
             
@@ -219,7 +219,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
+        <div className="fixed inset-0 z-[60] lg:hidden">
           <div 
             className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-fadeIn" 
             onClick={closeMenu}
@@ -333,7 +333,7 @@ export default function Navbar() {
         </div>
       )}
 
-      <div className="h-[100px]" />
+      <div className="h-[92px] sm:h-[84px]" />
     </>
   );
 }

@@ -1,24 +1,20 @@
-"use client";
+'use client';
 
-import HeroSection from "./HeroSection";
-import AlphabetNavigation from "./AlphabetNavigation";
-import PopularNamesSection from "./PopularNamesSection";
-import TrendingNames from "./TrendingNames";
-import WhyChooseSection from "./WhyChooseSection";
-import ComprehensiveFAQ from "./ComprehensiveFAQ";
-
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Suspense } from 'react';
+import HeroSection from './HeroSection';
+import AlphabetNavigation from './AlphabetNavigation';
+import PopularNamesSection from './PopularNamesSection';
+import TrendingNames from './TrendingNames';
+import WhyChooseSection from './WhyChooseSection';
+import ComprehensiveFAQ from './ComprehensiveFAQ';
+import Link from 'next/link';
 
 export default function HomePageClient() {
   const currentYear = new Date().getFullYear();
 
   return (
     <>
-      {/* Preload main hero image for faster LCP */}
-      <link rel="preload" as="image" href="/images/hero.jpg" />
-
-      {/* JSON-LD structured data */}
+      {/* JSON-LD structured data for enhanced SEO */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -130,14 +126,6 @@ export default function HomePageClient() {
                   },
                   {
                     "@type": "Question",
-                    "name": "How do Muslim names work?",
-                    "acceptedAnswer": {
-                      "@type": "Answer",
-                      "text": "Muslim naming traditionally includes a given name (ism), followed by father's name (nasab using 'ibn' or 'bint'), family name (nisba), and sometimes a descriptive name (kunyah like 'Abu' or 'Umm'). Modern Muslim parents often choose Quranic names or names with beautiful Arabic meanings for their children."
-                    }
-                  },
-                  {
-                    "@type": "Question",
                     "name": "How many baby names does NameVerse have?",
                     "acceptedAnswer": {
                       "@type": "Answer",
@@ -162,32 +150,33 @@ export default function HomePageClient() {
         }}
       />
 
-      <main
-        role="main"
-        className="min-h-screen flex flex-col items-center justify-start bg-white"
-      >
-        {/* HeroSection - Above the fold */}
+      <main role="main" className="min-h-screen flex flex-col bg-black">
+        {/* Hero Section */}
         <HeroSection />
 
-        {/* A-Z Alphabetical Navigation - Critical for SEO */}
+        {/* A-Z Alphabetical Navigation */}
         <AlphabetNavigation />
 
-        {/* Popular Names Section - Trending content */}
+        {/* Popular Names Section */}
         <PopularNamesSection />
 
-        {/* Trending Names - Existing component */}
-        <TrendingNames />
+        {/* Trending Names */}
+        <Suspense fallback={
+          <div className="py-16 text-center bg-gray-50">
+            <div className="inline-block w-8 h-8 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
+            <p className="mt-4 text-gray-600">Loading trending names...</p>
+          </div>
+        }>
+          <TrendingNames />
+        </Suspense>
 
-        {/* Why Choose NameVerse - Trust building */}
+        {/* Why Choose NameVerse */}
         <WhyChooseSection />
 
-        {/* Comprehensive FAQ - Converted from hidden content */}
+        {/* Comprehensive FAQ */}
         <ComprehensiveFAQ />
 
-        {/* Article Explorer removed per SEO focus (stories/articles removed) */}
       </main>
-
-      {/* Footer is in layout.js, but can be added here if needed */}
     </>
   );
 }

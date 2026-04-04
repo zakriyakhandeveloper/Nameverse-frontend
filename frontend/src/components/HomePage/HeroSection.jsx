@@ -1,122 +1,141 @@
-import { Globe, Heart, Award, BookOpen, Languages, CheckCircle, Star, Lock, TrendingUp, ArrowRight } from 'lucide-react';
+'use client';
+
+import { Globe, Heart, Award, BookOpen, Languages, CheckCircle, Star, ArrowRight, Sparkles, Zap } from 'lucide-react';
 import SearchBar from './SearchSection';
 import Link from 'next/link';
 
-const Hero = () => {
+const HeroSection = () => {
   const categories = [
     {
       id: 'islamic',
       name: 'Islamic',
       icon: Globe,
-      gradient: 'from-emerald-500 to-teal-600',
       url: '/names/islamic',
       count: '25,000+',
-      description: 'Quranic & Arabic baby names with meanings in Urdu & Arabic',
-      fullDescription: 'Explore 25,000+ authentic Islamic baby names including Quranic names for boys and girls, names of Prophets and Sahaba, and Arabic origin names. Each Muslim baby name includes verified meanings in Urdu and Arabic with spiritual significance and pronunciation guides.',
-      bgColor: 'bg-emerald-50'
+      description: 'Quranic & Arabic names with Urdu meanings',
+      color: 'from-emerald-500 to-teal-600',
+      bgColor: 'bg-emerald-50',
+      borderColor: 'border-emerald-200',
+      textColor: 'text-emerald-700'
     },
     {
       id: 'hindu',
       name: 'Hindu',
-      icon: Heart,
-      gradient: 'from-orange-500 to-red-600',
+      icon: Sparkles,
       url: '/names/hindu',
       count: '20,000+',
-      description: 'Sanskrit & Hindi names with Vedic meanings & deity names',
-      fullDescription: 'Discover 20,000+ Hindu baby names from Sanskrit, Hindi, Tamil, and other Indian languages. Find Hindu boy names and Hindu girl names inspired by Hindu deities like Lord Krishna and Lord Shiva, Vedic literature, Indian culture, and modern Bollywood trends with pronunciation guides.',
-      bgColor: 'bg-orange-50'
+      description: 'Sanskrit & Vedic names with Hindi meanings',
+      color: 'from-orange-500 to-amber-600',
+      bgColor: 'bg-orange-50',
+      borderColor: 'border-orange-200',
+      textColor: 'text-orange-700'
     },
     {
       id: 'christian',
       name: 'Christian',
       icon: Award,
-      gradient: 'from-blue-500 to-indigo-600',
       url: '/names/christian',
       count: '15,000+',
-      description: 'Biblical names with Old & New Testament references',
-      fullDescription: 'Browse 15,000+ Christian baby names with Biblical origins from Old and New Testament, traditional saint names, and European Christian heritage. Each Christian boy name and Christian girl name includes verse references, spiritual meanings, Christian historical significance, and pronunciation guides.',
-      bgColor: 'bg-blue-50'
+      description: 'Biblical names with spiritual meanings',
+      color: 'from-blue-500 to-indigo-600',
+      bgColor: 'bg-blue-50',
+      borderColor: 'border-blue-200',
+      textColor: 'text-blue-700'
     }
   ];
 
-  const stats = [
-    { number: '60K+', label: 'Names', icon: BookOpen, color: 'text-indigo-600', bg: 'bg-indigo-50' },
-    { number: '15+', label: 'Languages', icon: Languages, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-    { number: '99%', label: 'Verified', icon: CheckCircle, color: 'text-blue-600', bg: 'bg-blue-50' }
-  ];
-
-  const trustIndicators = [
-    { icon: Star, text: 'Trusted by 5M+ Parents', color: 'text-amber-600', bg: 'bg-amber-50' },
-    { icon: Lock, text: 'Expert Verified', color: 'text-blue-600', bg: 'bg-blue-50' },
-    { icon: BookOpen, text: 'Multilingual Support', color: 'text-purple-600', bg: 'bg-purple-50' }
+  const features = [
+    { icon: Star, text: 'Trusted by 5M+ Parents' },
+    { icon: CheckCircle, text: 'Expert Verified' },
+    { icon: Languages, text: '15+ Languages' },
+    { icon: Zap, text: 'Instant Search' }
   ];
 
   return (
-    <section className="relative w-full bg-white py-16 sm:py-20 lg:py-28">
-      {/* Subtle background accent */}
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-indigo-50/40 rounded-full blur-3xl" />
-      </div>
+    <section className="w-full bg-gradient-to-b from-blue-50 via-white to-white py-8 sm:py-10 md:py-12">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        <div className="space-y-8 sm:space-y-10">
 
-      <div className="relative z-10 w-full px-4 sm:px-6 max-w-6xl mx-auto">
-        <div className="space-y-12 sm:space-y-16">
-
-          {/* Main heading - SEO Optimized with Primary Keywords */}
-          <div className="space-y-6 text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 rounded-full">
-              <Star className="w-4 h-4 text-amber-600 fill-amber-600" />
-              <span className="text-sm font-semibold text-amber-900">
-                Trusted by 5M+ Parents Worldwide
+          {/* Main heading */}
+          <div className="text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full mb-4 shadow-md">
+              <Star className="w-4 h-4 text-white fill-white" />
+              <span className="text-xs font-semibold text-white">
+                Trusted by 5M+ Parents
               </span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
-              60,000+ Baby Names
-              <span className="block text-indigo-600 mt-2">with Meanings & Origins</span>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
+              65,000+ Baby Names
+              <span className="block bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent mt-2">
+                with Meanings & Origins
+              </span>
             </h1>
 
-            <h2 className="text-xl sm:text-2xl text-gray-700 font-medium max-w-3xl mx-auto">
-              Islamic, Hindu & Christian Baby Names from Quran, Vedas & Bible
-            </h2>
-
-            <p className="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto">
-              Explore verified Muslim boy & girl names, Hindu Sanskrit names, and Christian Biblical names with meanings in English, Urdu, Arabic & Hindi. Includes pronunciation guides and cultural origins.
+            <p className="mt-4 text-sm sm:text-base text-gray-600 max-w-xl mx-auto px-2">
+              Explore verified Muslim, Hindu, and Christian names with meanings in English, Urdu, Arabic & Hindi.
             </p>
           </div>
 
-          {/* Search Bar - More prominent */}
-          <div className="max-w-2xl mx-auto">
-            <SearchBar />
+          {/* Search Bar */}
+          <div className="max-w-lg mx-auto w-full">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-2xl blur opacity-20"></div>
+              <SearchBar />
+            </div>
           </div>
 
-          {/* Categories Grid - SEO Optimized with Keywords */}
+          {/* Trust features */}
+          <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 max-w-2xl mx-auto">
+            {features.map((feature, index) => {
+              const Icon = feature.icon;
+              return (
+                <div 
+                  key={index}
+                  className="flex items-center gap-1.5 text-xs sm:text-sm text-gray-600 bg-white px-3 py-1.5 rounded-full border border-gray-100 shadow-sm"
+                >
+                  <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-500" />
+                  <span className="font-medium">{feature.text}</span>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Categories Grid */}
           <div className="max-w-4xl mx-auto">
-            <h2 className="sr-only">Browse Baby Names by Religion</h2>
-            <div className="grid sm:grid-cols-3 gap-4 sm:gap-6">
+            <div className="text-center mb-6">
+              <p className="text-xs sm:text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                Browse by Tradition
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
               {categories.map((category) => {
                 const Icon = category.icon;
                 return (
                   <Link
                     key={category.id}
                     href={category.url}
-                    className="group bg-white border-2 border-gray-100 rounded-2xl p-6 hover:border-indigo-200 hover:shadow-lg transition-all"
+                    className={`group p-4 sm:p-5 border-2 ${category.borderColor} rounded-xl ${category.bgColor} hover:shadow-lg transition-all duration-300 hover:-translate-y-1`}
                   >
-                    <div className="flex flex-col items-center text-center gap-3">
-                      <div className={`bg-gradient-to-br ${category.gradient} p-4 rounded-xl`}>
-                        <Icon className="w-7 h-7 text-white" />
+                    <div className="flex items-start gap-3">
+                      <div className={`p-2 rounded-lg bg-gradient-to-br ${category.color} flex-shrink-0`}>
+                        <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                       </div>
-                      <div>
-                        <h3 className="font-bold text-lg text-gray-900 mb-1">
+                      <div className="flex-1 min-w-0">
+                        <h3 className={`font-bold ${category.textColor} text-sm sm:text-base`}>
                           {category.name} Baby Names
                         </h3>
-                        <p className="text-sm text-indigo-600 font-semibold mb-2">
-                          {category.count}
+                        <p className="text-xs text-gray-600 mt-0.5 font-medium">
+                          {category.count} Names
                         </p>
-                        <p className="text-xs text-gray-600 leading-relaxed">
+                        <p className="text-xs text-gray-600 mt-1.5 hidden sm:block">
                           {category.description}
                         </p>
+                        <div className={`flex items-center gap-1 mt-2 ${category.textColor} group-hover:gap-2 transition-all`}>
+                          <span className="text-xs font-semibold">Explore</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </div>
                       </div>
-                      <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all mt-auto" />
                     </div>
                   </Link>
                 );
@@ -124,20 +143,24 @@ const Hero = () => {
             </div>
           </div>
 
-          {/* Stats - Cleaner presentation with semantic markup */}
-          <div className="flex justify-center items-center gap-8 sm:gap-12 flex-wrap max-w-3xl mx-auto pt-8" role="list" aria-label="NameVerse Statistics">
-            {stats.map((stat, index) => {
-              const Icon = stat.icon;
-              return (
-                <div key={index} className="text-center" role="listitem">
-                  <div className="flex items-center justify-center mb-2">
-                    <Icon className={`w-5 h-5 ${stat.color} mr-2`} aria-hidden="true" />
-                    <div className="text-3xl sm:text-4xl font-bold text-gray-900">{stat.number}</div>
+          {/* Stats */}
+          <div className="max-w-3xl mx-auto pt-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+              {[
+                { number: '65K+', label: 'Verified Names', icon: BookOpen, color: 'text-emerald-600', bgColor: 'bg-emerald-50' },
+                { number: '15+', label: 'Languages', icon: Languages, color: 'text-blue-600', bgColor: 'bg-blue-50' },
+                { number: '99%', label: 'Accuracy', icon: CheckCircle, color: 'text-purple-600', bgColor: 'bg-purple-50' },
+                { number: '5M+', label: 'Happy Parents', icon: Heart, color: 'text-orange-600', bgColor: 'bg-orange-50' }
+              ].map((stat, index) => {
+                const Icon = stat.icon;
+                return (
+                  <div key={index} className={`text-center p-3 sm:p-4 rounded-xl ${stat.bgColor} border border-gray-100`}>
+                    <div className={`text-xl sm:text-2xl md:text-3xl font-bold ${stat.color}`}>{stat.number}</div>
+                    <div className="text-xs sm:text-sm text-gray-600 mt-1 font-medium">{stat.label}</div>
                   </div>
-                  <div className="text-sm text-gray-600">{stat.label}</div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
@@ -145,4 +168,4 @@ const Hero = () => {
   );
 };
 
-export default Hero;
+export default HeroSection;
