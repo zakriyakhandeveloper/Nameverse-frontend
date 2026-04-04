@@ -84,6 +84,8 @@ const nextConfig = {
   experimental: {
     // optimizeCss: true, // Disabled - requires critters package
     optimizePackageImports: ['lucide-react', '@radix-ui/react-dropdown-menu'],
+    // Fix for middleware .nft.json build issue
+    outputFileTracingRoot: undefined,
   },
 
   // Turbopack configuration

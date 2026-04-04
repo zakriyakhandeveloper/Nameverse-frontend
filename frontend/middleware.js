@@ -87,9 +87,15 @@ export function middleware(request) {
 // ==========================================
 export const config = {
   matcher: [
-    // Apply to name pages
-    '/names/:religion/:slug*',
-    // Apply to all pages except static files and api
-    '/((?!_next/static|_next/image|favicon.ico|api).*)',
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - sitemap files
+     * - robots.txt
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.*\\.xml).*)',
   ],
 };
