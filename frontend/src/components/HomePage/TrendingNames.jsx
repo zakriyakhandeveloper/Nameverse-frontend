@@ -38,25 +38,33 @@ export default function TrendingNames() {
     setLoading(true);
     setError(null);
 
+    // Add timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      setLoading(false);
+      setError('Request timed out');
+      setNames([]);
+    }, 15000); // 15 second timeout
+
     try {
       const result = await fetchTrendingNames({
         religion: religion,
         limit: 12,
       });
 
-      if (result.success && result.data) {
+      clearTimeout(timeoutId);
+
+      if (result.success && result.data && result.data.length > 0) {
         setNames(result.data);
       } else {
         setNames([]);
         setError('No trending names found');
       }
     } catch (err) {
+      clearTimeout(timeoutId);
       console.error('Error loading trending names:', err);
       setError('Failed to load trending names');
       toast.error('Failed to load trending names');
       setNames([]);
-    } finally {
-      setLoading(false);
     }
   }, []);
 
