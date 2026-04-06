@@ -83,14 +83,14 @@ export default function TrendingNames() {
         <div className="text-center mb-8 md:mb-10">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 rounded-full mb-4 shadow-md">
             <Flame className="w-4 h-4 text-white fill-white" />
-            <span className="text-sm font-semibold text-white">Trending Now</span>
+            <span className="text-sm font-semibold text-white">Trending Now 2026</span>
           </div>
 
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-            Trending Baby Names <span className="bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">2025</span>
+            Trending Baby Names <span className="bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">2026</span>
           </h2>
           <p className="text-base text-gray-600 max-w-3xl mx-auto">
-            Discover the most popular Islamic, Hindu & Christian baby names trending in 2025.
+            Discover the most popular Islamic, Hindu & Christian baby names trending in 2026. Find unique and modern baby names with verified meanings.
           </p>
         </div>
 

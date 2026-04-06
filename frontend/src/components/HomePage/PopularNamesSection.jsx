@@ -44,14 +44,14 @@ const PopularNamesSection = () => {
         <div className="text-center mb-8 md:mb-10">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full mb-4 shadow-md">
             <Flame className="w-4 h-4 text-white fill-white" />
-            <span className="text-sm font-semibold text-white">Trending Baby Names 2025</span>
+            <span className="text-sm font-semibold text-white">Popular Baby Names 2026</span>
           </div>
 
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3">
             Most Popular Baby Names with <span className="bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">Meanings & Origins</span>
           </h2>
           <p className="text-base text-gray-600 max-w-3xl mx-auto">
-            Discover the most searched Islamic, Hindu & Christian baby names chosen by millions of parents worldwide.
+            Discover the most searched Islamic, Hindu & Christian baby names chosen by millions of parents worldwide. Find trending Muslim baby names list, Hindu baby names list, and Christian baby names list with verified meanings.
           </p>
         </div>
 

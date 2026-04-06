@@ -12,7 +12,7 @@ const HeroSection = () => {
       icon: Globe,
       url: '/names/islamic',
       count: '25,000+',
-      description: 'Quranic & Arabic names with Urdu meanings',
+      description: 'Quranic & Arabic names for boys & girls. A-Z listings with Urdu meanings.',
       color: 'from-emerald-500 to-teal-600',
       bgColor: 'bg-emerald-50',
       borderColor: 'border-emerald-200',
@@ -24,7 +24,7 @@ const HeroSection = () => {
       icon: Sparkles,
       url: '/names/hindu',
       count: '20,000+',
-      description: 'Sanskrit & Vedic names with Hindi meanings',
+      description: 'Sanskrit & Vedic names for boys & girls. Traditional & modern A-Z listings.',
       color: 'from-orange-500 to-amber-600',
       bgColor: 'bg-orange-50',
       borderColor: 'border-orange-200',
@@ -36,7 +36,7 @@ const HeroSection = () => {
       icon: Award,
       url: '/names/christian',
       count: '15,000+',
-      description: 'Biblical names with spiritual meanings',
+      description: 'Biblical names with spiritual meanings. Classic & contemporary A-Z listings.',
       color: 'from-blue-500 to-indigo-600',
       bgColor: 'bg-blue-50',
       borderColor: 'border-blue-200',
@@ -61,19 +61,19 @@ const HeroSection = () => {
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full mb-4 shadow-md">
               <Star className="w-4 h-4 text-white fill-white" />
               <span className="text-xs font-semibold text-white">
-                Trusted by 5M+ Parents
+                Trusted by 5M+ Parents Worldwide
               </span>
             </div>
 
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
-              65,000+ Baby Names
+              Baby Names 2026
               <span className="block bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent mt-2">
-                with Meanings & Origins
+                65,000+ Islamic, Hindu & Christian Names with Meanings
               </span>
             </h1>
 
-            <p className="mt-4 text-sm sm:text-base text-gray-600 max-w-xl mx-auto px-2">
-              Explore verified Muslim, Hindu, and Christian names with meanings in English, Urdu, Arabic & Hindi.
+            <p className="mt-4 text-sm sm:text-base text-gray-600 max-w-2xl mx-auto px-2">
+              Discover 65,000+ verified baby names with meanings. Find Quranic, Biblical, Sanskrit & modern names for boys and girls in English, Urdu, Arabic & Hindi. A-Z listings with origins & numerology.
             </p>
           </div>
 
