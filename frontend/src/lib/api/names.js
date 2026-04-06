@@ -534,9 +534,21 @@ export async function fetchTrendingNames(params = {}) {
       ? religion.toLowerCase()
       : 'islamic';
 
-    const { data } = await apiClient.get('/api/v1/names', {
+    const response = await apiClient.get('/api/v1/names', {
       params: { religion: validReligion, page, limit }
     });
+
+    // Check if response is an error
+    if (response.__isError || response.status >= 400) {
+      return {
+        data: [],
+        pagination: { page, limit, total: 0, totalPages: 0 },
+        religion: validReligion,
+        success: false,
+      };
+    }
+
+    const data = response.data;
 
     return {
       data: data.data || data.names || [],
@@ -550,7 +562,6 @@ export async function fetchTrendingNames(params = {}) {
       success: data.success !== false,
     };
   } catch (error) {
-    
     return {
       data: [],
       pagination: { page: 1, limit: 20, total: 0, totalPages: 0 },
