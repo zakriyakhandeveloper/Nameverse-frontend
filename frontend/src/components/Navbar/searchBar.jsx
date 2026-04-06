@@ -233,11 +233,11 @@ const UniversalSearch = () => {
   };
 
   return (
-    <div ref={searchRef} className="relative w-full max-w-2xl mx-auto">
+    <div ref={searchRef} className="relative w-full">
       {/* Search Form */}
       <form onSubmit={handleSearchSubmit} className="relative" role="search" aria-label="Site search">
         <div className="relative group">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-indigo-600 transition-colors duration-200" aria-hidden="true" />
+          <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-focus-within:text-indigo-600 transition-colors duration-200" aria-hidden="true" />
           <input
             ref={inputRef}
             type="text"
@@ -246,7 +246,7 @@ const UniversalSearch = () => {
             onKeyDown={handleKeyDown}
             onFocus={() => query.trim().length >= 2 && (hasResults || isLoading) && setIsOpen(true)}
             placeholder="Search baby names..."
-            className="w-full pl-12 pr-12 py-4 text-base font-medium text-gray-900 placeholder-gray-500 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl focus:outline-none focus:ring-3 focus:ring-indigo-500/20 focus:border-indigo-500 shadow-sm hover:shadow-md transition-all duration-200"
+            className="w-full pl-10 pr-10 sm:pl-12 sm:pr-12 py-2.5 sm:py-3 text-sm sm:text-base font-medium text-gray-900 placeholder-gray-500 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-xl sm:rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 shadow-sm hover:shadow-md focus:shadow-lg transition-all duration-200"
             aria-label="Search for baby names"
             aria-autocomplete="list"
             aria-controls="search-results"
@@ -257,17 +257,17 @@ const UniversalSearch = () => {
           />
 
           {/* Right side icons */}
-          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-1">
+          <div className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-1">
             <AnimatePresence mode="wait">
               {isLoading && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.8 }}
-                  className="p-1.5"
+                  className="p-1"
                   aria-label="Searching"
                 >
-                  <Loader2 className="w-4 h-4 text-indigo-600 animate-spin" aria-hidden="true" />
+                  <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 text-indigo-600 animate-spin" aria-hidden="true" />
                 </motion.div>
               )}
               {query && !isLoading && (
@@ -277,10 +277,10 @@ const UniversalSearch = () => {
                   exit={{ opacity: 0, scale: 0.8 }}
                   onClick={clearSearch}
                   type="button"
-                  className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+                  className="p-1 hover:bg-gray-100 rounded-lg transition-colors duration-200"
                   aria-label="Clear search"
                 >
-                  <X className="w-4 h-4 text-gray-400 hover:text-gray-600" aria-hidden="true" />
+                  <X className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 hover:text-gray-600" aria-hidden="true" />
                 </motion.button>
               )}
             </AnimatePresence>

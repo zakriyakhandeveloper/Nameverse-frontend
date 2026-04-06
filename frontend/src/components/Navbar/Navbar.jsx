@@ -190,7 +190,7 @@ export default function Navbar() {
 
             {/* Desktop CTA */}
             <div className="hidden lg:flex items-center gap-3">
-              <div className="w-56">
+              <div className="w-64">
                 <SearchBar />
               </div>
               <Link 

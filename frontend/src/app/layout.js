@@ -29,7 +29,10 @@ const geistMono = Geist_Mono({
 
 // ✅ Global SEO Metadata
 export const metadata = {
-  title: "NameVerse — Baby Names 2026 & Meanings | Muslim, Hindu, Christian",
+  title: {
+    default: "NameVerse — Baby Names 2026 & Meanings | Muslim, Hindu, Christian",
+    template: "%s | NameVerse"
+  },
   description:
     "Explore 65,000+ baby names with meanings, origins, and numerology. Discover Islamic, Hindu, and Christian names in Urdu, Arabic, Hindi & English. Find Quranic, Biblical, Sanskrit names & modern baby names A–Z. Use our baby name generator for unique suggestions.",
   keywords:
@@ -47,10 +50,17 @@ export const metadata = {
     url: siteUrl,
     siteName: "NameVerse",
     images: [
-      { url: `${siteUrl}/og-image.png`, width: 1200, height: 630, type: "image/png", alt: "NameVerse — Baby Names & Meanings from Around the World" },
+      { 
+        url: `${siteUrl}/og-image.png`, 
+        width: 1200, 
+        height: 630, 
+        type: "image/png", 
+        alt: "NameVerse — Baby Names & Meanings from Around the World" 
+      },
     ],
     locale: "en_US",
     type: "website",
+    siteName: "NameVerse"
   },
   twitter: {
     card: "summary_large_image",

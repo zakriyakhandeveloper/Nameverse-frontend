@@ -11,16 +11,29 @@ export default function StructuredData({
 }) {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://nameverse.vercel.app";
   
-  // Organization Schema
+  // Organization Schema with detailed logo for Google Search
   const organizationSchema = organization ? {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "NameVerse",
     "url": siteUrl,
-    "logo": `${siteUrl}/logo.png`,
+    "logo": {
+      "@type": "ImageObject",
+      "url": `${siteUrl}/logo.png`,
+      "width": 192,
+      "height": 192,
+      "caption": "NameVerse - Baby Names & Meanings"
+    },
+    "image": {
+      "@type": "ImageObject",
+      "url": `${siteUrl}/logo.png`,
+      "width": 192,
+      "height": 192
+    },
     "sameAs": [
       // Add social media URLs here if needed
-    ]
+    ],
+    "description": "NameVerse - Discover 65,000+ baby names with meanings from Islamic, Hindu, and Christian traditions."
   } : null;
 
   // Website Schema

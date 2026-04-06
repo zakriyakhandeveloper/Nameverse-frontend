@@ -1,13 +1,29 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
 
 export async function GET() {
-  // Read the sitemap.xml file from the public directory
-  const filePath = path.join(process.cwd(), 'public', 'sitemap.xml');
-  const fileContent = fs.readFileSync(filePath, 'utf8');
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://nameverse.vercel.app';
+  
+  const sitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>${baseUrl}/islamic_sitemap_index.xml</loc>
+    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>${baseUrl}/christian_sitemap_index.xml</loc>
+    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>${baseUrl}/hindu_sitemap_index.xml</loc>
+    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>${baseUrl}/sitemap-main.xml</loc>
+    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+  </sitemap>
+</sitemapindex>`;
 
-  return new NextResponse(fileContent, {
+  return new NextResponse(sitemapIndex, {
     headers: {
       'Content-Type': 'application/xml',
       'Cache-Control': 'public, max-age=3600, s-maxage=3600',
