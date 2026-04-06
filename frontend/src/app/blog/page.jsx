@@ -1,13 +1,13 @@
 import Link from 'next/link';
-import { BookOpen, Heart, Clock, ArrowRight, Calendar, Award, TrendingUp } from 'lucide-react';
+import { BookOpen, Heart, Clock, ArrowRight, Calendar, Award, TrendingUp, User } from 'lucide-react';
 import blogPostsData from '../../../public/data/blog-posts.json';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://nameverse.com';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://nameverse.vercel.app';
 
 export const metadata = {
   title: 'Baby Names Blog & Expert Guides | Naming Tips, Trends & Advice | NameVerse',
-  description: 'Expert guides and articles on choosing the perfect baby name. Learn about Islamic, Christian, and Hindu naming traditions, trends for 2025, and tips from naming experts.',
-  keywords: 'baby names blog, naming guides, baby name trends 2025, Islamic naming guide, Christian naming guide, Hindu naming guide, how to choose baby name, baby naming tips',
+  description: 'Expert guides and articles on choosing the perfect baby name. Learn about Islamic, Christian, and Hindu naming traditions, trends for 2026, and tips from naming experts.',
+  keywords: 'baby names blog, naming guides, baby name trends 2026, Islamic naming guide, Christian naming guide, Hindu naming guide, how to choose baby name, baby naming tips',
   alternates: {
     canonical: `${SITE_URL}/blog`,
   },
