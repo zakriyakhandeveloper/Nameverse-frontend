@@ -1,32 +1,7 @@
-import { NextResponse } from 'next/server';
+// This route handler has been disabled.
+// Sitemap is now served directly from public/sitemap.xml
+// Delete this file to complete the migration.
 
 export async function GET() {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://nameverse.vercel.app';
-  
-  const sitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <sitemap>
-    <loc>${baseUrl}/islamic_sitemap_index.xml</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
-  </sitemap>
-  <sitemap>
-    <loc>${baseUrl}/christian_sitemap_index.xml</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
-  </sitemap>
-  <sitemap>
-    <loc>${baseUrl}/hindu_sitemap_index.xml</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
-  </sitemap>
-  <sitemap>
-    <loc>${baseUrl}/sitemap-main.xml</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
-  </sitemap>
-</sitemapindex>`;
-
-  return new NextResponse(sitemapIndex, {
-    headers: {
-      'Content-Type': 'application/xml',
-      'Cache-Control': 'public, max-age=3600, s-maxage=3600',
-    },
-  });
+  return new Response(null, { status: 410 });
 }
