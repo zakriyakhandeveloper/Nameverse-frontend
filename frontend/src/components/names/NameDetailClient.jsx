@@ -4,7 +4,8 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import {
   Sparkles, BookOpen, Heart, Brain, Gem, Calendar, Palette, Hash,
   Languages, Volume2, Users, Link2, Tag, Book, Share2, Bookmark,
-  TrendingUp, Globe, Star, MessageCircle, ChevronDown, ChevronUp, Home
+  TrendingUp, Globe, Star, MessageCircle, ChevronDown, ChevronUp, Home,
+  AlignLeft, History, Baby
 } from 'lucide-react'
 
 // Religion-based theme configuration
@@ -200,10 +201,20 @@ const FAQItem = ({ question, answer }) => {
   )
 }
 
+// Tab Configuration
+const tabConfig = [
+  { id: 'meaning', label: 'Meaning', icon: AlignLeft },
+  { id: 'origin', label: 'Origin & History', icon: History },
+  { id: 'personality', label: 'Personality', icon: Brain },
+  { id: 'similar', label: 'Similar Names', icon: Link2 },
+  { id: 'faq', label: 'FAQ', icon: MessageCircle },
+]
+
 // Main Component
 export default function NameClient({ data, initialLanguage }) {
   const [isFavorite, setIsFavorite] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [activeTab, setActiveTab] = useState('meaning')
 
   // Get religion theme
   const religion = data.religion?.toLowerCase() || 'islamic'
@@ -430,7 +441,7 @@ export default function NameClient({ data, initialLanguage }) {
 
       {/* Quick Info Bar */}
       {(data.category || data.themes || data.language) && (
-        <section className="py-8 px-4 bg-white border-b border-gray-200">
+        <section className="py-6 px-4 bg-white border-b border-gray-200">
           <div className="max-w-6xl mx-auto">
             <div className="flex flex-wrap gap-4">
               {data.category && data.category.length > 0 && (
@@ -449,9 +460,9 @@ export default function NameClient({ data, initialLanguage }) {
                 <div>
                   <h3 className="text-xs font-semibold text-gray-500 uppercase mb-2">Themes</h3>
                   <div className="flex flex-wrap gap-2">
-                    {data.themes.map((theme, idx) => (
+                    {data.themes.map((themeItem, idx) => (
                       <span key={idx} className="px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">
-                        {theme}
+                        {themeItem}
                       </span>
                     ))}
                   </div>
@@ -474,302 +485,442 @@ export default function NameClient({ data, initialLanguage }) {
         </section>
       )}
 
-      {/* Meanings Section */}
-      <section className="py-12 px-4 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-6">
-            <MeaningCard
-              icon={BookOpen}
-              title="Meaning"
-              content={data.long_meaning || data.short_meaning}
-              theme={theme}
-            />
-            {data.spiritual_meaning && (
-              <MeaningCard
-                icon={Heart}
-                title="Spiritual Significance"
-                content={data.spiritual_meaning}
-                theme={theme}
-              />
-            )}
-            {data.numerology_meaning && (
-              <MeaningCard
-                icon={Sparkles}
-                title="Numerology"
-                content={data.numerology_meaning}
-                theme={theme}
-              />
-            )}
-          </div>
+      {/* Tab Navigation */}
+      <div className="bg-white border-b border-gray-200 sticky top-16 z-40">
+        <div className="max-w-6xl mx-auto px-4">
+          <nav className="flex gap-0 overflow-x-auto" aria-label="Name information tabs">
+            {tabConfig.map((tab) => {
+              const Icon = tab.icon
+              const isActive = activeTab === tab.id
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`
+                    flex items-center gap-2 px-5 py-4 text-sm font-semibold whitespace-nowrap transition-all relative
+                    ${isActive 
+                      ? `text-gray-900` 
+                      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}
+                  `}
+                  role="tab"
+                  aria-selected={isActive}
+                  aria-controls={`tab-panel-${tab.id}`}
+                  id={`tab-${tab.id}`}
+                >
+                  <Icon size={18} className={isActive ? `text-${theme.primary?.replace('#', '')}` : ''} />
+                  {tab.label}
+                  {isActive && (
+                    <div className={`absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r ${theme.gradient} rounded-full`} />
+                  )}
+                </button>
+              )
+            })}
+          </nav>
         </div>
-      </section>
+      </div>
 
-      {/* Multilingual Translations */}
-      {availableTranslations.length > 0 && (
-        <section className="py-12 px-4 bg-gray-50">
-          <div className="max-w-6xl mx-auto">
-            <SectionHeader icon={Languages} title="Translations" theme={theme} />
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {availableTranslations.map(trans => (
-                <TranslationCard
-                  key={trans.key}
-                  language={trans.language}
-                  nativeName={trans.name}
-                  meaning={trans.meaning}
-                  longMeaning={trans.long_meaning}
-                  flag={trans.flag}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Pronunciation Guide */}
-      {data.pronunciation && (
-        <section className="py-12 px-4 bg-white">
-          <div className="max-w-4xl mx-auto">
-            <SectionHeader icon={Volume2} title="How to Pronounce" theme={theme} />
-
-            <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-2xl p-8">
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="text-lg font-semibold mb-3 text-gray-900">English</h3>
-                  <p className="text-3xl font-bold text-purple-600 mb-2">
-                    {data.pronunciation.english || data.pronunciation}
-                  </p>
-                  {data.pronunciation.ipa && (
-                    <p className="text-gray-600">IPA: {data.pronunciation.ipa}</p>
+      {/* Tab Content Area */}
+      <div className="pb-16">
+        {/* Meaning Tab */}
+        {activeTab === 'meaning' && (
+          <div id="tab-panel-meaning" role="tabpanel" aria-labelledby="tab-meaning" className="animate-in fade-in duration-200">
+            {/* Meanings Section */}
+            <section className="py-12 px-4 bg-white">
+              <div className="max-w-6xl mx-auto">
+                <SectionHeader icon={BookOpen} title="Name Meaning" theme={theme} />
+                <div className="grid md:grid-cols-3 gap-6">
+                  <MeaningCard
+                    icon={AlignLeft}
+                    title="Meaning"
+                    content={data.long_meaning || data.short_meaning}
+                    theme={theme}
+                  />
+                  {data.spiritual_meaning && (
+                    <MeaningCard
+                      icon={Heart}
+                      title="Spiritual Significance"
+                      content={data.spiritual_meaning}
+                      theme={theme}
+                    />
+                  )}
+                  {data.numerology_meaning && (
+                    <MeaningCard
+                      icon={Sparkles}
+                      title="Numerology"
+                      content={data.numerology_meaning}
+                      theme={theme}
+                    />
                   )}
                 </div>
-
-                {data.pronunciation.urdu && (
-                  <div className="text-right">
-                    <h3 className="text-lg font-semibold mb-3 text-gray-900">Urdu</h3>
-                    <p className="text-2xl font-arabic text-purple-600">
-                      {data.pronunciation.urdu}
-                    </p>
-                  </div>
-                )}
               </div>
-            </div>
-          </div>
-        </section>
-      )}
+            </section>
 
-      {/* Personality & Numerology */}
-      {(data.emotional_traits || data.hidden_personality_traits || data.life_path_number || data.lucky_day) && (
-        <section className="py-12 px-4 bg-gradient-to-br from-indigo-50 to-purple-50">
-          <div className="max-w-6xl mx-auto">
-            <SectionHeader icon={Brain} title="Personality Insights" theme={theme} />
+            {/* Multilingual Translations */}
+            {availableTranslations.length > 0 && (
+              <section className="py-12 px-4 bg-gray-50">
+                <div className="max-w-6xl mx-auto">
+                  <SectionHeader icon={Languages} title="Translations" theme={theme} />
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {availableTranslations.map(trans => (
+                      <TranslationCard
+                        key={trans.key}
+                        language={trans.language}
+                        nativeName={trans.name}
+                        meaning={trans.meaning}
+                        longMeaning={trans.long_meaning}
+                        flag={trans.flag}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </section>
+            )}
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {data.emotional_traits && data.emotional_traits.length > 0 && (
-                <InsightCard
-                  icon={Heart}
-                  title="Emotional Traits"
-                  items={data.emotional_traits}
-                  color="rose"
-                />
-              )}
-
-              {data.hidden_personality_traits && data.hidden_personality_traits.length > 0 && (
-                <InsightCard
-                  icon={Sparkles}
-                  title="Hidden Traits"
-                  items={data.hidden_personality_traits}
-                  color="amber"
-                />
-              )}
-
-              {data.life_path_number && (
-                <InsightCard
-                  icon={Hash}
-                  title="Life Path Number"
-                  value={data.life_path_number}
-                  description={data.numerology_meaning}
-                  color="blue"
-                />
-              )}
-
-              {data.lucky_day && (
-                <InsightCard
-                  icon={Calendar}
-                  title="Lucky Day"
-                  value={data.lucky_day}
-                  color="green"
-                />
-              )}
-            </div>
-
-            {/* Lucky Colors & Stone */}
-            {(data.lucky_colors || data.lucky_stone) && (
-              <div className="mt-8 grid md:grid-cols-2 gap-6">
-                {data.lucky_colors && data.lucky_colors.length > 0 && (
-                  <div className="bg-white rounded-2xl p-6 shadow-lg">
-                    <div className="flex items-center gap-3 mb-4">
-                      <Palette className="text-pink-600" size={28} />
-                      <h3 className="text-xl font-bold text-gray-900">Lucky Colors</h3>
-                    </div>
-                    <div className="flex flex-wrap gap-3">
-                      {data.lucky_colors.map((color, idx) => (
-                        <div key={idx} className="text-center">
-                          <div
-                            className="w-16 h-16 rounded-full shadow-md mb-2"
-                            style={{ backgroundColor: getColorHex(color) }}
-                            title={color}
-                          />
-                          <span className="text-xs text-gray-600">{color}</span>
+            {/* Pronunciation Guide */}
+            {data.pronunciation && (
+              <section className="py-12 px-4 bg-white">
+                <div className="max-w-4xl mx-auto">
+                  <SectionHeader icon={Volume2} title="How to Pronounce" theme={theme} />
+                  <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-2xl p-8">
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div>
+                        <h3 className="text-lg font-semibold mb-3 text-gray-900">English</h3>
+                        <p className="text-3xl font-bold text-purple-600 mb-2">
+                          {data.pronunciation.english || data.pronunciation}
+                        </p>
+                        {data.pronunciation.ipa && (
+                          <p className="text-gray-600">IPA: {data.pronunciation.ipa}</p>
+                        )}
+                      </div>
+                      {data.pronunciation.urdu && (
+                        <div className="text-right">
+                          <h3 className="text-lg font-semibold mb-3 text-gray-900">Urdu</h3>
+                          <p className="text-2xl font-arabic text-purple-600">
+                            {data.pronunciation.urdu}
+                          </p>
                         </div>
-                      ))}
+                      )}
                     </div>
                   </div>
-                )}
-
-                {data.lucky_stone && (
-                  <div className="bg-white rounded-2xl p-6 shadow-lg">
-                    <div className="flex items-center gap-3 mb-4">
-                      <Gem className="text-purple-600" size={28} />
-                      <h3 className="text-xl font-bold text-gray-900">Lucky Stone</h3>
-                    </div>
-                    <p className="text-2xl font-semibold text-purple-600">
-                      {data.lucky_stone}
-                    </p>
-                  </div>
-                )}
-              </div>
+                </div>
+              </section>
             )}
           </div>
-        </section>
-      )}
+        )}
 
-      {/* Biblical/Vedic Reference */}
-      {data.biblical_reference && data.biblical_reference.is_biblical && (
-        <section className="py-12 px-4 bg-blue-50">
-          <div className="max-w-4xl mx-auto">
-            <SectionHeader icon={Book} title="Biblical Reference" theme={theme} />
-
-            <div className="bg-white rounded-2xl p-8 shadow-lg">
-              <div className="mb-4">
-                <span className="px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">
-                  {data.biblical_reference.verse_reference}
-                </span>
-              </div>
-              <p className="text-lg text-gray-700 mb-4">
-                {data.biblical_reference.origin_scripture}
-              </p>
-              <p className="text-gray-600 italic">
-                {data.biblical_reference.note}
-              </p>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {data.vedic_reference && data.vedic_reference.is_vedic && (
-        <section className="py-12 px-4 bg-orange-50">
-          <div className="max-w-4xl mx-auto">
-            <SectionHeader icon={Book} title="Vedic Origin" theme={theme} />
-
-            <div className="bg-white rounded-2xl p-8 shadow-lg">
-              <div className="mb-4">
-                <span className="px-4 py-2 bg-orange-100 text-orange-800 rounded-full text-sm font-semibold">
-                  {data.vedic_reference.root_origin}
-                </span>
-              </div>
-              <p className="text-lg text-gray-700">
-                {data.vedic_reference.note}
-              </p>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Celebrity Usage */}
-      {data.celebrity_usage && data.celebrity_usage.length > 0 && (
-        <section className="py-12 px-4 bg-white">
-          <div className="max-w-6xl mx-auto">
-            <SectionHeader icon={Users} title={`Famous People Named ${data.name}`} theme={theme} />
-
-            <div className="grid md:grid-cols-3 gap-6">
-              {data.celebrity_usage.map((celebrity, idx) => (
-                <div key={idx} className="bg-gray-50 rounded-xl p-6 hover:shadow-lg transition-shadow">
-                  <div className={`w-16 h-16 bg-gradient-to-br ${theme.gradient} rounded-full mb-4 flex items-center justify-center text-white text-2xl font-bold`}>
-                    {celebrity.charAt(0)}
+        {/* Origin & History Tab */}
+        {activeTab === 'origin' && (
+          <div id="tab-panel-origin" role="tabpanel" aria-labelledby="tab-origin" className="animate-in fade-in duration-200">
+            {/* Biblical/Vedic Reference */}
+            {data.biblical_reference && data.biblical_reference.is_biblical && (
+              <section className="py-12 px-4 bg-blue-50">
+                <div className="max-w-4xl mx-auto">
+                  <SectionHeader icon={Book} title="Biblical Reference" theme={theme} />
+                  <div className="bg-white rounded-2xl p-8 shadow-lg">
+                    <div className="mb-4">
+                      <span className="px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">
+                        {data.biblical_reference.verse_reference}
+                      </span>
+                    </div>
+                    <p className="text-lg text-gray-700 mb-4">
+                      {data.biblical_reference.origin_scripture}
+                    </p>
+                    <p className="text-gray-600 italic">
+                      {data.biblical_reference.note}
+                    </p>
                   </div>
-                  <h4 className="font-semibold text-lg text-gray-900">{celebrity}</h4>
                 </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+              </section>
+            )}
 
-      {/* Related & Similar Names */}
-      {((data.related_names && data.related_names.length > 0) || (data.similar_sounding_names && data.similar_sounding_names.length > 0)) && (
-        <section className="py-12 px-4 bg-gray-50">
-          <div className="max-w-6xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-8">
-              {data.related_names && data.related_names.length > 0 && (
-                <div>
-                  <SectionHeader icon={Link2} title="Related Names" theme={theme} />
-                  <div className="flex flex-wrap gap-3">
-                    {data.related_names.map((relatedName, idx) => (
-                      <a
-                        key={idx}
-                        href={`/names/${religion}/${relatedName.toLowerCase()}`}
-                        className={`px-4 py-2 bg-white rounded-full border-2 ${theme.border} hover:bg-gradient-to-r hover:${theme.gradient} hover:text-white transition font-semibold`}
-                      >
-                        {relatedName}
-                      </a>
+            {data.vedic_reference && data.vedic_reference.is_vedic && (
+              <section className="py-12 px-4 bg-orange-50">
+                <div className="max-w-4xl mx-auto">
+                  <SectionHeader icon={Book} title="Vedic Origin" theme={theme} />
+                  <div className="bg-white rounded-2xl p-8 shadow-lg">
+                    <div className="mb-4">
+                      <span className="px-4 py-2 bg-orange-100 text-orange-800 rounded-full text-sm font-semibold">
+                        {data.vedic_reference.root_origin}
+                      </span>
+                    </div>
+                    <p className="text-lg text-gray-700">
+                      {data.vedic_reference.note}
+                    </p>
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {/* Origin Info Card */}
+            <section className="py-12 px-4 bg-white">
+              <div className="max-w-4xl mx-auto">
+                <SectionHeader icon={Globe} title="Name Origin" theme={theme} />
+                <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
+                  <div className="flex items-start gap-4">
+                    <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${theme.gradient} flex items-center justify-center flex-shrink-0`}>
+                      <Globe className="w-8 h-8 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">{data.origin || 'Ancient Origin'}</h3>
+                      <p className="text-gray-700 leading-relaxed">
+                        The name {data.name} has its roots in {data.origin || 'ancient traditions'} and is predominantly used in {religion} cultures. 
+                        {data.long_meaning && ` It carries the beautiful meaning "${data.short_meaning}" and has been cherished for generations.`}
+                      </p>
+                      <div className="mt-6 flex flex-wrap gap-3">
+                        <span className="px-4 py-2 bg-gray-100 rounded-full text-sm font-medium text-gray-700">
+                          Origin: {data.origin || 'Ancient'}
+                        </span>
+                        <span className="px-4 py-2 bg-gray-100 rounded-full text-sm font-medium text-gray-700">
+                          Religion: {religion}
+                        </span>
+                        <span className="px-4 py-2 bg-gray-100 rounded-full text-sm font-medium text-gray-700">
+                          Gender: {data.gender || 'Unisex'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Celebrity Usage */}
+            {data.celebrity_usage && data.celebrity_usage.length > 0 && (
+              <section className="py-12 px-4 bg-white">
+                <div className="max-w-6xl mx-auto">
+                  <SectionHeader icon={Users} title={`Famous People Named ${data.name}`} theme={theme} />
+                  <div className="grid md:grid-cols-3 gap-6">
+                    {data.celebrity_usage.map((celebrity, idx) => (
+                      <div key={idx} className="bg-gray-50 rounded-xl p-6 hover:shadow-lg transition-shadow">
+                        <div className={`w-16 h-16 bg-gradient-to-br ${theme.gradient} rounded-full mb-4 flex items-center justify-center text-white text-2xl font-bold`}>
+                          {celebrity.charAt(0)}
+                        </div>
+                        <h4 className="font-semibold text-lg text-gray-900">{celebrity}</h4>
+                      </div>
                     ))}
                   </div>
                 </div>
-              )}
+              </section>
+            )}
 
-              {data.similar_sounding_names && data.similar_sounding_names.length > 0 && (
-                <div>
-                  <SectionHeader icon={Volume2} title="Similar Sounding Names" theme={theme} />
-                  <div className="flex flex-wrap gap-3">
-                    {data.similar_sounding_names.map((similarName, idx) => (
-                      <a
-                        key={idx}
-                        href={`/names/${religion}/${similarName.toLowerCase()}`}
-                        className="px-4 py-2 bg-white rounded-full border-2 border-gray-200 hover:border-green-500 hover:text-green-600 transition font-semibold"
-                      >
-                        {similarName}
-                      </a>
-                    ))}
+            {/* If no origin data available */}
+            {!data.biblical_reference?.is_biblical && !data.vedic_reference?.is_vedic && !data.celebrity_usage?.length && !data.origin && (
+              <section className="py-16 px-4 bg-white">
+                <div className="max-w-4xl mx-auto text-center">
+                  <div className={`w-20 h-20 mx-auto rounded-full bg-gradient-to-br ${theme.gradient} flex items-center justify-center mb-6`}>
+                    <History className="w-10 h-10 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">Origin & History</h3>
+                  <p className="text-gray-600">
+                    Detailed origin information for {data.name} will be available soon.
+                  </p>
+                </div>
+              </section>
+            )}
+          </div>
+        )}
+
+        {/* Personality Tab */}
+        {activeTab === 'personality' && (
+          <div id="tab-panel-personality" role="tabpanel" aria-labelledby="tab-personality" className="animate-in fade-in duration-200">
+            {/* Personality & Numerology */}
+            {(data.emotional_traits || data.hidden_personality_traits || data.life_path_number || data.lucky_day || data.lucky_colors || data.lucky_stone) ? (
+              <>
+                <section className="py-12 px-4 bg-gradient-to-br from-indigo-50 to-purple-50">
+                  <div className="max-w-6xl mx-auto">
+                    <SectionHeader icon={Brain} title="Personality Insights" theme={theme} />
+                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                      {data.emotional_traits && data.emotional_traits.length > 0 && (
+                        <InsightCard
+                          icon={Heart}
+                          title="Emotional Traits"
+                          items={data.emotional_traits}
+                          color="rose"
+                        />
+                      )}
+                      {data.hidden_personality_traits && data.hidden_personality_traits.length > 0 && (
+                        <InsightCard
+                          icon={Sparkles}
+                          title="Hidden Traits"
+                          items={data.hidden_personality_traits}
+                          color="amber"
+                        />
+                      )}
+                      {data.life_path_number && (
+                        <InsightCard
+                          icon={Hash}
+                          title="Life Path Number"
+                          value={data.life_path_number}
+                          description={data.numerology_meaning}
+                          color="blue"
+                        />
+                      )}
+                      {data.lucky_day && (
+                        <InsightCard
+                          icon={Calendar}
+                          title="Lucky Day"
+                          value={data.lucky_day}
+                          color="green"
+                        />
+                      )}
+                    </div>
+
+                    {/* Lucky Colors & Stone */}
+                    {(data.lucky_colors || data.lucky_stone) && (
+                      <div className="mt-8 grid md:grid-cols-2 gap-6">
+                        {data.lucky_colors && data.lucky_colors.length > 0 && (
+                          <div className="bg-white rounded-2xl p-6 shadow-lg">
+                            <div className="flex items-center gap-3 mb-4">
+                              <Palette className="text-pink-600" size={28} />
+                              <h3 className="text-xl font-bold text-gray-900">Lucky Colors</h3>
+                            </div>
+                            <div className="flex flex-wrap gap-3">
+                              {data.lucky_colors.map((color, idx) => (
+                                <div key={idx} className="text-center">
+                                  <div
+                                    className="w-16 h-16 rounded-full shadow-md mb-2"
+                                    style={{ backgroundColor: getColorHex(color) }}
+                                    title={color}
+                                  />
+                                  <span className="text-xs text-gray-600">{color}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        {data.lucky_stone && (
+                          <div className="bg-white rounded-2xl p-6 shadow-lg">
+                            <div className="flex items-center gap-3 mb-4">
+                              <Gem className="text-purple-600" size={28} />
+                              <h3 className="text-xl font-bold text-gray-900">Lucky Stone</h3>
+                            </div>
+                            <p className="text-2xl font-semibold text-purple-600">
+                              {data.lucky_stone}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </section>
+
+                {/* Lucky Number */}
+                {data.luckyNumber && (
+                  <section className="py-12 px-4 bg-white">
+                    <div className="max-w-4xl mx-auto">
+                      <SectionHeader icon={Star} title="Lucky Number" theme={theme} />
+                      <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-2xl p-12 text-center">
+                        <div className="text-8xl font-bold text-amber-600 mb-4">{data.luckyNumber}</div>
+                        <p className="text-gray-700 text-lg">
+                          The lucky number for {data.name} is {data.luckyNumber}. 
+                          People with this lucky number are often associated with unique characteristics and fortune.
+                        </p>
+                      </div>
+                    </div>
+                  </section>
+                )}
+              </>
+            ) : (
+              <section className="py-16 px-4 bg-white">
+                <div className="max-w-4xl mx-auto text-center">
+                  <div className={`w-20 h-20 mx-auto rounded-full bg-gradient-to-br ${theme.gradient} flex items-center justify-center mb-6`}>
+                    <Brain className="w-10 h-10 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">Personality Insights</h3>
+                  <p className="text-gray-600">
+                    Personality insights and lucky traits for {data.name} will be available soon.
+                  </p>
+                </div>
+              </section>
+            )}
+          </div>
+        )}
+
+        {/* Similar Names Tab */}
+        {activeTab === 'similar' && (
+          <div id="tab-panel-similar" role="tabpanel" aria-labelledby="tab-similar" className="animate-in fade-in duration-200">
+            {((data.related_names && data.related_names.length > 0) || (data.similar_sounding_names && data.similar_sounding_names.length > 0)) ? (
+              <section className="py-12 px-4 bg-gray-50">
+                <div className="max-w-6xl mx-auto">
+                  <div className="grid md:grid-cols-2 gap-8">
+                    {data.related_names && data.related_names.length > 0 && (
+                      <div>
+                        <SectionHeader icon={Link2} title="Related Names" theme={theme} />
+                        <p className="text-gray-600 mb-6">
+                          Names that share similar origins, meanings, or cultural connections with {data.name}.
+                        </p>
+                        <div className="flex flex-wrap gap-3">
+                          {data.related_names.map((relatedName, idx) => (
+                            <a
+                              key={idx}
+                              href={`/names/${religion}/${relatedName.toLowerCase()}`}
+                              className={`px-5 py-3 bg-white rounded-full border-2 ${theme.border} hover:bg-gradient-to-r hover:${theme.gradient} hover:text-white transition font-semibold shadow-sm hover:shadow-md`}
+                            >
+                              {relatedName}
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {data.similar_sounding_names && data.similar_sounding_names.length > 0 && (
+                      <div>
+                        <SectionHeader icon={Volume2} title="Similar Sounding Names" theme={theme} />
+                        <p className="text-gray-600 mb-6">
+                          Names that sound similar to {data.name} and might appeal to you.
+                        </p>
+                        <div className="flex flex-wrap gap-3">
+                          {data.similar_sounding_names.map((similarName, idx) => (
+                            <a
+                              key={idx}
+                              href={`/names/${religion}/${similarName.toLowerCase()}`}
+                              className="px-5 py-3 bg-white rounded-full border-2 border-gray-200 hover:border-green-500 hover:text-green-600 transition font-semibold shadow-sm hover:shadow-md"
+                            >
+                              {similarName}
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
-              )}
-            </div>
+              </section>
+            ) : (
+              <section className="py-16 px-4 bg-gray-50">
+                <div className="max-w-4xl mx-auto text-center">
+                  <div className={`w-20 h-20 mx-auto rounded-full bg-gradient-to-br ${theme.gradient} flex items-center justify-center mb-6`}>
+                    <Link2 className="w-10 h-10 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">Similar Names</h3>
+                  <p className="text-gray-600">
+                    Similar and related names for {data.name} will be available soon.
+                  </p>
+                </div>
+              </section>
+            )}
           </div>
-        </section>
-      )}
+        )}
 
-      {/* FAQ Section */}
-      {faqData.length > 0 && (
-        <section className="py-12 px-4 bg-white">
-          <div className="max-w-4xl mx-auto">
-            <SectionHeader icon={MessageCircle} title="Frequently Asked Questions" theme={theme} />
-
-            <div className="space-y-4">
-              {faqData.map((faq, idx) => (
-                <FAQItem key={idx} question={faq.q} answer={faq.a} />
-              ))}
-            </div>
+        {/* FAQ Tab */}
+        {activeTab === 'faq' && (
+          <div id="tab-panel-faq" role="tabpanel" aria-labelledby="tab-faq" className="animate-in fade-in duration-200">
+            <section className="py-12 px-4 bg-white">
+              <div className="max-w-4xl mx-auto">
+                <SectionHeader icon={MessageCircle} title="Frequently Asked Questions" theme={theme} />
+                <div className="space-y-4">
+                  {faqData.map((faq, idx) => (
+                    <FAQItem key={idx} question={faq.q} answer={faq.a} />
+                  ))}
+                </div>
+              </div>
+            </section>
           </div>
-        </section>
-      )}
+        )}
+      </div>
 
-      {/* Social Sharing Section */}
+      {/* Social Sharing Section (Always visible at bottom) */}
       {data.social_tags && data.social_tags.length > 0 && (
         <section className="py-12 px-4 bg-gradient-to-r from-pink-50 to-purple-50">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl font-bold mb-6 text-gray-900">Share This Beautiful Name</h2>
-
             <div className="flex flex-wrap justify-center gap-3 mb-6">
               {data.social_tags.map((tag, idx) => (
                 <span key={idx} className="px-4 py-2 bg-white rounded-full text-sm font-semibold text-gray-700 shadow">
@@ -777,7 +928,6 @@ export default function NameClient({ data, initialLanguage }) {
                 </span>
               ))}
             </div>
-
             <div className="flex justify-center gap-4">
               <button
                 onClick={handleShare}
@@ -796,6 +946,9 @@ export default function NameClient({ data, initialLanguage }) {
           font-family: 'Noto Sans Arabic', 'Noto Nastaliq Urdu', serif;
         }
       `}</style>
+      
+      {/* AdSense Script */}
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1510675468129183" crossOrigin="anonymous" />
     </div>
   )
 }
