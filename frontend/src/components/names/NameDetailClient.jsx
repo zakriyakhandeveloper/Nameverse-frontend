@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import {
-  Sparkles, BookOpen, Heart, Brain, Gem, Calendar, Palette, Hash,
+  Sparkles, BookOpen, Book, Heart, Brain, Gem, Calendar, Palette, Hash,
   Languages, Volume2, Users, Link2, Share2, Bookmark, TrendingUp,
   Globe, ChevronDown, ChevronUp, Home, AlignLeft, History, Star,
   MessageCircle, Copy, Check, ExternalLink
@@ -176,6 +176,12 @@ export default function NameDetailClient({ data, initialLanguage }) {
 
   const religion = data.religion?.toLowerCase() || 'islamic'
   const theme = religionThemes[religion] || religionThemes.islamic
+  
+  // Compute hover gradient class separately to avoid Turbopack parsing issues
+  const hoverGradientClass = `hover:bg-gradient-to-r hover:${theme.gradient} hover:text-white hover:border-transparent`
+  
+  // Pre-compute related name link classes to avoid multi-line template literal issues
+  const relatedNameLinkClass = `inline-flex items-center px-4 py-2 rounded-full font-medium transition-all bg-white border-2 ${theme.border} text-gray-700 ${hoverGradientClass}`
 
   // Track scroll position
   useEffect(() => {
@@ -392,7 +398,7 @@ export default function NameDetailClient({ data, initialLanguage }) {
 
             {/* Native Script */}
             {nativeScriptName !== data.name && (
-              <p className="text-2xl sm:text-3xl text-white/90 mb-6" style={{ fontFamily: 'serif' }}>
+              <p className="text-2xl sm:text-3xl text-white/90 mb-6 font-arabic">
                 {nativeScriptName}
               </p>
             )}
@@ -815,12 +821,7 @@ export default function NameDetailClient({ data, initialLanguage }) {
                       <a
                         key={idx}
                         href={`/names/${religion}/${relatedName.toLowerCase()}`}
-                        className={`
-                          inline-flex items-center px-4 py-2 rounded-full font-medium transition-all
-                          bg-white border-2 ${theme.border} text-gray-700
-                          hover:bg-gradient-to-r hover:${theme.gradient} hover:text-white hover:border-transparent
-                          hover:shadow-md
-                        `}
+                        className={relatedNameLinkClass}
                       >
                         {relatedName}
                         <ExternalLink size={14} className="ml-1" />
@@ -839,12 +840,7 @@ export default function NameDetailClient({ data, initialLanguage }) {
                       <a
                         key={idx}
                         href={`/names/${religion}/${similarName.toLowerCase()}`}
-                        className="
-                          inline-flex items-center px-4 py-2 rounded-full font-medium transition-all
-                          bg-white border-2 border-gray-200 text-gray-700
-                          hover:border-emerald-500 hover:text-emerald-600
-                          hover:shadow-md
-                        "
+                        className="inline-flex items-center px-4 py-2 rounded-full font-medium transition-all bg-white border-2 border-gray-200 text-gray-700 hover:border-emerald-500 hover:text-emerald-600 hover:shadow-md"
                       >
                         {similarName}
                         <ExternalLink size={14} className="ml-1" />
