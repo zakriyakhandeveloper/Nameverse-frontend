@@ -143,6 +143,13 @@ export default function RootLayout({ children }) {
           data-key="Xu6eED27Kx1ZuJhBcJDJsA"
           async
         ></script>
+
+        {/* AdSense Script - for displaying ads on all pages */}
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1510675468129183"
+          crossOrigin="anonymous"
+        ></script>
       </head>
 
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-gray-900`}>
