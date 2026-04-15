@@ -1,0 +1,11 @@
+name: New MCP server
+version: 0.0.1
+schema: v1
+mcpServers:
+  - name: bright-data-web
+    command: npx
+    args:
+      - -y
+      - "@brightdata/mcp"
+    env:
+      API_TOKEN: 482207f9-966c-4968-a2bb-29b8047deff3

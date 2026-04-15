@@ -23,18 +23,12 @@ import { apiClient } from './client';
 export async function fetchFilters(religion) {
   try {
     if (!religion) {
-      // Religion is required for fetching filters
-      return {
-        genders: [],
-        origins: [],
-        letters: [],
-        totalNames: 0,
-      };
+      return { genders: [], origins: [], letters: [], totalNames: 0 };
     }
 
     const { data } = await apiClient.get(`/api/v1/filters/${religion}`);
 
-    if (data.success && data.filters) {
+    if (data?.success && data?.filters) {
       return {
         genders: data.filters.genders || [],
         origins: data.filters.origins || [],
@@ -43,20 +37,9 @@ export async function fetchFilters(religion) {
       };
     }
 
-    return {
-      genders: [],
-      origins: [],
-      letters: [],
-      totalNames: 0,
-    };
+    return { genders: [], origins: [], letters: [], totalNames: 0 };
   } catch (error) {
-    // Error fetching filters
-    return {
-      genders: [],
-      origins: [],
-      letters: [],
-      totalNames: 0,
-    };
+    return { genders: [], origins: [], letters: [], totalNames: 0 };
   }
 }
 
@@ -79,48 +62,25 @@ export async function fetchNames(params = {}) {
     const { religion, page = 1, limit = 50, ...filters } = params;
 
     if (!religion) {
-      
       return {
         data: [],
-        pagination: {
-          page: 1,
-          limit: 50,
-          total: 0,
-          totalPages: 0,
-        },
+        pagination: { page: 1, limit: 50, total: 0, totalPages: 0 },
         success: false,
       };
     }
 
-    const queryParams = {
-      religion,
-      page,
-      limit,
-      ...filters,
-    };
-
+    const queryParams = { religion, page, limit, ...filters };
     const { data } = await apiClient.get('/api/v1/names', { params: queryParams });
 
     return {
-      data: data.data || [],
-      pagination: data.pagination || {
-        page: 1,
-        limit: 50,
-        total: 0,
-        totalPages: 0,
-      },
-      success: data.success !== false,
+      data: data?.data || [],
+      pagination: data?.pagination || { page: 1, limit: 50, total: 0, totalPages: 0 },
+      success: data?.success !== false,
     };
   } catch (error) {
-    
     return {
       data: [],
-      pagination: {
-        page: 1,
-        limit: 50,
-        total: 0,
-        totalPages: 0,
-      },
+      pagination: { page: 1, limit: 50, total: 0, totalPages: 0 },
       success: false,
     };
   }
@@ -139,26 +99,14 @@ export async function fetchNameDetail(religion, slug) {
   }
 
   try {
-    const response = await apiClient.get(`/api/v1/names/${religion}/${slug}`);
+    const { data } = await apiClient.get(`/api/v1/names/${religion}/${slug}`);
 
-    // Handle 404 silently - name doesn't exist (expected behavior)
-    if (response.status === 404) {
-      return null;
-    }
-
-    // Handle other error statuses silently
-    if (response.status >= 400) {
-      return null;
-    }
-
-    // Success case
-    if (response.data?.success && response.data?.data) {
-      return response.data.data;
+    if (data?.success && data?.data) {
+      return data.data;
     }
 
     return null;
   } catch (error) {
-    // Silently handle all errors - they're handled by notFound() in the page
     return null;
   }
 }
@@ -192,14 +140,13 @@ export async function searchNames(query, options = {}) {
     const { data } = await apiClient.get('/api/v1/search', { params });
 
     return {
-      data: data.data || [],
-      count: data.count || 0,
-      pagination: data.pagination || null,
-      success: data.success !== false,
-      query: data.query || query,
+      data: data?.data || [],
+      count: data?.count || 0,
+      pagination: data?.pagination || null,
+      success: data?.success !== false,
+      query: data?.query || query,
     };
   } catch (error) {
-
     return {
       data: [],
       count: 0,
